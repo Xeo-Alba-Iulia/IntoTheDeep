@@ -34,10 +34,15 @@ public class MeepMeepTesting {
         Image img = null;
         try {
             img = ImageIO.read(new File("MeepMeepTesting/src/main/resources/into-the-deep-meepmeep-custom.webp"));
-        } catch (IOException ignored) {}
+        } catch (IOException ioException) {
+            System.out.println("Image not found");
+            System.out.println(ioException.getMessage());
+        }
 
-        meepMeep.setBackground(img)
-                .setDarkMode(true)
+        if (img != null)
+            meepMeep.setBackground(img);
+
+        meepMeep.setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
                 .start();
