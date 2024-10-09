@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import kotlin.math.abs
@@ -13,9 +14,7 @@ import kotlin.math.max
  * @param hardwareMap The hardware map from the OpMode
  * @throws NullPointerException If one or more motors are null
  */
-open class MovementHardware @Throws(NullPointerException::class) constructor(
-    hardwareMap: HardwareMap
-) {
+open class MovementHardware @Throws(NullPointerException::class) constructor(hardwareMap: HardwareMap) {
     val frontLeft = hardwareMap.get(DcMotorEx::class.java, "MotorFrontLeft")
     val frontRight = hardwareMap.get(DcMotorEx::class.java, "MotorFrontRight")
     val backLeft = hardwareMap.get(DcMotorEx::class.java, "MotorBackLeft")
@@ -36,7 +35,7 @@ open class MovementHardware @Throws(NullPointerException::class) constructor(
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
-        // TODO: Reverse necessary motors
+        arrayOf(frontLeft, backLeft, ).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
     }
 
     /**
@@ -51,10 +50,9 @@ open class MovementHardware @Throws(NullPointerException::class) constructor(
 
         val denominator = max(1.0, abs(y) + abs(x) + abs(rx))
 
-        TODO("Fix power values")
-//        frontLeft.power = (y + x + rx) / denominator
-//        frontRight.power = (y - x - rx) / denominator
-//        backLeft.power = (y - x + rx) / denominator
-//        backRight.power = (y + x - rx) / denominator
+        frontLeft.power = (y + x + rx) / denominator
+        frontRight.power = (y - x - rx) / denominator
+        backLeft.power = (y - x + rx) / denominator
+        backRight.power = (y + x - rx) / denominator
     }
 }
