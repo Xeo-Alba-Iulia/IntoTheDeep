@@ -51,7 +51,7 @@ open class MovementHardware @Throws(NullPointerException::class) constructor(
 
         val denominator = max(1.0, abs(y) + abs(x) + abs(rx))
 
-        // TODO: Fix power values
+        TODO("Fix power values")
 //        frontLeft.power = (y + x + rx) / denominator
 //        frontRight.power = (y - x - rx) / denominator
 //        backLeft.power = (y - x + rx) / denominator
