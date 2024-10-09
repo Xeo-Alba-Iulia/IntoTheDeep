@@ -5,14 +5,10 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
@@ -38,7 +34,7 @@ public class MeepMeepTesting {
         Image img = null;
         try {
             img = ImageIO.read(new File("MeepMeepTesting/src/main/resources/into-the-deep-meepmeep-custom.webp"));
-        } catch (IOException ioException) {}
+        } catch (IOException ignored) {}
 
         meepMeep.setBackground(img)
                 .setDarkMode(true)
