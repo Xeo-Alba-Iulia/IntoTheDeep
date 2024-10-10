@@ -37,28 +37,29 @@ constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareI
     lateinit var backLeft: DcMotorEx
     lateinit var backRight: DcMotorEx
 
-    override val motors = listOf(frontLeft, frontRight, backLeft, backRight)
+    override val motors = arrayListOf(frontLeft, frontRight, backLeft, backRight)
 
     init {
         val exception = HardwareNotFoundException()
 
-        val hardwareDevices = devicesRequired.map {
-            hardwareMap.get(it) ?: run {
-                exception.add(it)
+        val deviceIterator = devicesRequired.iterator()
+        val motorIterator = motors.listIterator()
+
+        while (motorIterator.hasNext()) {
+            val cur = deviceIterator.next()
+            motorIterator.next()
+            motorIterator.set((hardwareMap.get(cur) ?: run {
+                exception.add(cur)
                 null
-            }
+            }) as DcMotorEx)
         }
         if (exception.isNotEmpty)
             throw exception
 
-        hardwareDevices.to(motors)
+        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+        mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
-        for (motor in motors) {
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        }
-
-        arrayOf(this.frontLeft, this.backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
+        arrayOf(frontLeft, backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
     }
 
     /**
@@ -81,28 +82,4 @@ constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareI
 
     @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
     protected open fun movement(gamepad: Gamepad) = move(gamepad)
-
-
-    override var power: Double = 0.0
-        set(value) {
-            field = value
-            for (motor in motors) {
-                motor.power = value
-            }
-        }
-    override var zeroPowerBehavior: DcMotor.ZeroPowerBehavior = DcMotor.ZeroPowerBehavior.UNKNOWN
-        set(value) {
-            field = value
-            for (motor in motors) {
-                motor.zeroPowerBehavior = value
-            }
-        }
-
-    override var mode: DcMotor.RunMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        set(value) {
-            field = value
-            for (motor in motors) {
-                motor.mode = value
-            }
-        }
 }

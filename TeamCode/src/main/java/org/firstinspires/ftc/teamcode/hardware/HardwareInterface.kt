@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 
 interface RequiredDevices {
     val devicesRequired: List<String>
@@ -10,8 +9,22 @@ interface RequiredDevices {
 
 interface MotorHardwareInterface {
     var power: Double
+        get() = TODO()
+        set(value) {
+            motors.forEach { it.power = value }
+        }
+
     var zeroPowerBehavior: DcMotor.ZeroPowerBehavior
+        get() = TODO()
+        set(value) {
+            motors.forEach { it.zeroPowerBehavior = value }
+        }
+
     var mode: DcMotor.RunMode
+        get() = TODO()
+        set(value) {
+            motors.forEach { it.mode = value }
+        }
 
     val motors: Collection<DcMotorEx>
 }
