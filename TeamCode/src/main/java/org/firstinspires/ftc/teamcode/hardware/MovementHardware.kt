@@ -51,7 +51,7 @@ constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareI
         if (exception.isNotEmpty)
             throw exception
 
-        hardwareDevices.to(motors)
+        hardwareDevices to motors
 
         for (motor in motors) {
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

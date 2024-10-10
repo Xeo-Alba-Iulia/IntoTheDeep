@@ -20,6 +20,6 @@ public class SasiuSimplu extends OpMode {
 
     @Override
     public void loop() {
-        Arrays.stream(robot.getMotors()).forEach(motor -> motor.setPower(gamepad1.a ? 1.0 : 0.0));
+//        Arrays.stream(robot.getMotors()).forEach(motor -> motor.setPower(gamepad1.a ? 1.0 : 0.0));
     }
 }
