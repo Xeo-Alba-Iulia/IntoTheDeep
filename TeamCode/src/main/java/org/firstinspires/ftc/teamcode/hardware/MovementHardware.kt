@@ -35,7 +35,7 @@ open class MovementHardware @Throws(NullPointerException::class) constructor(har
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
-        arrayOf(frontLeft, backLeft, ).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
+        arrayOf(frontLeft, backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
     }
 
     /**
@@ -55,4 +55,7 @@ open class MovementHardware @Throws(NullPointerException::class) constructor(har
         backLeft.power = (y - x + rx) / denominator
         backRight.power = (y + x - rx) / denominator
     }
+
+    @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
+    protected open fun movement(gamepad: Gamepad) = move(gamepad)
 }
