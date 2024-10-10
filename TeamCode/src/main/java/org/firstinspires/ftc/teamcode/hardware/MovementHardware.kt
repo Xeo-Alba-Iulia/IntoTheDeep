@@ -8,34 +8,57 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import kotlin.math.abs
 import kotlin.math.max
 
+open class DefaultDevices : RequiredDevices {
+    override val devicesRequired = listOf(
+        "MotorFrontLeft",
+        "MotorFrontRight",
+        "MotorBackLeft",
+        "MotorBackRight"
+    )
+}
+
+interface MovementHardwareInterface {
+    fun move(gamepad: Gamepad)
+}
+
 /**
  * A class that represents the hardware for the movement of the robot
  *
  * @param hardwareMap The hardware map from the OpMode
- * @throws NullPointerException If one or more motors are null
+ * @throws HardwareNotFoundException If one or more motors are null
  */
-open class MovementHardware @Throws(NullPointerException::class) constructor(hardwareMap: HardwareMap) {
-    val frontLeft = hardwareMap.get(DcMotorEx::class.java, "MotorFrontLeft")
-    val frontRight = hardwareMap.get(DcMotorEx::class.java, "MotorFrontRight")
-    val backLeft = hardwareMap.get(DcMotorEx::class.java, "MotorBackLeft")
-    val backRight = hardwareMap.get(DcMotorEx::class.java, "MotorBackRight")
+open class MovementHardware
+@Throws(HardwareNotFoundException::class)
+constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareInterface {
+    companion object : DefaultDevices()
 
-    val motors = arrayOf(frontLeft, frontRight, backLeft, backRight)
+    lateinit var frontLeft: DcMotorEx
+    lateinit var frontRight: DcMotorEx
+    lateinit var backLeft: DcMotorEx
+    lateinit var backRight: DcMotorEx
+
+    override val motors = listOf(frontLeft, frontRight, backLeft, backRight)
 
     init {
-        if (motors.any { it == null }) {
-            throw NullPointerException("""
-                One or more motors are null.
-                Make sure that the names of the motors in the code match the names of the motors in the configuration.
-            """.trimIndent())
+        val exception = HardwareNotFoundException()
+
+        val hardwareDevices = devicesRequired.map {
+            hardwareMap.get(it) ?: run {
+                exception.add(it)
+                null
+            }
         }
+        if (exception.isNotEmpty)
+            throw exception
+
+        hardwareDevices.to(motors)
 
         for (motor in motors) {
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         }
 
-        arrayOf(frontLeft, backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
+        arrayOf(this.frontLeft, this.backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
     }
 
     /**
@@ -43,7 +66,7 @@ open class MovementHardware @Throws(NullPointerException::class) constructor(har
      *
      * @param gamepad The gamepad to get input from
      */
-    fun move(gamepad: Gamepad) {
+    override fun move(gamepad: Gamepad) {
         val y = -gamepad.left_stick_y
         val x = gamepad.left_stick_x * 1.1
         val rx = gamepad.right_stick_x
@@ -58,4 +81,28 @@ open class MovementHardware @Throws(NullPointerException::class) constructor(har
 
     @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
     protected open fun movement(gamepad: Gamepad) = move(gamepad)
+
+
+    override var power: Double = 0.0
+        set(value) {
+            field = value
+            for (motor in motors) {
+                motor.power = value
+            }
+        }
+    override var zeroPowerBehavior: DcMotor.ZeroPowerBehavior = DcMotor.ZeroPowerBehavior.UNKNOWN
+        set(value) {
+            field = value
+            for (motor in motors) {
+                motor.zeroPowerBehavior = value
+            }
+        }
+
+    override var mode: DcMotor.RunMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        set(value) {
+            field = value
+            for (motor in motors) {
+                motor.mode = value
+            }
+        }
 }
