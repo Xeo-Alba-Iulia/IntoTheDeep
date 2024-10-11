@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import kotlin.math.abs
 import kotlin.math.max
 
-open class DefaultDevices : RequiredDevices {
+open class DefaultMotors : RequiredDevices {
     override val devicesRequired = listOf(
         "MotorFrontLeft",
         "MotorFrontRight",
@@ -17,7 +17,7 @@ open class DefaultDevices : RequiredDevices {
     )
 }
 
-interface MovementHardwareInterface {
+interface MovementHardwareInterface: MotorHardwareInterface {
     fun move(gamepad: Gamepad)
 }
 
@@ -29,8 +29,8 @@ interface MovementHardwareInterface {
  */
 open class MovementHardware
 @Throws(HardwareNotFoundException::class)
-constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareInterface {
-    companion object : DefaultDevices()
+constructor(hardwareMap: HardwareMap): MovementHardwareInterface {
+    companion object : DefaultMotors()
 
     lateinit var frontLeft: DcMotorEx
     lateinit var frontRight: DcMotorEx
@@ -79,7 +79,4 @@ constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareI
         backLeft.power = (y - x + rx) / denominator
         backRight.power = (y + x - rx) / denominator
     }
-
-    @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
-    protected open fun movement(gamepad: Gamepad) = move(gamepad)
 }
