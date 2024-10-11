@@ -4,13 +4,26 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
+import org.firstinspires.ftc.teamcode.hardware.HardwareNotFoundException
+import org.firstinspires.ftc.teamcode.hardware.MovementHardware
 
 @TeleOp
 class TestOpMode : OpMode() {
     lateinit var robot: RobotHardware
 
+    lateinit var movementHardware: MovementHardware
     override fun init() {
-        robot = RobotHardware(hardwareMap)
+        try {
+            movementHardware = MovementHardware(hardwareMap)
+        } catch (e: HardwareNotFoundException) {
+            telemetry.addData("Error", e.message)
+            telemetry.update()
+            stop()
+        }
+
+        robot = RobotHardware(hardwareMap,
+            movementHardware = movementHardware
+        )
     }
 
     fun Boolean.toDouble() = if (this) 1.0 else 0.0
@@ -19,15 +32,22 @@ class TestOpMode : OpMode() {
         if (gamepad1 == null)
             return
 
-        if (gamepad1.dpad_down) {
-            robot.motors.forEach { it.power = 1.0 }
+        if (gamepad1.dpad_up) {
+            robot.power = 1.0
             return
+        } else if (gamepad1.dpad_down) {
+            robot.power = -1.0
+            return
+        } else {
+            robot.power = 0.0
         }
         val gamepad = gamepad1 as Gamepad
 
-        robot.frontLeft.power = gamepad.y.toDouble()
-        robot.frontRight.power = gamepad.b.toDouble()
-        robot.backRight.power = gamepad.a.toDouble()
-        robot.backLeft.power = gamepad.x.toDouble()
+        movementHardware.apply {
+            frontLeft.power = gamepad.y.toDouble()
+            frontRight.power = gamepad.b.toDouble()
+            backRight.power = gamepad.a.toDouble()
+            backLeft.power = gamepad.x.toDouble()
+        }
     }
 }
