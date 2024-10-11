@@ -15,8 +15,7 @@ import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
 class RobotHardware(
     hardwareMap: HardwareMap,
     private val movementHardware: MovementHardwareInterface = MovementHardware(hardwareMap)
-) : MovementHardwareInterface by movementHardware
-{
+) : MovementHardwareInterface by movementHardware {
     /**
      * Default hardware constructor
      */
