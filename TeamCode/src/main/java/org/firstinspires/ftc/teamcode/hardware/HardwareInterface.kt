@@ -42,48 +42,6 @@ interface MotorHardwareInterface {
 /**
  * Exception thrown when a device is not found
  *
- * @property deviceNames The names of the devices that are not found
+ * Captures all exceptions thrown by get in a single exception for easier debugging
  */
-class HardwareNotFoundException(
-    deviceNames: Collection<String> = emptyList()
-): Exception() {
-    private val deviceNames = deviceNames.toMutableList()
-
-    /**
-     * Adds a device to the end of the list
-     *
-     * @param deviceName The name of the device
-     */
-    fun add(deviceName: String) = this.deviceNames.add(deviceName)
-
-    /**
-     * Adds multiple devices to the list.
-     *
-     * The devices are added in the order they appear in the [deviceNames] collection
-     *
-     * @return `true` if the list of device names changed as a result of the call
-     */
-    fun addAll(deviceNames: Collection<String>) = this.deviceNames.addAll(deviceNames)
-
-    fun isEmpty() = deviceNames.isEmpty()
-
-    override val message: String?
-        get() =
-            if (deviceNames.isEmpty()) {
-                "One or more devices are not found"
-            } else {
-                "The following devices are not found: ${deviceNames.joinToString(", ")}"
-            }
-
-    operator fun plusAssign(deviceNames: Collection<String>) {
-        addAll(deviceNames)
-    }
-
-    operator fun plusAssign(deviceName: String) {
-        add(deviceName)
-    }
-
-    operator fun plusAssign(exception: HardwareNotFoundException) {
-        this += exception.deviceNames
-    }
-}
+class HardwareNotFoundException: Exception()
