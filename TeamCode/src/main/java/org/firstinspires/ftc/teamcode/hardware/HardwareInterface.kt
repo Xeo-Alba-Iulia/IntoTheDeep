@@ -74,4 +74,16 @@ class HardwareNotFoundException(
             } else {
                 "The following devices are not found: ${deviceNames.joinToString(", ")}"
             }
+
+    operator fun plusAssign(deviceNames: Collection<String>) {
+        addAll(deviceNames)
+    }
+
+    operator fun plusAssign(deviceName: String) {
+        add(deviceName)
+    }
+
+    operator fun plusAssign(exception: HardwareNotFoundException) {
+        this += exception.deviceNames
+    }
 }
