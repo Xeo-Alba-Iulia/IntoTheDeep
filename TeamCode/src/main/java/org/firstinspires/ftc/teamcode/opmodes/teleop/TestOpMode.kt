@@ -33,13 +33,13 @@ class TestOpMode : OpMode() {
             return
 
         if (gamepad1.dpad_up) {
-            robot.power = 1.0
+            robot.setPower(1.0)
             return
         } else if (gamepad1.dpad_down) {
-            robot.power = -1.0
+            robot.setPower(-1.0)
             return
         } else {
-            robot.power = 0.0
+            robot.setPower(0.0)
         }
         val gamepad = gamepad1 as Gamepad
 

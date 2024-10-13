@@ -25,41 +25,43 @@ interface MovementHardwareInterface: MotorHardwareInterface {
  * A class that represents the hardware for the movement of the robot
  *
  * @param hardwareMap The hardware map from the OpMode
- * @throws HardwareNotFoundException If one or more motors are null
  */
-open class MovementHardware
-@Throws(HardwareNotFoundException::class)
-constructor(hardwareMap: HardwareMap): MovementHardwareInterface {
+open class MovementHardware(hardwareMap: HardwareMap): MovementHardwareInterface {
     companion object : DefaultMotors()
 
-    lateinit var frontLeft: DcMotorEx
-    lateinit var frontRight: DcMotorEx
-    lateinit var backLeft: DcMotorEx
-    lateinit var backRight: DcMotorEx
+    val frontLeft: DcMotorEx
+    val frontRight: DcMotorEx
+    val backLeft: DcMotorEx
+    val backRight: DcMotorEx
 
-    override val motors = arrayListOf(frontLeft, frontRight, backLeft, backRight)
+    val motors: Array<DcMotorEx>
 
     init {
-        val exception = HardwareNotFoundException()
-
         val deviceIterator = devicesRequired.iterator()
-        val motorIterator = motors.listIterator()
 
-        while (motorIterator.hasNext()) {
-            val cur = deviceIterator.next()
-            motorIterator.next()
-            motorIterator.set((hardwareMap.get(cur) ?: run {
-                exception.add(cur)
-                null
-            }) as DcMotorEx)
-        }
-        if (exception.isNotEmpty)
-            throw exception
+        frontLeft = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
+        frontRight = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
+        backLeft = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
+        backRight = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
 
-        zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
-        mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        motors = arrayOf(frontLeft, frontRight, backLeft, backRight)
+
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT)
+        setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
 
         arrayOf(frontLeft, backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
+    }
+
+    override fun setMode(mode: DcMotor.RunMode) {
+        motors.forEach { it.mode = mode }
+    }
+
+    override fun setPower(power: Double) {
+        motors.forEach { it.power = power }
+    }
+
+    override fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) {
+        motors.forEach { it.zeroPowerBehavior = behavior }
     }
 
     /**
