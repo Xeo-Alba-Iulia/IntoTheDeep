@@ -1,46 +1,71 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 
+/**
+ * Interface that represents the required devices for a hardware class
+ * The companion object of the class should extend this interface
+ *
+ * @property devicesRequired The list of devices required for the hardware class
+ * @see MovementHardware.Companion
+ */
 interface RequiredDevices {
     val devicesRequired: List<String>
 }
 
+/**
+ * Interface for motor hardware operations
+ */
 interface MotorHardwareInterface {
-    var power: Double
-        get() = TODO()
-        set(value) {
-            motors.forEach { it.power = value }
-        }
+    /**
+     * Sets the same power to all motors
+     *
+     * @param power The power to set the motors to
+     */
+    fun setPower(power: Double)
 
-    var zeroPowerBehavior: DcMotor.ZeroPowerBehavior
-        get() = TODO()
-        set(value) {
-            motors.forEach { it.zeroPowerBehavior = value }
-        }
+    /**
+     * Sets zero power behavior of all motors
+     *
+     * @param behavior The behavior to set the motors to
+     */
+    fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior)
 
-    var mode: DcMotor.RunMode
-        get() = TODO()
-        set(value) {
-            motors.forEach { it.mode = value }
-        }
-
-    val motors: Collection<DcMotorEx>
+    /**
+     * Sets the mode of all motors
+     *
+     * @param mode The mode to set the motors to
+     */
+    fun setMode(mode: DcMotor.RunMode)
 }
 
-class HardwareNotFoundException(deviceNames: Collection<String>): Exception() {
+/**
+ * Exception thrown when a device is not found
+ *
+ * @property deviceNames The names of the devices that are not found
+ */
+class HardwareNotFoundException(
+    deviceNames: Collection<String> = emptyList()
+): Exception() {
     private val deviceNames = deviceNames.toMutableList()
 
-    constructor(): this(mutableListOf())
-
+    /**
+     * Adds a device to the end of the list
+     *
+     * @param deviceName The name of the device
+     */
     fun add(deviceName: String) = this.deviceNames.add(deviceName)
-    fun addAll(deviceNames: Collection<String>) = this.deviceNames.addAll(deviceNames)
-    val isEmpty
-        get() = deviceNames.isEmpty()
 
-    val isNotEmpty
-        get() = deviceNames.isNotEmpty()
+    /**
+     * Adds multiple devices to the list.
+     *
+     * The devices are added in the order they appear in the [deviceNames] collection
+     *
+     * @return `true` if the list of device names changed as a result of the call
+     */
+    fun addAll(deviceNames: Collection<String>) = this.deviceNames.addAll(deviceNames)
+
+    fun isEmpty() = deviceNames.isEmpty()
 
     override val message: String?
         get() =
