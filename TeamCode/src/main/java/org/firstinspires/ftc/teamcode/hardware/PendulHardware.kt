@@ -18,7 +18,7 @@ interface PendulHardwareInterface: MotorHardwareInterface {
 }
 
 open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
-    companion object : DefaultMotors()
+    companion object : PendulMotors()
 
     val pendulLeft: DcMotorEx
     val pendulRight: DcMotorEx

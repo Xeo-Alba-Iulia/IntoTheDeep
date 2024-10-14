@@ -21,9 +21,7 @@ class TestOpMode : OpMode() {
             stop()
         }
 
-        robot = RobotHardware(hardwareMap,
-            movementHardware = movementHardware
-        )
+        robot = RobotHardware(hardwareMap)
     }
 
     fun Boolean.toDouble() = if (this) 1.0 else 0.0
