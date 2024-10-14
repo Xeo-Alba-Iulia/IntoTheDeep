@@ -17,7 +17,7 @@ open class DefaultMotors : RequiredDevices {
     )
 }
 
-interface MovementHardwareInterface: MotorHardwareInterface {
+interface MovementHardwareInterface : MotorHardwareInterface {
     fun move(gamepad: Gamepad)
 }
 
@@ -26,7 +26,7 @@ interface MovementHardwareInterface: MotorHardwareInterface {
  *
  * @param hardwareMap The hardware map from the OpMode
  */
-open class MovementHardware(hardwareMap: HardwareMap): MovementHardwareInterface {
+open class MovementHardware(hardwareMap: HardwareMap) : MovementHardwareInterface {
     companion object : DefaultMotors()
 
     val frontLeft: DcMotorEx
