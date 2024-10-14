@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.hardware.HardwareNotFoundException
 import org.firstinspires.ftc.teamcode.hardware.MovementHardware
 
 @TeleOp
@@ -13,15 +12,12 @@ class TestOpMode : OpMode() {
 
     lateinit var movementHardware: MovementHardware
     override fun init() {
-        try {
-            movementHardware = MovementHardware(hardwareMap)
-        } catch (e: HardwareNotFoundException) {
-            telemetry.addData("Error", e.message)
-            telemetry.update()
-            stop()
-        }
+        movementHardware = MovementHardware(hardwareMap)
 
-        robot = RobotHardware(hardwareMap)
+        robot = RobotHardware(
+            hardwareMap,
+            movementHardware = movementHardware
+        )
     }
 
     fun Boolean.toDouble() = if (this) 1.0 else 0.0

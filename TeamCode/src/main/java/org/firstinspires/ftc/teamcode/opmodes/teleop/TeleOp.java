@@ -14,7 +14,6 @@ public class TeleOp extends OpMode {
 
     @Override
     public void loop() {
-        robot.move(gamepad1);
-        robot.pendul(gamepad1);
+        robot.control(gamepad1);
     }
 }
