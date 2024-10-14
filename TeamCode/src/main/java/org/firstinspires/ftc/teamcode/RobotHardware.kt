@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.hardware.MovementHardware
@@ -15,15 +16,37 @@ import org.firstinspires.ftc.teamcode.hardware.PendulHardwareInterface
  * @param hardwareMap The hardware map from the OpMode
  */
 class RobotHardware(
-    hardwareMap: HardwareMap,
-    private val movementHardware: MovementHardwareInterface = MovementHardware(hardwareMap),
+    hardwareMap: HardwareMap
+) {
+    private val movementHardware: MovementHardwareInterface = MovementHardware(hardwareMap)
     private val pendulHardware: PendulHardwareInterface = PendulHardware(hardwareMap)
-) : MovementHardwareInterface by movementHardware, PendulHardwareInterface by pendulHardware {
-    /**
-     * Default hardware constructor
-     */
-    constructor(hardwareMap: HardwareMap): this(hardwareMap, MovementHardware(hardwareMap))
 
-    @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
-    fun movement(gamepad: Gamepad) = move(gamepad)
+    // Function to move the robot using the gamepad
+    fun move(gamepad: Gamepad) {
+        movementHardware.move(gamepad)
+    }
+
+    // Set the power for both movement and pendul hardware
+    fun setPower(power: Double) {
+        movementHardware.setPower(power)
+        pendulHardware.setPower(power)
+    }
+
+    // Set the mode for both movement and pendul hardware
+    fun setMode(mode: DcMotor.RunMode) {
+        movementHardware.setMode(mode)
+        pendulHardware.setMode(mode)
+    }
+
+    // Set the zero power behavior for both movement and pendul hardware
+    fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) {
+        movementHardware.setZeroPowerBehavior(behavior)
+        pendulHardware.setZeroPowerBehavior(behavior)
+    }
+
+    fun pendul(gamepad: Gamepad) {
+        pendulHardware.pendul(gamepad)
+    }
+
+    // Add any additional methods to control specific robot hardware components here
 }
