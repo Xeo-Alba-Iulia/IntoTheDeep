@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.hardware.MovementHardware
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
+import org.firstinspires.ftc.teamcode.hardware.PendulHardware
+import org.firstinspires.ftc.teamcode.hardware.PendulHardwareInterface
 
 /**
  * Class containing all hardware of the robot
@@ -14,8 +16,9 @@ import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
  */
 class RobotHardware(
     hardwareMap: HardwareMap,
-    private val movementHardware: MovementHardwareInterface = MovementHardware(hardwareMap)
-) : MovementHardwareInterface by movementHardware {
+    private val movementHardware: MovementHardwareInterface = MovementHardware(hardwareMap),
+    private val pendulHardware: PendulHardwareInterface = PendulHardware(hardwareMap)
+) : MovementHardwareInterface by movementHardware, PendulHardwareInterface by pendulHardware {
     /**
      * Default hardware constructor
      */
