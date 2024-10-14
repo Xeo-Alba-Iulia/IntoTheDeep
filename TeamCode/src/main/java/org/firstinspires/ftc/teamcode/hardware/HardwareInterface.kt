@@ -1,39 +1,47 @@
 package org.firstinspires.ftc.teamcode.hardware
 
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 
+/**
+ * Interface that represents the required devices for a hardware class
+ * The companion object of the class should extend this interface
+ *
+ * @property devicesRequired The list of devices required for the hardware class
+ * @see MovementHardware.Companion
+ */
 interface RequiredDevices {
     val devicesRequired: List<String>
 }
 
+/**
+ * Interface for motor hardware operations
+ */
 interface MotorHardwareInterface {
-    var power: Double
-    var zeroPowerBehavior: DcMotor.ZeroPowerBehavior
-    var mode: DcMotor.RunMode
+    /**
+     * Sets the same power to all motors
+     *
+     * @param power The power to set the motors to
+     */
+    fun setPower(power: Double)
 
-    val motors: Collection<DcMotorEx>
+    /**
+     * Sets zero power behavior of all motors
+     *
+     * @param behavior The behavior to set the motors to
+     */
+    fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior)
+
+    /**
+     * Sets the mode of all motors
+     *
+     * @param mode The mode to set the motors to
+     */
+    fun setMode(mode: DcMotor.RunMode)
 }
 
-class HardwareNotFoundException(deviceNames: Collection<String>): Exception() {
-    private val deviceNames = deviceNames.toMutableList()
-
-    constructor(): this(mutableListOf())
-
-    fun add(deviceName: String) = this.deviceNames.add(deviceName)
-    fun addAll(deviceNames: Collection<String>) = this.deviceNames.addAll(deviceNames)
-    val isEmpty
-        get() = deviceNames.isEmpty()
-
-    val isNotEmpty
-        get() = deviceNames.isNotEmpty()
-
-    override val message: String?
-        get() =
-            if (deviceNames.isEmpty()) {
-                "One or more devices are not found"
-            } else {
-                "The following devices are not found: ${deviceNames.joinToString(", ")}"
-            }
-}
+/**
+ * Exception thrown when a device is not found
+ *
+ * Captures all exceptions thrown by get in a single exception for easier debugging
+ */
+class HardwareNotFoundException: Exception()

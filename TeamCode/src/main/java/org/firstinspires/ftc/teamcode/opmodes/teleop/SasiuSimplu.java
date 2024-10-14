@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 
-import java.util.Arrays;
-
 /**
  * Cel mai basic TeleOp posibil
  */
@@ -20,6 +18,6 @@ public class SasiuSimplu extends OpMode {
 
     @Override
     public void loop() {
-//        Arrays.stream(robot.getMotors()).forEach(motor -> motor.setPower(gamepad1.a ? 1.0 : 0.0));
+        robot.setPower(gamepad1.a ? 1.0 : 0.0);
     }
 }

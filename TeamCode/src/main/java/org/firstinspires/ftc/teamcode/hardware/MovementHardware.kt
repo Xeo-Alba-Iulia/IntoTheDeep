@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import kotlin.math.abs
 import kotlin.math.max
 
-open class DefaultDevices : RequiredDevices {
+open class DefaultMotors : RequiredDevices {
     override val devicesRequired = listOf(
         "MotorFrontLeft",
         "MotorFrontRight",
@@ -17,7 +17,7 @@ open class DefaultDevices : RequiredDevices {
     )
 }
 
-interface MovementHardwareInterface {
+interface MovementHardwareInterface : MotorHardwareInterface {
     fun move(gamepad: Gamepad)
 }
 
@@ -25,40 +25,43 @@ interface MovementHardwareInterface {
  * A class that represents the hardware for the movement of the robot
  *
  * @param hardwareMap The hardware map from the OpMode
- * @throws HardwareNotFoundException If one or more motors are null
  */
-open class MovementHardware
-@Throws(HardwareNotFoundException::class)
-constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareInterface {
-    companion object : DefaultDevices()
+open class MovementHardware(hardwareMap: HardwareMap) : MovementHardwareInterface {
+    companion object : DefaultMotors()
 
-    lateinit var frontLeft: DcMotorEx
-    lateinit var frontRight: DcMotorEx
-    lateinit var backLeft: DcMotorEx
-    lateinit var backRight: DcMotorEx
+    val frontLeft: DcMotorEx
+    val frontRight: DcMotorEx
+    val backLeft: DcMotorEx
+    val backRight: DcMotorEx
 
-    override val motors = listOf(frontLeft, frontRight, backLeft, backRight)
+    val motors: Array<DcMotorEx>
 
     init {
-        val exception = HardwareNotFoundException()
+        val deviceIterator = devicesRequired.iterator()
 
-        val hardwareDevices = devicesRequired.map {
-            hardwareMap.get(it) ?: run {
-                exception.add(it)
-                null
-            }
-        }
-        if (exception.isNotEmpty)
-            throw exception
+        frontLeft = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
+        frontRight = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
+        backLeft = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
+        backRight = hardwareMap.get(DcMotorEx::class.java, deviceIterator.next())
 
-        hardwareDevices to motors
+        motors = arrayOf(frontLeft, frontRight, backLeft, backRight)
 
-        for (motor in motors) {
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-            motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        }
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT)
+        setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
 
-        arrayOf(this.frontLeft, this.backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
+        arrayOf(frontLeft, backLeft).forEach { it.direction = DcMotorSimple.Direction.REVERSE }
+    }
+
+    override fun setMode(mode: DcMotor.RunMode) {
+        motors.forEach { it.mode = mode }
+    }
+
+    override fun setPower(power: Double) {
+        motors.forEach { it.power = power }
+    }
+
+    override fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) {
+        motors.forEach { it.zeroPowerBehavior = behavior }
     }
 
     /**
@@ -78,31 +81,4 @@ constructor(hardwareMap: HardwareMap): MovementHardwareInterface, MotorHardwareI
         backLeft.power = (y - x + rx) / denominator
         backRight.power = (y + x - rx) / denominator
     }
-
-    @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
-    protected open fun movement(gamepad: Gamepad) = move(gamepad)
-
-
-    override var power: Double = 0.0
-        set(value) {
-            field = value
-            for (motor in motors) {
-                motor.power = value
-            }
-        }
-    override var zeroPowerBehavior: DcMotor.ZeroPowerBehavior = DcMotor.ZeroPowerBehavior.UNKNOWN
-        set(value) {
-            field = value
-            for (motor in motors) {
-                motor.zeroPowerBehavior = value
-            }
-        }
-
-    override var mode: DcMotor.RunMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        set(value) {
-            field = value
-            for (motor in motors) {
-                motor.mode = value
-            }
-        }
 }
