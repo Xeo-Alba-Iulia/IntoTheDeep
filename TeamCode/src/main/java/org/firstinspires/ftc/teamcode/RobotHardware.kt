@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.hardware.MovementHardware
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
 import org.firstinspires.ftc.teamcode.hardware.PendulHardware
 import org.firstinspires.ftc.teamcode.hardware.PendulHardwareInterface
+import org.firstinspires.ftc.teamcode.hardware.LiftHardware
+import org.firstinspires.ftc.teamcode.hardware.LiftHardwareInterface
 
 /**
  * Class containing all hardware of the robot
@@ -22,9 +24,11 @@ class RobotHardware(
     hardwareMap: HardwareMap,
     private val movementHardware: MovementHardwareInterface = MovementHardware(hardwareMap),
     private val pendulHardware: PendulHardwareInterface = PendulHardware(hardwareMap),
+    private val liftHardware: LiftHardwareInterface = LiftHardware(hardwareMap)
 ):  MotorHardwareInterface,
     MovementHardwareInterface by movementHardware,
-    PendulHardwareInterface by pendulHardware
+    PendulHardwareInterface by pendulHardware,
+    LiftHardwareInterface by liftHardware
 {
     /**
      * Since Java does not support default parameters, this constructor is provided for Java OpModes
@@ -34,7 +38,8 @@ class RobotHardware(
     constructor(hardwareMap: HardwareMap): this(
         hardwareMap,
         MovementHardware(hardwareMap),
-        PendulHardware(hardwareMap)
+        PendulHardware(hardwareMap),
+        LiftHardware(hardwareMap)
     )
 
     override fun setPower(power: Double) =
@@ -48,7 +53,11 @@ class RobotHardware(
 
     fun control(gamepad: Gamepad) {
         move(gamepad)
+    }
+
+    fun sistems(gamepad: Gamepad) {
         pendul(gamepad)
+        lift(gamepad)
     }
 
     @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))

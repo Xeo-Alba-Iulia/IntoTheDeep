@@ -52,9 +52,9 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
     }
 
     override fun pendul(gamepad: Gamepad) {
-        val y: Double = gamepad.right_stick_y.toDouble()
+        val x: Double = gamepad.right_stick_x.toDouble()
 
-        pendulLeft.power = y
-        pendulRight.power = y
+        pendulLeft.power = x
+        pendulRight.power = x
     }
 }

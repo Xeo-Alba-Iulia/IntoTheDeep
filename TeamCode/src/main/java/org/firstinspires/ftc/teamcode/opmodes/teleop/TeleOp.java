@@ -15,5 +15,6 @@ public class TeleOp extends OpMode {
     @Override
     public void loop() {
         robot.control(gamepad1);
+        robot.sistems(gamepad2);
     }
 }
