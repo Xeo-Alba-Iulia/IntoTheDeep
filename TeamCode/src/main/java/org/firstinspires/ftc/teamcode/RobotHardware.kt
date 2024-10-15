@@ -34,29 +34,23 @@ class RobotHardware(
     constructor(hardwareMap: HardwareMap): this(
         hardwareMap,
         MovementHardware(hardwareMap),
-        PendulHardware(hardwareMap),
+        PendulHardware(hardwareMap)
     )
 
-    // Set the mode for both movement and pendul hardware
-    override fun setMode(mode: DcMotor.RunMode) {
-        movementHardware.setMode(mode)
-        pendulHardware.setMode(mode)
-    }
-
-    // Set the zero power behavior for both movement and pendul hardware
-    override fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) {
-        movementHardware.setZeroPowerBehavior(behavior)
-        pendulHardware.setZeroPowerBehavior(behavior)
-    }
-
-    // Set the power for both movement and pendul hardware
-    override fun setPower(power: Double) {
+    override fun setPower(power: Double) =
         movementHardware.setPower(power)
-        pendulHardware.setPower(power)
-    }
+
+    override fun setMode(mode: DcMotor.RunMode) =
+        movementHardware.setMode(mode)
+
+    override fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) =
+        movementHardware.setZeroPowerBehavior(behavior)
 
     fun control(gamepad: Gamepad) {
-        movementHardware.move(gamepad)
-        pendulHardware.pendul(gamepad)
+        move(gamepad)
+        pendul(gamepad)
     }
+
+    @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
+    fun movement(gamepad: Gamepad) = move(gamepad)
 }
