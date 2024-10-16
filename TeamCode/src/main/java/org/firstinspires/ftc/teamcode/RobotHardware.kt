@@ -60,6 +60,6 @@ class RobotHardware(
         lift(gamepad)
     }
 
-    @Deprecated("Use move instead", ReplaceWith("move(gamepad)"))
+    @Deprecated("Use move instead", ReplaceWith("move(gamepad)"), DeprecationLevel.ERROR)
     fun movement(gamepad: Gamepad) = move(gamepad)
 }
