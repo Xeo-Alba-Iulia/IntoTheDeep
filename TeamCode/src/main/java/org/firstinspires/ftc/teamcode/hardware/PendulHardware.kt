@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.sun.tools.javac.util.Position
 
 open class PendulMotors : RequiredDevices {
     override val devicesRequired = listOf(
@@ -15,6 +16,7 @@ open class PendulMotors : RequiredDevices {
 
 interface PendulHardwareInterface: MotorHardwareInterface {
     fun pendul(gamepad: Gamepad)
+    fun setPendul(int: Int)
 }
 
 open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
@@ -34,7 +36,7 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
         pendul = arrayOf(pendulLeft, pendulRight)
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-        setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER)
 
         pendulRight.direction = DcMotorSimple.Direction.REVERSE
     }
@@ -54,7 +56,15 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
     override fun pendul(gamepad: Gamepad) {
         val x: Double = gamepad.right_stick_x.toDouble()
 
-        pendulLeft.power = x
-        pendulRight.power = x
+        pendulLeft.power = x / 2
+        pendulRight.power = x / 2
+    }
+
+    override fun setPendul(pos: Int) {
+        val position: Int = pos
+
+        pendulRight.targetPosition = position
+
+        pendulRight.power = 1.0
     }
 }

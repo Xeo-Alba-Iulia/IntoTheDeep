@@ -55,8 +55,8 @@ class RobotHardware(
         move(gamepad)
     }
 
-    fun sistems(gamepad: Gamepad) {
-        pendul(gamepad)
+    fun sistems(gamepad: Gamepad, pendPos: Int) {
+        setPendul(pendPos)
         lift(gamepad)
     }
 
