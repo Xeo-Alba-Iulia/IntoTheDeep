@@ -20,8 +20,8 @@ interface PendulHardwareInterface: MotorHardwareInterface {
 
 enum class PendulPosition(val position: Int) {
     DOWN(0),
-    HALF(100),
-    UP(200)
+    HALF(10),
+    UP(20)
 }
 
 open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
@@ -32,6 +32,27 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
 
     val pendul: Array<DcMotorEx>
 
+    /**
+     * Target position for all pendul motors
+     *
+     * When read returns null if target positions are different and the target position if they are the same
+     *
+     * When set sets the target position for all pendul motors
+     *
+     * @see DcMotorEx.getTargetPosition
+     * @see DcMotorEx.setTargetPosition
+     */
+    private var targetPosition: Int?
+        get() =
+            if (pendul.all { it.targetPosition == pendul.first().targetPosition }) {
+                pendul.first().targetPosition
+            } else {
+                null
+            }
+        set(value) {
+            if (value != null) pendul.forEach { it.targetPosition = value }
+        }
+
     init {
         val deviceIterator = devicesRequired.iterator()
 
@@ -41,6 +62,8 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
         pendul = arrayOf(pendulLeft, pendulRight)
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER)
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
         setMode(DcMotor.RunMode.RUN_USING_ENCODER)
 
         pendulRight.direction = DcMotorSimple.Direction.REVERSE
@@ -58,19 +81,9 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
         pendul.forEach { it.zeroPowerBehavior = behavior }
     }
 
-    private var targetPosition: Int?
-        get() =
-            if (pendul.all { it.targetPosition == pendul[0].targetPosition }) {
-                pendul[0].targetPosition
-            } else {
-                null
-            }
-        set(value) {
-            pendul.forEach { it.targetPosition = value!! }
-        }
-
 
     override fun pendul(gamepad: Gamepad) {
+        TODO("Doar setPendul ar trebui sa mearga")
         val x: Double = gamepad.right_stick_x.toDouble()
 
         pendulLeft.power = x / 2
@@ -80,7 +93,8 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
     override fun setPendul(pos: PendulPosition) {
         val position: Int = pos.position
 
-        setPower(0.25)
+        setPower(1.0)
         targetPosition = position
+        setMode(DcMotor.RunMode.RUN_TO_POSITION)
     }
 }
