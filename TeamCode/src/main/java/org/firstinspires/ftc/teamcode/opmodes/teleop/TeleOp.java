@@ -31,5 +31,8 @@ public class TeleOp extends OpMode {
             return;
         }
         robot.setPendul(pos);
+
+        telemetry.addData("Pendul position:", robot.getPendulHardware().getCurrentPosition());
+        telemetry.update();
     }
 }
