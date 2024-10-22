@@ -19,18 +19,21 @@ interface PendulHardwareInterface: MotorHardwareInterface {
 }
 
 enum class PendulPosition(val position: Int) {
-    DOWN(0),
-    HALF(10),
-    UP(20)
+    DOWN(-30),
+    HALF(-87),
+    UP(-214)
 }
 
-open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
+class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
     companion object : PendulMotors()
 
     val pendulLeft: DcMotorEx
     val pendulRight: DcMotorEx
 
     val pendul: Array<DcMotorEx>
+
+    val currentPosition: Int
+        get() = pendul.sumOf { it.currentPosition } / pendul.size
 
     /**
      * Target position for all pendul motors
@@ -84,16 +87,16 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
 
     override fun pendul(gamepad: Gamepad) {
         TODO("Doar setPendul ar trebui sa mearga")
-        val x: Double = gamepad.right_stick_x.toDouble()
-
-        pendulLeft.power = x / 2
-        pendulRight.power = x / 2
+//        val x: Double = gamepad.right_stick_x.toDouble()
+//
+//        pendulLeft.power = x / 2
+//        pendulRight.power = x / 2
     }
 
     override fun setPendul(pos: PendulPosition) {
-        val position: Int = pos.position
+        val position = pos.position
 
-        setPower(1.0)
+        pendulRight.power = 0.2
         targetPosition = position
         setMode(DcMotor.RunMode.RUN_TO_POSITION)
     }
