@@ -17,6 +17,11 @@ interface LiftHardwareInterface: MotorHardwareInterface {
     fun lift(gamepad: Gamepad)
 }
 
+enum class LiftPosition(val position: Int) {
+    UP(0),
+    DOWN(1000)
+}
+
 open class LiftHardware(hardwareMap: HardwareMap): LiftHardwareInterface {
     companion object : LiftMotors()
 

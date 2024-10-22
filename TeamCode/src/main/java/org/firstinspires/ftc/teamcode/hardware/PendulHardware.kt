@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
-import com.sun.tools.javac.util.Position
 
 open class PendulMotors : RequiredDevices {
     override val devicesRequired = listOf(
@@ -16,7 +15,13 @@ open class PendulMotors : RequiredDevices {
 
 interface PendulHardwareInterface: MotorHardwareInterface {
     fun pendul(gamepad: Gamepad)
-    fun setPendul(int: Int)
+    fun setPendul(pos: PendulPosition)
+}
+
+enum class PendulPosition(val position: Int) {
+    DOWN(0),
+    HALF(100),
+    UP(200)
 }
 
 open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
@@ -53,6 +58,18 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
         pendul.forEach { it.zeroPowerBehavior = behavior }
     }
 
+    private var targetPosition: Int?
+        get() =
+            if (pendul.all { it.targetPosition == pendul[0].targetPosition }) {
+                pendul[0].targetPosition
+            } else {
+                null
+            }
+        set(value) {
+            pendul.forEach { it.targetPosition = value!! }
+        }
+
+
     override fun pendul(gamepad: Gamepad) {
         val x: Double = gamepad.right_stick_x.toDouble()
 
@@ -60,11 +77,10 @@ open class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
         pendulRight.power = x / 2
     }
 
-    override fun setPendul(pos: Int) {
-        val position: Int = pos
+    override fun setPendul(pos: PendulPosition) {
+        val position: Int = pos.position
 
-        pendulRight.targetPosition = position
-
-        pendulRight.power = 1.0
+        setPower(0.25)
+        targetPosition = position
     }
 }
