@@ -22,9 +22,9 @@ import org.firstinspires.ftc.teamcode.hardware.LiftHardwareInterface
  */
 class RobotHardware(
     hardwareMap: HardwareMap,
-    private val movementHardware: MovementHardwareInterface = MovementHardware(hardwareMap),
-    private val pendulHardware: PendulHardwareInterface = PendulHardware(hardwareMap),
-    private val liftHardware: LiftHardwareInterface = LiftHardware(hardwareMap)
+    val movementHardware: MovementHardware = MovementHardware(hardwareMap),
+    val pendulHardware: PendulHardware = PendulHardware(hardwareMap),
+    val liftHardware: LiftHardware = LiftHardware(hardwareMap)
 ):  MotorHardwareInterface,
     MovementHardwareInterface by movementHardware,
     PendulHardwareInterface by pendulHardware,
