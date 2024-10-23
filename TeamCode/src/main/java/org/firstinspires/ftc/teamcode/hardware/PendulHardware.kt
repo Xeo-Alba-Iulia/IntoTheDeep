@@ -96,7 +96,7 @@ class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
     override fun setPendul(pos: PendulPosition) {
         val position = pos.position
 
-        pendulRight.power = 0.2
+        setPower(0.2)
         targetPosition = position
         setMode(DcMotor.RunMode.RUN_TO_POSITION)
     }
