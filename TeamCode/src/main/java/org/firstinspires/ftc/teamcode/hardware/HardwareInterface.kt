@@ -38,10 +38,3 @@ interface MotorHardwareInterface {
      */
     fun setMode(mode: DcMotor.RunMode)
 }
-
-/**
- * Exception thrown when a device is not found
- *
- * Captures all exceptions thrown by get in a single exception for easier debugging
- */
-class HardwareNotFoundException: Exception()
