@@ -33,7 +33,7 @@ class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
     val pendul: Array<DcMotorEx>
 
     val currentPosition: Int
-        get() = pendul.sumOf { it.currentPosition } / pendul.size
+        get() = pendul.map { it.currentPosition }.average().toInt()
 
     /**
      * Target position for all pendul motors
