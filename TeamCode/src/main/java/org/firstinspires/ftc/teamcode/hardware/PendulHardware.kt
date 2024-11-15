@@ -13,7 +13,7 @@ open class PendulMotors : RequiredDevices {
     )
 }
 
-interface PendulHardwareInterface: MotorHardwareInterface {
+interface PendulHardwareInterface : MotorHardwareInterface {
     fun pendul(gamepad: Gamepad)
     fun setPendul(pos: PendulPosition)
 }
@@ -24,7 +24,7 @@ enum class PendulPosition(val position: Int) {
     UP(-214)
 }
 
-class PendulHardware(hardwareMap: HardwareMap): PendulHardwareInterface {
+class PendulHardware(hardwareMap: HardwareMap) : PendulHardwareInterface {
     companion object : PendulMotors()
 
     val pendulLeft: DcMotorEx
