@@ -6,10 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.hardware.MotorHardwareInterface
 import org.firstinspires.ftc.teamcode.hardware.MovementHardware
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
-import org.firstinspires.ftc.teamcode.hardware.PendulHardware
-import org.firstinspires.ftc.teamcode.hardware.PendulHardwareInterface
-import org.firstinspires.ftc.teamcode.hardware.LiftHardware
-import org.firstinspires.ftc.teamcode.hardware.LiftHardwareInterface
 
 /**
  * Class containing all hardware of the robot
@@ -20,28 +16,16 @@ import org.firstinspires.ftc.teamcode.hardware.LiftHardwareInterface
  * @constructor Default constructs everything using just hardwareMap,
  * but allows for custom hardware classes to be passed in for testing
  */
-class RobotHardware(
+class RobotHardware @JvmOverloads constructor(
     hardwareMap: HardwareMap,
     val movementHardware: MovementHardware = MovementHardware(hardwareMap),
-    val pendulHardware: PendulHardware = PendulHardware(hardwareMap),
-    val liftHardware: LiftHardware = LiftHardware(hardwareMap)
+//    val pendulHardware: PendulHardware = PendulHardware(hardwareMap),
+//    val liftHardware: LiftHardware = LiftHardware(hardwareMap)
 ):  MotorHardwareInterface,
-    MovementHardwareInterface by movementHardware,
-    PendulHardwareInterface by pendulHardware,
-    LiftHardwareInterface by liftHardware
+    MovementHardwareInterface by movementHardware
+//    PendulHardwareInterface by pendulHardware,
+//    LiftHardwareInterface by liftHardware
 {
-    /**
-     * Since Java does not support default parameters, this constructor is provided for Java OpModes
-     *
-     * @param hardwareMap The hardware map from the OpMode
-     */
-    constructor(hardwareMap: HardwareMap): this(
-        hardwareMap,
-        MovementHardware(hardwareMap),
-        PendulHardware(hardwareMap),
-        LiftHardware(hardwareMap)
-    )
-
     override fun setPower(power: Double) =
         movementHardware.setPower(power)
 
@@ -55,9 +39,9 @@ class RobotHardware(
         move(gamepad)
     }
 
-    fun sistems(gamepad: Gamepad) {
-        lift(gamepad)
-    }
+//    fun sistems(gamepad: Gamepad) {
+//        lift(gamepad)
+//    }
 
     @Deprecated("Use move instead", ReplaceWith("move(gamepad)"), DeprecationLevel.ERROR)
     fun movement(gamepad: Gamepad) = move(gamepad)

@@ -16,23 +16,23 @@ public class TeleOp extends OpMode {
     @Override
     public void loop() {
         robot.control(gamepad1);
-        robot.sistems(gamepad2);
-
-        PendulPosition pos = null;
-        if (gamepad2.a) {
-            pos = PendulPosition.DOWN;
-        } else if (gamepad2.b) {
-            pos = PendulPosition.HALF;
-        } else if (gamepad2.y) {
-            pos = PendulPosition.UP;
-        }
-
-        if (pos == null) {
-            return;
-        }
-        robot.setPendul(pos);
-
-        telemetry.addData("Pendul position:", robot.getPendulHardware().getCurrentPosition());
-        telemetry.update();
+//        robot.sistems(gamepad2);
+//
+//        PendulPosition pos = null;
+//        if (gamepad2.a) {
+//            pos = PendulPosition.DOWN;
+//        } else if (gamepad2.b) {
+//            pos = PendulPosition.HALF;
+//        } else if (gamepad2.y) {
+//            pos = PendulPosition.UP;
+//        }
+//
+//        if (pos == null) {
+//            return;
+//        }
+//        robot.setPendul(pos);
+//
+//        telemetry.addData("Pendul position:", robot.getPendulHardware().getCurrentPosition());
+//        telemetry.update();
     }
 }

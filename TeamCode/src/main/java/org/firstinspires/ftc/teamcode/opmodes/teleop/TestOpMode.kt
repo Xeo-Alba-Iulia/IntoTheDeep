@@ -3,21 +3,13 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
-import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.hardware.MovementHardware
 
 @TeleOp
 class TestOpMode : OpMode() {
-    lateinit var robot: RobotHardware
-
     lateinit var movementHardware: MovementHardware
     override fun init() {
         movementHardware = MovementHardware(hardwareMap)
-
-        robot = RobotHardware(
-            hardwareMap,
-            movementHardware = movementHardware
-        )
     }
 
     fun Boolean.toDouble() = if (this) 1.0 else 0.0
@@ -27,13 +19,13 @@ class TestOpMode : OpMode() {
             return
 
         if (gamepad1.dpad_up) {
-            robot.setPower(1.0)
+            movementHardware.setPower(1.0)
             return
         } else if (gamepad1.dpad_down) {
-            robot.setPower(-1.0)
+            movementHardware.setPower(-1.0)
             return
         } else {
-            robot.setPower(0.0)
+            movementHardware.setPower(0.0)
         }
         val gamepad = gamepad1 as Gamepad
 
