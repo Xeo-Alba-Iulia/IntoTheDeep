@@ -20,9 +20,9 @@ import org.firstinspires.ftc.teamcode.messages.ThreeDeadWheelInputsMessage;
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
-        public double par0YTicks = 0.0; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = 1.0; // y position of the second parallel encoder (in tick units)
-        public double perpXTicks = 0.0; // x position of the perpendicular encoder (in tick units)
+        public double par0YTicks = -1417.4777140251208; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks = 1008.476050046868; // y position of the second parallel encoder (in tick units)
+        public double perpXTicks = -1812.0079565722772; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -35,9 +35,9 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     private boolean initialized;
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorFrontLeft"))); // Par st control hub port 3
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorBackRight"))); // Par dr expansion hub port 3
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorPendulLeft"))); // Perp expansion hub port 1
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorBackRight"))); // Par st control hub port 3
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorBackLeft"))); // Par dr expansion hub port 3
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorFrontLeft"))); // Perp expansion hub port 1
 
            par1.setDirection(DcMotorSimple.Direction.REVERSE);
 
