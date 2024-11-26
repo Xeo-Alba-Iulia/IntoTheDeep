@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop
 
-import com.acmerobotics.roadrunner.ParallelAction
-import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.SleepAction
-import com.acmerobotics.roadrunner.ftc.runBlocking
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Intake
+import kotlin.properties.Delegates
+
+const val MULTIPLIER = 0.005
 
 @TeleOp
 class IntakeTest : LinearOpMode() {
@@ -15,11 +16,26 @@ class IntakeTest : LinearOpMode() {
 
         waitForStart()
 
-        runBlocking(ParallelAction(intake.start(), SequentialAction(
-            SleepAction(1.0),
-            intake.setPower(0.5),
-            SleepAction(1.0),
-            intake.stop()
-        )))
+//        runBlocking(ParallelAction(intake.start(), SequentialAction(
+//            SleepAction(1.0),
+//            intake.setPower(0.5),
+//            SleepAction(1.0),
+//            intake.stop()
+//        )))
+
+        var position: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
+
+        val dash = FtcDashboard.getInstance()
+        var isRunning = true
+
+        while (opModeIsActive() && isRunning) {
+            val packet = TelemetryPacket()
+
+            position += MULTIPLIER * gamepad1.left_stick_y
+            intake.intakeRotate.position = position
+            isRunning = intake.intakeRotate.run(packet)
+
+            dash.sendTelemetryPacket(packet)
+        }
     }
 }
