@@ -13,15 +13,16 @@ open class Pendul(hardwareMap: HardwareMap) {
 
     protected val servos = arrayListOf(servoLeft, servoRight)
 
-    enum class PendulPosition(val value: Double) {
+    enum class PendulPosition(val position: Double) {
         DOWN(0.0),
         HALF(0.5),
-        UP(0.0)
+        UP(1.0)
     }
 
-    var position = PendulPosition.DOWN
+    var position: PendulPosition? = null
         set(value) {
-            servos.forEach { it.position = value.value }
+            require(value != null) { "Pendul position must not be null" }
+            servos.forEach { it.position = value.position }
             field = value
         }
 }
