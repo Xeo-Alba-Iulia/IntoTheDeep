@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Intake
 import kotlin.properties.Delegates
 
-const val MULTIPLIER = 0.003
-
 @TeleOp
 class IntakeTest : LinearOpMode() {
+    companion object {
+        private const val MULTIPLIER = 0.003
+    }
+
     override fun runOpMode() {
         val intake = Intake(hardwareMap)
 
