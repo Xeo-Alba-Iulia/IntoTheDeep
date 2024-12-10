@@ -18,12 +18,18 @@ class Intake(hardwareMap: HardwareMap) : Action {
     private var isCanceled = false
     private var isStarted = false
 
+    /**
+     * Power to set the intake to
+     */
     var intakePower: Double = START_POWER
         set(value) {
             require(value in 0.0..1.0) { "Intake power must be between 0 and 1" }
             field = value
         }
 
+    /**
+     * Doesn't actually start the intake, use [startAction] or [start] for that
+     */
     override fun run(p: TelemetryPacket): Boolean {
         if (!isStarted)
             return false
@@ -44,6 +50,14 @@ class Intake(hardwareMap: HardwareMap) : Action {
     fun cancel() {
         isCanceled = true
     }
+
+    val cancelAction = actionWrapper { cancel() }
+
+    fun start() {
+        isStarted = true
+    }
+
+    val startAction = actionWrapper { start() }
 
     fun setPowerAction(power: Double): Action = actionWrapper { this.intakePower = power }
 
