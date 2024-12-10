@@ -35,9 +35,9 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     private boolean initialized;
 
     public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick) {
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorFrontRight"))); // Par st control hub port 3
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorBackLeft"))); // Par dr expansion hub port 3
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorFrontLeft"))); // Perp expansion hub port 1
+        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "LiftLeft"))); // Encoder paralel stânga: Control hub port 3
+        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorBackLeft"))); // Encoder paralel dreapta: Control hub port 0
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "MotorBackRight"))); // Encoder perpendicular: Expansion hub port 3
 
            par1.setDirection(DcMotorSimple.Direction.REVERSE);
 
