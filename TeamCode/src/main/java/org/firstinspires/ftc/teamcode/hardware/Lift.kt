@@ -1,29 +1,26 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 
-open class LiftMotors : RequiredDevices {
-    override val devicesRequired = listOf(
-        "MotorLiftLeft",
-        "MotorLiftRight"
-    )
-}
+class Lift(hardwareMap: HardwareMap): Action {
+    enum class LiftState {
+        UP,
+        DOWN,
+        STOP
+    }
 
-interface LiftHardwareInterface: MotorHardwareInterface {
-    fun lift(gamepad: Gamepad)
-}
-
-enum class LiftPosition(val position: Int) {
-    UP(0),
-    DOWN(1000)
-}
-
-open class LiftHardware(hardwareMap: HardwareMap): LiftHardwareInterface {
-    companion object : LiftMotors()
+    companion object {
+        val devicesRequired = listOf(
+            "MotorLiftLeft",
+            "MotorLiftRight"
+        )
+    }
 
     val liftLeft: DcMotorEx
     val liftRight: DcMotorEx
@@ -44,22 +41,26 @@ open class LiftHardware(hardwareMap: HardwareMap): LiftHardwareInterface {
         liftRight.direction = DcMotorSimple.Direction.REVERSE
     }
 
-    override fun setMode(mode: DcMotor.RunMode) {
+    private fun setMode(mode: DcMotor.RunMode) {
         lift.forEach { it.mode = mode }
     }
 
-    override fun setPower(power: Double) {
+    private fun setPower(power: Double) {
         lift.forEach { it.power = power }
     }
 
-    override fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) {
+    private fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) {
         lift.forEach { it.zeroPowerBehavior = behavior }
     }
 
-    override fun lift(gamepad: Gamepad) {
+    fun lift(gamepad: Gamepad) {
         val y: Double = gamepad.right_stick_y.toDouble()
 
         liftLeft.power = y
         liftRight.power = y
+    }
+
+    override fun run(p: TelemetryPacket): Boolean {
+        TODO("Not yet implemented")
     }
 }

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
  * The companion object of the class should extend this interface
  *
  * @property devicesRequired The list of devices required for the hardware class
- * @see MovementHardware.Companion
+ * @see Movement.Companion
  */
 interface RequiredDevices {
     val devicesRequired: List<String>

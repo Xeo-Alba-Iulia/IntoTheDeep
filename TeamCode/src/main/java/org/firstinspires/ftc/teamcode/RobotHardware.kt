@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.hardware.Intake
+import org.firstinspires.ftc.teamcode.hardware.Lift
 import org.firstinspires.ftc.teamcode.hardware.MotorHardwareInterface
-import org.firstinspires.ftc.teamcode.hardware.MovementHardware
+import org.firstinspires.ftc.teamcode.hardware.Movement
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
 
 /**
@@ -18,13 +20,11 @@ import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
  */
 class RobotHardware @JvmOverloads constructor(
     hardwareMap: HardwareMap,
-    val movementHardware: MovementHardware = MovementHardware(hardwareMap),
-//    val pendulHardware: PendulHardware = PendulHardware(hardwareMap),
-//    val liftHardware: LiftHardware = LiftHardware(hardwareMap)
-):  MotorHardwareInterface,
-    MovementHardwareInterface by movementHardware
-//    PendulHardwareInterface by pendulHardware,
-//    LiftHardwareInterface by liftHardware
+    val movementHardware: Movement = Movement(hardwareMap),
+    val lift: Lift = Lift(hardwareMap),
+    val pendulHardware: RobotHardware = RobotHardware(hardwareMap),
+    val intake: Intake = Intake(hardwareMap)
+):  MotorHardwareInterface, MovementHardwareInterface by movementHardware
 {
     override fun setPower(power: Double) =
         movementHardware.setPower(power)
@@ -35,13 +35,7 @@ class RobotHardware @JvmOverloads constructor(
     override fun setZeroPowerBehavior(behavior: DcMotor.ZeroPowerBehavior) =
         movementHardware.setZeroPowerBehavior(behavior)
 
-    fun control(gamepad: Gamepad) {
-        move(gamepad)
-    }
 
-//    fun sistems(gamepad: Gamepad) {
-//        lift(gamepad)
-//    }
 
     @Deprecated("Use move instead", ReplaceWith("move(gamepad)"), DeprecationLevel.ERROR)
     fun movement(gamepad: Gamepad) = move(gamepad)

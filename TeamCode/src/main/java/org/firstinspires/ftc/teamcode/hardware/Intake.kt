@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.hardware.actionUtils.actionWrapper
 
 class Intake(hardwareMap: HardwareMap) : Action {
     companion object {
@@ -15,6 +16,8 @@ class Intake(hardwareMap: HardwareMap) : Action {
     // Implementing Action interface for the actual Intake
 
     private var isCanceled = false
+    private var isStarted = false
+
     var intakePower: Double = START_POWER
         set(value) {
             require(value in 0.0..1.0) { "Intake power must be between 0 and 1" }
@@ -22,8 +25,12 @@ class Intake(hardwareMap: HardwareMap) : Action {
         }
 
     override fun run(p: TelemetryPacket): Boolean {
+        if (!isStarted)
+            return false
+
         if (isCanceled) {
             isCanceled = false
+            isStarted = false
 
             intakeMotor.power = 0.0
             intakePower = START_POWER
@@ -72,19 +79,5 @@ class Intake(hardwareMap: HardwareMap) : Action {
         }
 
         override fun setPositionAction(position: Double): Action = actionWrapper { this.position = position }
-    }
-
-    private fun actionWrapper(block: () -> Unit): Action = object : Action {
-        override fun run(p: TelemetryPacket): Boolean {
-            block()
-            return false
-        }
-    }
-
-    private fun actionWrapperTelemetry(block: (TelemetryPacket) -> Unit): Action = object : Action {
-        override fun run(p: TelemetryPacket): Boolean {
-            block(p)
-            return false
-        }
     }
 }

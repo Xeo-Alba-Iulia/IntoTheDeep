@@ -26,7 +26,7 @@ interface MovementHardwareInterface : MotorHardwareInterface {
  *
  * @param hardwareMap The hardware map from the OpMode
  */
-open class MovementHardware(hardwareMap: HardwareMap) : MovementHardwareInterface {
+open class Movement(hardwareMap: HardwareMap) : MovementHardwareInterface {
     companion object : DefaultMotors()
 
     val frontLeft: DcMotorEx
