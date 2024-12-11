@@ -15,6 +15,8 @@ abstract class ServoPosition(protected val servos: List<Servo>) {
         @Volatile @JvmField var CURRENT_POSITION = 0.0
     }
 
+    abstract val componentName: String
+
     val dashboard: FtcDashboard = FtcDashboard.getInstance()
 
     // Vararg Constructor
@@ -27,7 +29,7 @@ abstract class ServoPosition(protected val servos: List<Servo>) {
         set(value) {
             field = clip(value, 0.0, 1.0)
             servos.forEach { it.position = field }
-            dashboard.telemetry.addData("Servo Position", field)
+            dashboard.telemetry.addData("Servo Position for $componentName", field)
         }
 
     init {

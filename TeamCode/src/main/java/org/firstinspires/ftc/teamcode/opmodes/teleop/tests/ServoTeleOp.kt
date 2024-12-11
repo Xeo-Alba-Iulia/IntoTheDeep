@@ -4,24 +4,24 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.utils.IntakeRotationPosition
+import org.firstinspires.ftc.teamcode.utils.PendulServoPosition
 import org.firstinspires.ftc.teamcode.utils.ServoPosition
 
 @TeleOp(name = "Servo TeleOp", group = "TeleOp")
 class ServoTeleOp : LinearOpMode() {
     override fun runOpMode() {
-        val servoPendulLeft = hardwareMap.servo.get("PendulLeft")
-        val servoPendulRight = hardwareMap.servo.get("PendulRight")
-
-        servoPendulLeft.direction = Servo.Direction.REVERSE
-
         val dashboard = FtcDashboard.getInstance()
 
         waitForStart()
 
-        val servoPos = ServoPosition(servoPendulLeft, servoPendulRight)
+        val servoPositions = listOf(
+            PendulServoPosition(hardwareMap),
+            IntakeRotationPosition(hardwareMap)
+        )
 
         while (opModeIsActive()) {
-            servoPos.update()
+            servoPositions.forEach { it.update() }
             dashboard.telemetry.update()
         }
     }

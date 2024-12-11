@@ -9,6 +9,7 @@ class PendulServoPosition(hardwareMap: HardwareMap) : ServoPosition(
     hardwareMap.servo.get("PendulLeft"),
     hardwareMap.servo.get("PendulRight")
 ) {
+    override val componentName = "Pendul"
     init {
         servos[0].direction = Servo.Direction.REVERSE
     }
