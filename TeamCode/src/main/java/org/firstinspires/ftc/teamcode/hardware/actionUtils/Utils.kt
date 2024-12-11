@@ -11,7 +11,7 @@ internal fun actionWrapper(block: () -> Unit): Action = object : Action {
     }
 }
 
-internal fun actionWrapperTelemetry(block: (TelemetryPacket) -> Unit): Action = object : Action {
+internal fun actionWrapper(block: (TelemetryPacket) -> Unit): Action = object : Action {
     override fun run(p: TelemetryPacket): Boolean {
         block(p)
         return false
