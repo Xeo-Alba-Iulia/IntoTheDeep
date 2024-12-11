@@ -7,12 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.utils.PIDController
 
 class Lift(hardwareMap: HardwareMap): Action {
-    enum class LiftState {
-        UP,
-        DOWN,
-        STOP
+    enum class LiftState(val position: Int) {
+        UP(0),
+        HALF(0),
+        DOWN(0)
     }
 
     companion object {
@@ -27,6 +28,22 @@ class Lift(hardwareMap: HardwareMap): Action {
 
     val lift: Array<DcMotorEx>
 
+    val controller = PIDController(0.01, 0.0, 0.0)
+    protected open var target = 0
+
+    /**
+     * Target position for all pendul motors
+     *
+     * @see DcMotorEx.getTargetPosition
+     * @see DcMotorEx.setTargetPosition
+     */
+    var targetPosition = LiftState.DOWN
+        set(value) {
+            field = value
+            target = value.position
+        }
+
+
     init {
         val deviceIterator = devicesRequired.iterator()
 
@@ -36,7 +53,9 @@ class Lift(hardwareMap: HardwareMap): Action {
         lift = arrayOf(liftLeft, liftRight)
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-        setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER)
+        setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
+        setMode(DcMotor.RunMode.RUN_USING_ENCODER)
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
     }
@@ -53,30 +72,9 @@ class Lift(hardwareMap: HardwareMap): Action {
         lift.forEach { it.zeroPowerBehavior = behavior }
     }
 
-    fun lift(gamepad: Gamepad) {
-        val y: Double = gamepad.right_stick_y.toDouble()
-
-        liftLeft.power = y
-        liftRight.power = y
-    }
-
-    fun moveToPosition(position: Int, power: Double ){
-
-        liftLeft.targetPosition = position
-        liftRight.targetPosition = position
-
-        setMode(DcMotor.RunMode.RUN_TO_POSITION)
+    fun update(){
+        val power = controller.update(target.toDouble(), liftRight.currentPosition.toDouble())
         setPower(power)
-
-        while(liftLeft.isBusy && liftRight.isBusy){
-            setPower(0.0)
-        }
-        fun lift(gamepad: Gamepad){
-            val y: Double = gamepad.right_stick_y.toDouble()
-
-            liftLeft.power = y
-            liftRight.power = y
-        }
     }
 
     override fun run(p: TelemetryPacket): Boolean {
