@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.hardware.Extend
 import org.firstinspires.ftc.teamcode.hardware.Intake
 import org.firstinspires.ftc.teamcode.hardware.Lift
 import org.firstinspires.ftc.teamcode.hardware.MotorHardwareInterface
 import org.firstinspires.ftc.teamcode.hardware.Movement
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
+import org.firstinspires.ftc.teamcode.hardware.Pendul
 
 /**
  * Class containing all hardware of the robot
@@ -22,8 +24,9 @@ class RobotHardware @JvmOverloads constructor(
     hardwareMap: HardwareMap,
     val movementHardware: Movement = Movement(hardwareMap),
     val lift: Lift = Lift(hardwareMap),
-    val pendulHardware: RobotHardware = RobotHardware(hardwareMap),
-    val intake: Intake = Intake(hardwareMap)
+    val pendul: Pendul = Pendul(hardwareMap),
+    val intake: Intake = Intake(hardwareMap),
+    val extend: Extend = Extend(hardwareMap)
 ):  MotorHardwareInterface, MovementHardwareInterface by movementHardware
 {
     override fun setPower(power: Double) =
