@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils
 
 import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.Range.clip
 
@@ -11,8 +10,7 @@ import com.qualcomm.robotcore.util.Range.clip
  * Da log la toate pozițiile servo-urilor pe dashboard
  * @property servos Lista de servo-uri
  */
-@Config
-class ServoPosition(private val servos: List<Servo>) {
+abstract class ServoPosition(protected val servos: List<Servo>) {
     companion object {
         @Volatile @JvmField var CURRENT_POSITION = 0.0
     }
