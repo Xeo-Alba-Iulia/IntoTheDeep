@@ -60,7 +60,31 @@ class Lift(hardwareMap: HardwareMap): Action {
         liftRight.power = y
     }
 
+    fun moveToPosition(position: Int, power: Double ){
+
+        liftLeft.targetPosition = position
+        liftRight.targetPosition = position
+
+        setMode(DcMotor.RunMode.RUN_TO_POSITION)
+        setPower(power)
+
+        while(liftLeft.isBusy && liftRight.isBusy){
+            setPower(0.0)
+        }
+        fun lift(gamepad: Gamepad){
+            val y: Double = gamepad.right_stick_y.toDouble()
+
+            liftLeft.power = y
+            liftRight.power = y
+        }
+    }
+
     override fun run(p: TelemetryPacket): Boolean {
         TODO("Not yet implemented")
+        p.put("Lift Left Position", liftLeft.currentPosition)
+        p.put("Lift Right Position", liftRight.currentPosition)
     }
 }
+
+
+
