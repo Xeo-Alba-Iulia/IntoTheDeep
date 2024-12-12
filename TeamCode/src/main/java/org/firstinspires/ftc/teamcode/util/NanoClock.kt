@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils
+package org.firstinspires.ftc.teamcode.util
 
 /**
  * Clock interface with nanosecond precision and no guarantee about its origin (that is, this is only suited for

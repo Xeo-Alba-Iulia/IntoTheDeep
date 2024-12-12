@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop.tests
 import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.utils.IntakeRotationPosition
-import org.firstinspires.ftc.teamcode.utils.PendulServoPosition
-import org.firstinspires.ftc.teamcode.utils.ServoPosition
+import org.firstinspires.ftc.teamcode.util.IntakeRotationPosition
+import org.firstinspires.ftc.teamcode.util.PendulServoPosition
 
 @TeleOp(name = "Servo TeleOp", group = "TeleOp")
 class ServoTeleOp : LinearOpMode() {

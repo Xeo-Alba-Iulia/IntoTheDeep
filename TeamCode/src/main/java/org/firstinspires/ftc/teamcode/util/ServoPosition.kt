@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils
+package org.firstinspires.ftc.teamcode.util
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.hardware.Servo

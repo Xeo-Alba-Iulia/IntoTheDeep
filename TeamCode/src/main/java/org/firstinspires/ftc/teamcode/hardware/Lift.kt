@@ -5,9 +5,8 @@ import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.utils.PIDController
+import org.firstinspires.ftc.teamcode.util.PIDController
 
 class Lift(hardwareMap: HardwareMap): Action {
     enum class LiftState(val position: Int) {

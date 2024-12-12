@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.control
 
-import org.firstinspires.ftc.teamcode.utils.NanoClock
+import org.firstinspires.ftc.teamcode.util.NanoClock
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
