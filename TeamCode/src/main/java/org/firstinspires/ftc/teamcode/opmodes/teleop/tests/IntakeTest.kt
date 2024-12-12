@@ -34,7 +34,7 @@ class IntakeTest : LinearOpMode() {
             val packet = TelemetryPacket()
 
             position += MULTIPLIER * gamepad1.left_stick_y
-            intake.rotate.position = position
+            intake.rotate.targetPosition = position
             isRunning = intake.rotate.run(packet)
 
             dash.sendTelemetryPacket(packet)

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.lift.Lift
 import org.firstinspires.ftc.teamcode.hardware.MotorHardwareInterface
 import org.firstinspires.ftc.teamcode.hardware.Movement
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
-import org.firstinspires.ftc.teamcode.hardware.Pendul
+import org.firstinspires.ftc.teamcode.hardware.pendul.Pendul
 
 /**
  * Class containing all hardware of the robot

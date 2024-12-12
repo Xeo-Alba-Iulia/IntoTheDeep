@@ -55,7 +55,7 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
             lift.forEach { it.power = field }
         }
 
-    fun cancel() {
+    override fun cancel() {
         isCanceled = true
     }
 
