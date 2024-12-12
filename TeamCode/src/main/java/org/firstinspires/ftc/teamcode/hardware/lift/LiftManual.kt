@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware.lift
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -13,6 +14,11 @@ import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
 class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
     val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
     val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
+
+    // FIXME: Set the correct lift motor
+    val encoder = RawEncoder(liftRight)
+
+    private var isCanceled = false
 
     val lift = listOf(liftLeft, liftRight)
 
@@ -26,6 +32,12 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
      */
     override var targetPosition = 0.0
 
+    /**
+     * Actual position of the lift, as measured while the action is running
+     */
+    var actualPosition = 0.0
+        private set
+
     init {
         lift.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -37,9 +49,26 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
         liftRight.direction = DcMotorSimple.Direction.REVERSE
     }
 
-    override fun run(p: TelemetryPacket): Boolean {
+    private var power = 0.0
+        set(value) {
+            field = value
+            lift.forEach { it.power = field }
+        }
 
-        p.put("Lift Left Position", liftLeft.currentPosition)
-        p.put("Lift Right Position", liftRight.currentPosition)
+    fun cancel() {
+        isCanceled = true
+    }
+
+    override fun run(p: TelemetryPacket): Boolean {
+        if (isCanceled) {
+            isCanceled = false
+            power = 0.0
+
+            return false
+        }
+
+        TODO("Implementat PID")
+
+        return true
     }
 }
