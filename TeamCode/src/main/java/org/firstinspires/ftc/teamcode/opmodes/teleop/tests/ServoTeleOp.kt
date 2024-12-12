@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.util.IntakeRotationTest
 import org.firstinspires.ftc.teamcode.util.LiftTest
+import org.firstinspires.ftc.teamcode.util.PendulTest
 
 @TeleOp(name = "Position Tests", group = "Tests")
 class ServoTeleOp : LinearOpMode() {

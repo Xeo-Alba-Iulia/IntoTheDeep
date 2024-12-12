@@ -67,7 +67,7 @@ class Intake(hardwareMap: HardwareMap) : Action {
          * Wraps [position] set in an [Action]
          */
         fun setPositionAction(position: Double): Action
-        fun cancel()
+        override fun cancel()
     }
 
     val rotate = object : IntakeRotateAction {

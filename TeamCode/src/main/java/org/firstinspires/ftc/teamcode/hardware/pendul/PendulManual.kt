@@ -17,7 +17,7 @@ class PendulManual(hardwareMap: HardwareMap) : ManualPositionMechanism {
 
     private val servos = arrayListOf(servoLeft, servoRight)
 
-    fun cancel() {
+    override fun cancel() {
         isCanceled = true
     }
 

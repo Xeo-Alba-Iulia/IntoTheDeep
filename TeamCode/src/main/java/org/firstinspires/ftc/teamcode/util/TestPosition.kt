@@ -22,9 +22,10 @@ abstract class TestPosition(protected val mechanism: ManualPositionMechanism) : 
     /**
      * Target position of the mechanism
      */
-    var position
+    var position = 0.0
         get() = mechanism.targetPosition
         set(value) {
+            field = value
             mechanism.targetPosition = field
             dashboard.telemetry.addData("Servo Position for $componentName", field)
         }
