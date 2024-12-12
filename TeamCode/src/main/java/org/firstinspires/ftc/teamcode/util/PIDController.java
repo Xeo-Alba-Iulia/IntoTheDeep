@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import kotlin.Deprecated;
 
+@Deprecated(message = "Use PIDFController instead")
 public class PIDController {
     private static final double integralSumLimit = 1000;
     double Kp, Ki, Kd;
