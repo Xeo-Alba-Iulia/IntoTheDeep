@@ -17,7 +17,6 @@ class ServoTeleOp : LinearOpMode() {
 
         val servoPositions = listOf(
             IntakeRotationTest(hardwareMap),
-            LiftTest(hardwareMap),
             PendulTest(hardwareMap)
         )
 

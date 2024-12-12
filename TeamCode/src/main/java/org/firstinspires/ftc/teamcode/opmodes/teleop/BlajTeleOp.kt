@@ -45,6 +45,7 @@ class BlajTeleOp : LinearOpMode() {
                 controlGamepad.a -> robotHardware.intake.start()
                 controlGamepad.b -> robotHardware.intake.cancel()
             }
+            robotHardware.extend.setPower(controlGamepad.right_stick_y.toDouble())
         }
     }
 }
