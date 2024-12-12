@@ -23,7 +23,6 @@ class ServoTeleOp : LinearOpMode() {
         while (opModeIsActive()) {
             val telemetryPacket = TelemetryPacket()
             servoPositions.forEach {
-                it.updateFromDashboard()
                 it.run(telemetryPacket)
             }
 
