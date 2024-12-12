@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.hardware.Extend
 import org.firstinspires.ftc.teamcode.hardware.Intake
-import org.firstinspires.ftc.teamcode.hardware.Lift
+import org.firstinspires.ftc.teamcode.hardware.lift.Lift
 import org.firstinspires.ftc.teamcode.hardware.MotorHardwareInterface
 import org.firstinspires.ftc.teamcode.hardware.Movement
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
