@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.hardware.actionUtils.actionWrapper
+import org.firstinspires.ftc.teamcode.hardware.actionUtil.actionWrapper
 
 class Intake(hardwareMap: HardwareMap) : Action {
     companion object {
