@@ -61,8 +61,8 @@ class Intake(hardwareMap: HardwareMap) : Action {
 
     fun setPowerAction(power: Double): Action = actionWrapper { this.intakePower = power }
 
-    interface IntakeRotateAction : Action {
-        var position: Double
+    interface IntakeRotateAction : ManualPositionMechanism {
+        override var targetPosition: Double
         /**
          * Wraps [position] set in an [Action]
          */
@@ -72,7 +72,7 @@ class Intake(hardwareMap: HardwareMap) : Action {
 
     val rotate = object : IntakeRotateAction {
         private var isCanceled = false
-        override var position = 0.0
+        override var targetPosition = 0.0
             set(value) {
                 require(value in 0.0..1.0) { "Intake position must be between 0 and 1" }
                 field = value
@@ -84,7 +84,7 @@ class Intake(hardwareMap: HardwareMap) : Action {
                 return false
             }
 
-            intakeRotation.position = position
+            intakeRotation.position = targetPosition
             return true
         }
 
@@ -92,6 +92,6 @@ class Intake(hardwareMap: HardwareMap) : Action {
             isCanceled = true
         }
 
-        override fun setPositionAction(position: Double): Action = actionWrapper { this.position = position }
+        override fun setPositionAction(position: Double): Action = actionWrapper { this.targetPosition = position }
     }
 }
