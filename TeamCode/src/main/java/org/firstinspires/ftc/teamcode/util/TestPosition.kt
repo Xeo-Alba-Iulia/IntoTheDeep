@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.util
 
 import com.acmerobotics.dashboard.FtcDashboard
-import com.qualcomm.robotcore.hardware.Servo
-import com.qualcomm.robotcore.util.Range.clip
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
+import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
 
 /**
  * Clasă pentru a găsi poziții la servo-uri
  *
  * Da log la toate pozițiile servo-urilor pe dashboard
- * @property servos Lista de servo-uri
  */
-abstract class ServoPosition(protected val servos: List<Servo>) {
+abstract class TestPosition(protected val mechanism: ManualPositionMechanism) : Action {
     companion object {
         @Volatile @JvmField var CURRENT_POSITION = 0.0
     }
@@ -19,27 +19,26 @@ abstract class ServoPosition(protected val servos: List<Servo>) {
 
     val dashboard: FtcDashboard = FtcDashboard.getInstance()
 
-    // Vararg Constructor
-    constructor(vararg servos: Servo): this(servos.toList())
-
     /**
-     * Target position of the servos, all values are clipped to [0, 1]
+     * Target position of the mechanism
      */
-    var position: Double = 0.0
+    var position
+        get() = mechanism.targetPosition
         set(value) {
-            field = clip(value, 0.0, 1.0)
-            servos.forEach { it.position = field }
+            mechanism.targetPosition = field
             dashboard.telemetry.addData("Servo Position for $componentName", field)
         }
 
+    override fun run(p: TelemetryPacket) = mechanism.run(p)
+
     init {
-        update()
+        updateFromDashboard()
     }
 
     /**
      * Update the position of the servos, according to FtcDashboard
      */
-    fun update() {
+    fun updateFromDashboard() {
         position = CURRENT_POSITION
     }
 }
