@@ -24,12 +24,6 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
 
     val controller = PIDFController(PIDCoefficients(0.01, 0.0, 0.0))
 
-    /**
-     * Target value for all pendul motors
-     *
-     * @see com.qualcomm.robotcore.hardware.DcMotor.getTargetPosition
-     * @see com.qualcomm.robotcore.hardware.DcMotor.setTargetPosition
-     */
     override var targetPosition = 0.0
 
     /**
@@ -73,9 +67,13 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
             return false
         }
 
-        measuredPosition = encoder.getPositionAndVelocity().position.toDouble()
+        val positionVelocityPair = encoder.getPositionAndVelocity()
+        measuredPosition = positionVelocityPair.position.toDouble()
+        measuredVelocity = positionVelocityPair.velocity.toDouble()
+
         power = controller.update(measuredPosition, measuredVelocity)
 
+        p.put("Lift Power", power)
         return true
     }
 }
