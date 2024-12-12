@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware.lift
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -11,7 +10,7 @@ import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
 
-class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
+class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : ManualPositionMechanism {
     val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
     val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
 
@@ -73,7 +72,16 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
 
         power = controller.update(measuredPosition, measuredVelocity)
 
-        p.put("Lift Power", power)
+        if (isVerbose) {
+            p.putAll(
+                mapOf(
+                    "liftPosition" to measuredPosition,
+                    "liftVelocity" to measuredVelocity,
+                    "liftPower" to power
+                )
+            )
+        }
+
         return true
     }
 }
