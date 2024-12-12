@@ -9,6 +9,6 @@ class Lift private constructor(private val liftManual: LiftManual) : Action by l
     var targetPosition = Position.DOWN
         set(value) {
             field = value
-            liftManual.targetPosition = targetPosition.positionValue
+            liftManual.targetPosition = field.positionValue.toDouble()
         }
 }

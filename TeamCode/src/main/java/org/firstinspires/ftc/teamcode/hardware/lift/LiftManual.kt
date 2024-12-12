@@ -35,7 +35,13 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
     /**
      * Actual position of the lift, as measured while the action is running
      */
-    var actualPosition = 0.0
+    var measuredPosition = 0.0
+        private set
+
+    /**
+     * Measured velocity of the lift, as measured while the action is running
+     */
+    var measuredVelocity = 0.0
         private set
 
     init {
@@ -67,7 +73,8 @@ class LiftManual(hardwareMap: HardwareMap) : Action, ManualPositionMechanism {
             return false
         }
 
-        TODO("Implementat PID")
+        measuredPosition = encoder.getPositionAndVelocity().position.toDouble()
+        power = controller.update(measuredPosition, measuredVelocity)
 
         return true
     }
