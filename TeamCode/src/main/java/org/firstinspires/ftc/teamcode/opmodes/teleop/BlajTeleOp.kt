@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationPosition
 import org.firstinspires.ftc.teamcode.hardware.lift.LiftPosition
 import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
 
+private const val MULTIPLIER_PENDUL = 0.001
+
 @TeleOp
 class BlajTeleOp : LinearOpMode() {
     val actionList = mutableListOf<Action>()
@@ -37,10 +39,13 @@ class BlajTeleOp : LinearOpMode() {
             listOf(
                 robot.intake,
                 robot.intakeRotation,
-                robot.pendul,
-                robot.extend
+                robot.pendul.pendulManual,
+                robot.extend,
+                robot.lift.liftManual
             )
         )
+
+        robot.lift.liftManual.targetPosition = PendulPosition.DOWN.positionValue
 
         while(opModeIsActive()) {
             // Movement
@@ -54,30 +59,31 @@ class BlajTeleOp : LinearOpMode() {
             // Pendul + Lift (Gamepad2.up_button)
             val (pendulPosition, liftPosition, intakeRotatePosition) = when {
                 controlGamepad.dpad_up -> Triple(
-                    PendulPosition.BASKET,
+                    PendulPosition.BASKET.positionValue,
                     LiftPosition.UP,
                     IntakeRotationPosition.PARALLEL
                 )
 
                 controlGamepad.dpad_left -> Triple(
-                    PendulPosition.BAR,
+                    PendulPosition.BAR.positionValue,
                     LiftPosition.HALF,
                     IntakeRotationPosition.PERPENDICULAR
                 )
 
                 controlGamepad.dpad_down -> Triple(
-                    PendulPosition.DOWN,
+                    PendulPosition.DOWN.positionValue,
                     LiftPosition.DOWN,
                     IntakeRotationPosition.PARALLEL
                 )
 
                 else -> Triple(
-                    robot.pendul.targetPosition,
+                    robot.pendul.pendulManual.targetPosition,
                     robot.lift.targetPosition,
                     robot.intakeRotation.targetPosition
                 )
             }
-            robot.pendul.targetPosition = pendulPosition
+
+            robot.pendul.pendulManual.targetPosition = pendulPosition
             robot.lift.targetPosition = liftPosition
             robot.intakeRotation.targetPosition = intakeRotatePosition
 
@@ -86,10 +92,13 @@ class BlajTeleOp : LinearOpMode() {
 
             // Intake
             robot.intake.intakePower = when {
-                moveGamepad.a -> 1.0
+                moveGamepad.a -> 0.6
                 moveGamepad.x -> -1.0
                 else -> 0.0
             }
+
+            // Pendul manual
+            robot.pendul.pendulManual.targetPosition -= controlGamepad.left_stick_y * MULTIPLIER_PENDUL
 
             robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
         }
