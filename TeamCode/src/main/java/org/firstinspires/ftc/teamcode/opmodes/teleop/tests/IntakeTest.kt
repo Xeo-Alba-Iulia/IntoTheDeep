@@ -37,6 +37,14 @@ class IntakeTest : LinearOpMode() {
             intake.rotate.targetPosition = position
             isRunning = intake.rotate.run(packet)
 
+            intake.intakePower = when {
+                gamepad1.a -> 1.0
+                gamepad1.b -> -1.0
+                else -> 0.0
+            }
+
+            intake.run(packet)
+
             dash.sendTelemetryPacket(packet)
         }
     }

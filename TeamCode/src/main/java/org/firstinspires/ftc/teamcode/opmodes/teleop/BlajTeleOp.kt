@@ -42,10 +42,9 @@ class BlajTeleOp : LinearOpMode() {
 
             // Finite State Machine
             when {
-                controlGamepad.a -> robotHardware.intake.start()
-                controlGamepad.b -> robotHardware.intake.cancel()
+
             }
-            robotHardware.extend.setPower(controlGamepad.right_stick_y.toDouble())
+            robotHardware.extend.power = controlGamepad.right_stick_y.toDouble()
         }
     }
 }
