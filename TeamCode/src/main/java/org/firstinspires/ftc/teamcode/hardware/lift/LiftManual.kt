@@ -30,7 +30,11 @@ class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : Manu
 
     val controller = PIDFController(coefficients)
 
-    override var targetPosition = 0.0
+    override var targetPosition
+        get() = controller.targetPosition
+        set(value) {
+            controller.targetPosition = value
+        }
 
     /**
      * Actual position of the lift, as measured while the action is running
