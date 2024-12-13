@@ -61,7 +61,7 @@ class BlajTeleOp : LinearOpMode() {
                 controlGamepad.dpad_up -> Triple(
                     PendulPosition.BASKET.positionValue,
                     LiftPosition.UP,
-                    IntakeRotationPosition.PARALLEL
+                    IntakeRotationPosition.PERPENDICULAR
                 )
 
                 controlGamepad.dpad_left -> Triple(
