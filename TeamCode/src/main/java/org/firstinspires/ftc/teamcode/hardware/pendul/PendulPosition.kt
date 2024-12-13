@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware.pendul
 
 enum class PendulPosition(val positionValue: Double) {
-    DOWN(0.1),
+    DOWN(0.2),
     HALF(0.24),
-    UP(0.5)
+    UP(0.66)
 }
