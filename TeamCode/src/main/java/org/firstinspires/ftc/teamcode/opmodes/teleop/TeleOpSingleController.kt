@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
 private const val MULTIPLIER_PENDUL = 0.001
 
 @TeleOp
-class BlajTeleOp : LinearOpMode() {
+class TeleOpSingleController : LinearOpMode() {
     val actionList = mutableListOf<Action>()
 
     private fun runActions(telemetryPacket: TelemetryPacket) {
@@ -41,13 +41,13 @@ class BlajTeleOp : LinearOpMode() {
                 robot.intakeRotation,
                 robot.pendul.pendulManual,
                 robot.extend,
-                robot.lift.liftManual
+//                robot.lift.liftManual
             )
         )
 
         robot.lift.liftManual.targetPosition = PendulPosition.DOWN.positionValue
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             // Movement
             robot.move(moveGamepad)
 
@@ -58,19 +58,19 @@ class BlajTeleOp : LinearOpMode() {
 
             // Pendul + Lift (Gamepad2.up_button)
             val (pendulPosition, liftPosition, intakeRotatePosition) = when {
-                controlGamepad.dpad_up -> Triple(
+                moveGamepad.dpad_up -> Triple(
                     PendulPosition.BAR.positionValue,
                     LiftPosition.UP,
                     IntakeRotationPosition.PARALLEL
                 )
 
-                controlGamepad.dpad_left -> Triple(
+                moveGamepad.dpad_left -> Triple(
                     PendulPosition.BAR.positionValue,
                     LiftPosition.HALF,
                     IntakeRotationPosition.PERPENDICULAR
                 )
 
-                controlGamepad.dpad_down -> Triple(
+                moveGamepad.dpad_down -> Triple(
                     PendulPosition.DOWN.positionValue,
                     LiftPosition.DOWN,
                     IntakeRotationPosition.PARALLEL
@@ -98,9 +98,9 @@ class BlajTeleOp : LinearOpMode() {
             }
 
             // Pendul manual
-            robot.pendul.pendulManual.targetPosition -= controlGamepad.left_stick_y * MULTIPLIER_PENDUL
+            robot.pendul.pendulManual.targetPosition -= (if (moveGamepad.right_bumper) 1.0 else 0.0 - if (moveGamepad.left_bumper) 1.0 else 0.0) * MULTIPLIER_PENDUL
 
-            robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
+            robot.extend.power = (moveGamepad.left_trigger - moveGamepad.right_trigger).toDouble()
         }
     }
 }
