@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware.lift
 
+import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -10,18 +11,24 @@ import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
 
+@Config
 class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : ManualPositionMechanism {
+    companion object {
+        @JvmField
+        @Volatile
+        var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
+    }
+
     val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
     val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
 
-    // FIXME: Set the correct lift motor
     val encoder = RawEncoder(liftRight)
 
     private var isCanceled = false
 
     val lift = listOf(liftLeft, liftRight)
 
-    val controller = PIDFController(PIDCoefficients(0.01, 0.0, 0.0))
+    val controller = PIDFController(coefficients)
 
     override var targetPosition = 0.0
 
@@ -39,13 +46,14 @@ class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : Manu
 
     init {
         lift.forEach {
-            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
             it.mode = DcMotor.RunMode.RUN_USING_ENCODER
             it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             it.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
+        encoder.direction = DcMotorSimple.Direction.REVERSE
     }
 
     private var power = 0.0
