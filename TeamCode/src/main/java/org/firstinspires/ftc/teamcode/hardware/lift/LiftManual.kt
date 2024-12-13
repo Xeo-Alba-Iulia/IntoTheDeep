@@ -17,6 +17,16 @@ class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : Manu
         @JvmField
         @Volatile
         var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
+
+        @JvmField
+        @Volatile
+        var kStatic = 0.0
+        @JvmField
+        @Volatile
+        var kV = 0.0
+        @JvmField
+        @Volatile
+        var kA = 0.0
     }
 
     val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
@@ -28,7 +38,7 @@ class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : Manu
 
     val lift = listOf(liftLeft, liftRight)
 
-    val controller = PIDFController(coefficients)
+    val controller = PIDFController(coefficients, kV, kA, kStatic)
 
     override var targetPosition
         get() = controller.targetPosition
@@ -58,12 +68,14 @@ class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : Manu
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
         encoder.direction = DcMotorSimple.Direction.REVERSE
+
+        controller.targetVelocity = 10.0
     }
 
     private var power = 0.0
         set(value) {
             field = value
-            lift.forEach { it.power = field }
+            liftRight.power = value
         }
 
     override fun cancel() {
