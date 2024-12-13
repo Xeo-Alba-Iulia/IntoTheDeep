@@ -72,11 +72,7 @@ class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : Manu
         controller.targetVelocity = 10.0
     }
 
-    private var power = 0.0
-        set(value) {
-            field = value
-            liftRight.power = value
-        }
+    var power = 0.0
 
     override fun cancel() {
         isCanceled = true
@@ -90,20 +86,24 @@ class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : Manu
             return false
         }
 
-        val positionVelocityPair = encoder.getPositionAndVelocity()
-        measuredPosition = positionVelocityPair.position.toDouble()
-        measuredVelocity = positionVelocityPair.velocity.toDouble()
+//        val positionVelocityPair = encoder.getPositionAndVelocity()
+//        measuredPosition = positionVelocityPair.position.toDouble()
+//        measuredVelocity = positionVelocityPair.velocity.toDouble()
+//
+//        power = controller.update(measuredPosition, measuredVelocity)
+//
+//        if (isVerbose) {
+//            p.putAll(
+//                mapOf(
+//                    "liftPosition" to measuredPosition,
+//                    "liftVelocity" to measuredVelocity,
+//                    "liftPower" to power
+//                )
+//            )
+//        }
 
-        power = controller.update(measuredPosition, measuredVelocity)
-
-        if (isVerbose) {
-            p.putAll(
-                mapOf(
-                    "liftPosition" to measuredPosition,
-                    "liftVelocity" to measuredVelocity,
-                    "liftPower" to power
-                )
-            )
+        for (motor in lift) {
+            motor.power = power
         }
 
         return true
