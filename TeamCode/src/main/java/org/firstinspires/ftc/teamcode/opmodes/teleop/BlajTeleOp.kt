@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationPosition
 import org.firstinspires.ftc.teamcode.hardware.lift.LiftPosition
 import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
 
-private const val MULTIPLIER_EXTEND = 0.003
-
 @TeleOp
 class BlajTeleOp : LinearOpMode() {
     val actionList = mutableListOf<Action>()
@@ -83,8 +81,8 @@ class BlajTeleOp : LinearOpMode() {
             robot.lift.targetPosition = liftPosition
             robot.intakeRotation.targetPosition = intakeRotatePosition
 
-            // Extend
-            robot.extend.power = moveGamepad.right_stick_y * MULTIPLIER_EXTEND
+            // Lift
+            robot.lift.liftManual.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
 
             // Intake
             robot.intake.intakePower = when {
