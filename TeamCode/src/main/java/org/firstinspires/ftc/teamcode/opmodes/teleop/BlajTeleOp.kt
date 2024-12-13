@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationPosition
+import org.firstinspires.ftc.teamcode.hardware.lift.LiftPosition
+import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
 
 private const val MULTIPLIER_EXTEND = 0.003
 
@@ -52,16 +54,37 @@ class BlajTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
 
             // Pendul + Lift (Gamepad2.up_button)
-//            val (pendulPosition, liftPosition) = when {
-//                controlGamepad.dpad_up -> Pair(PendulPosition., LiftPosition.UP)
-//            }
+            val (pendulPosition, liftPosition, intakeRotatePosition) = when {
+                controlGamepad.dpad_up -> Triple(
+                    PendulPosition.BASKET,
+                    LiftPosition.UP,
+                    IntakeRotationPosition.PARALLEL
+                )
+
+                controlGamepad.dpad_left -> Triple(
+                    PendulPosition.BAR,
+                    LiftPosition.HALF,
+                    IntakeRotationPosition.PERPENDICULAR
+                )
+
+                controlGamepad.dpad_down -> Triple(
+                    PendulPosition.DOWN,
+                    LiftPosition.DOWN,
+                    IntakeRotationPosition.PARALLEL
+                )
+
+                else -> Triple(
+                    robot.pendul.targetPosition,
+                    robot.lift.targetPosition,
+                    robot.intakeRotation.targetPosition
+                )
+            }
+            robot.pendul.targetPosition = pendulPosition
+            robot.lift.targetPosition = liftPosition
+            robot.intakeRotation.targetPosition = intakeRotatePosition
 
             // Extend
             robot.extend.power = moveGamepad.right_stick_y * MULTIPLIER_EXTEND
-
-            // Intake Rotate
-            val intakeRotatePosition = IntakeRotationPosition.PERPENDICULAR
-            robot.intakeRotation.targetPosition = intakeRotatePosition
 
             // Intake
             robot.intake.intakePower = when {
@@ -70,7 +93,7 @@ class BlajTeleOp : LinearOpMode() {
                 else -> 0.0
             }
 
-            robot.extend.power = (controlGamepad.right_trigger - controlGamepad.left_trigger).toDouble()
+            robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
         }
     }
 }
