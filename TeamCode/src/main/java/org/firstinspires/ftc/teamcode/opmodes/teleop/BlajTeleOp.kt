@@ -54,6 +54,7 @@ class BlajTeleOp : LinearOpMode() {
 
         var pendulUp = false
         var ticksSincePendulChange = 0
+        var ticksSinceIntakeChange = 0
 
         while(opModeIsActive()) {
             // Movement
@@ -63,7 +64,6 @@ class BlajTeleOp : LinearOpMode() {
             val telemetryPacket = TelemetryPacket()
             runActions(telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
-
 
             // Pendul + Intake Rotate + Lift (Gamepad2.y)
             /* Delay de 10 ticks ca să nu acționeze prea repede butonul */
@@ -83,6 +83,15 @@ class BlajTeleOp : LinearOpMode() {
 
             // Extend
             robot.extend.power = moveGamepad.right_stick_y * MULTIPLIER_EXTEND
+
+            //Intake
+            val intakeActive = robot.intake.intakePower != 0.0
+            when (ticksSinceIntakeChange) {
+                in 0..10 -> ticksSinceIntakeChange += 1
+                else -> if (controlGamepad.y || controlGamepad.b) {
+                    robot.intake.intakePower = if (intakeActive) 0.0 else if (controlGamepad.y) 1.0 else -1.0
+                }
+            }
 
             robot.extend.power = controlGamepad.right_stick_y.toDouble()
         }
