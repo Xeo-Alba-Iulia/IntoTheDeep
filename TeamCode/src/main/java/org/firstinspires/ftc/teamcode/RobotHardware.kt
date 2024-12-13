@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.hardware.Extend
-import org.firstinspires.ftc.teamcode.hardware.Intake
+import org.firstinspires.ftc.teamcode.hardware.intake.Intake
 import org.firstinspires.ftc.teamcode.hardware.lift.Lift
 import org.firstinspires.ftc.teamcode.hardware.MotorHardwareInterface
 import org.firstinspires.ftc.teamcode.hardware.Movement
 import org.firstinspires.ftc.teamcode.hardware.MovementHardwareInterface
+import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotation
 import org.firstinspires.ftc.teamcode.hardware.pendul.Pendul
 
 /**
@@ -26,6 +27,7 @@ class RobotHardware @JvmOverloads constructor(
     val lift: Lift = Lift(hardwareMap),
     val pendul: Pendul = Pendul(hardwareMap),
     val intake: Intake = Intake(hardwareMap),
+    val intakeRotation: IntakeRotation = IntakeRotation(hardwareMap),
     val extend: Extend = Extend(hardwareMap)
 ):  MotorHardwareInterface, MovementHardwareInterface by movementHardware
 {

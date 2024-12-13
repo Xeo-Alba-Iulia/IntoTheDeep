@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.util
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.hardware.Intake
+import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationManual
 
 @Config
-class IntakeRotationTest(hardwareMap: HardwareMap) : TestPosition(Intake(hardwareMap).rotate) {
+class IntakeRotationTest(hardwareMap: HardwareMap) : TestPosition(IntakeRotationManual(hardwareMap)) {
     companion object {
         @JvmField
         @Volatile
