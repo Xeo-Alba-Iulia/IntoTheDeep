@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Extend
 
-const val MULTIPLIER = 0.001
+private const val MULTIPLIER = 0.001
 
 @TeleOp
 class ExtendTest : LinearOpMode() {

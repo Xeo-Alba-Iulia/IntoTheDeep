@@ -11,11 +11,15 @@ class IntakeRotationTest(hardwareMap: HardwareMap) : TestPosition(IntakeRotation
         @JvmField
         @Volatile
         var CURRENT_POSITION: Double = 0.0
+
+        @JvmField
+        @Volatile
+        var active = true
     }
     override val componentName = "Intake Rotation"
 
     override fun run(p: TelemetryPacket): Boolean {
         position = CURRENT_POSITION
-        return super.run(p)
+        return if (active) super.run(p) else false
     }
 }

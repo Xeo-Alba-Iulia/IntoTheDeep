@@ -10,12 +10,16 @@ class LiftTest(hardwareMap: HardwareMap) : TestPosition(LiftManual(hardwareMap))
     companion object {
         @JvmField
         @Volatile
-        var CURRENT_POSITION: Double = 0.0
+        var CURRENT_POSITION = 0.0
+
+        @JvmField
+        @Volatile
+        var active = true
     }
     override val componentName = "Lift"
 
     override fun run(p: TelemetryPacket): Boolean {
         position = CURRENT_POSITION
-        return super.run(p)
+        return if (active) return super.run(p) else false
     }
 }
