@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationPosition
-import org.firstinspires.ftc.teamcode.hardware.lift.LiftPosition
-import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
 
 private const val MULTIPLIER_EXTEND = 0.003
 
@@ -23,15 +21,6 @@ class BlajTeleOp : LinearOpMode() {
             val action = iterator.next()
             if (!action.run(telemetryPacket)) iterator.remove()
         }
-    }
-
-    /**
-     * @return Triple(Poziție pendul, Poziție lift, Poziție intake rotation)
-     */
-    // FIXME: Pozițiile la intake
-    private fun basketPositions(pendulUp: Boolean) = when (pendulUp) {
-        true -> Pair(PendulPosition.UP, LiftPosition.UP)
-        false -> Pair(PendulPosition.DOWN, LiftPosition.DOWN)
     }
 
     override fun runOpMode() {
@@ -53,10 +42,6 @@ class BlajTeleOp : LinearOpMode() {
             )
         )
 
-        var pendulUp = false
-        var ticksSincePendulChange = 0
-        var ticksSinceIntakeChange = 0
-
         while(opModeIsActive()) {
             // Movement
             robot.move(moveGamepad)
@@ -66,39 +51,26 @@ class BlajTeleOp : LinearOpMode() {
             runActions(telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
 
-            // Pendul + Lift (Gamepad2.y)
-            /* Delay de 10 ticks ca să nu acționeze prea repede butonul */
-            when (ticksSincePendulChange) {
-                in 0..10 -> ticksSincePendulChange += 1
-                else -> if (controlGamepad.y) {
-                    pendulUp = pendulUp xor controlGamepad.y
-                    ticksSincePendulChange = 0
-                }
-            }
-
-            val (pendulPosition, liftPosition) = basketPositions(pendulUp)
-            robot.pendul.targetPosition = pendulPosition
-            robot.lift.targetPosition = liftPosition
-
+            // Pendul + Lift (Gamepad2.up_button)
+//            val (pendulPosition, liftPosition) = when {
+//                controlGamepad.dpad_up -> Pair(PendulPosition., LiftPosition.UP)
+//            }
 
             // Extend
             robot.extend.power = moveGamepad.right_stick_y * MULTIPLIER_EXTEND
-
 
             // Intake Rotate
             val intakeRotatePosition = IntakeRotationPosition.PERPENDICULAR
             robot.intakeRotation.targetPosition = intakeRotatePosition
 
             // Intake
-            val intakeActive = robot.intake.intakePower != 0.0
-            when (ticksSinceIntakeChange) {
-                in 0..10 -> ticksSinceIntakeChange += 1
-                else -> if (controlGamepad.y || controlGamepad.b) {
-                    robot.intake.intakePower = if (intakeActive) 0.0 else if (controlGamepad.y) 1.0 else -1.0
-                }
+            robot.intake.intakePower = when {
+                moveGamepad.a -> 1.0
+                moveGamepad.x -> -1.0
+                else -> 0.0
             }
 
-            robot.extend.power = controlGamepad.right_stick_y.toDouble()
+            robot.extend.power = (controlGamepad.right_trigger - controlGamepad.left_trigger).toDouble()
         }
     }
 }
