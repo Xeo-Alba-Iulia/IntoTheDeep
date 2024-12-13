@@ -6,6 +6,5 @@ package org.firstinspires.ftc.teamcode.hardware.pendul
 enum class PendulPosition(val positionValue: Double) {
     DOWN(0.29),
     BASKET(0.8),
-    BAR(0.89),
-    UNKNOWN(0.0)
+    BAR(0.89)
 }
