@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.lift.LiftManual
 class LiftTest(hardwareMap: HardwareMap) : TestPosition(LiftManual(hardwareMap)) {
     companion object {
         @JvmField
+        @Volatile
         var CURRENT_POSITION: Double = 0.0
     }
     override val componentName = "Lift"

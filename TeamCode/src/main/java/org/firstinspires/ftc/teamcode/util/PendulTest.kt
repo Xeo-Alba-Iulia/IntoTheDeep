@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.pendul.PendulManual
 class PendulTest(hardwareMap: HardwareMap) : TestPosition(PendulManual(hardwareMap)) {
     companion object {
         @JvmField
+        @Volatile
         var CURRENT_POSITION: Double = 0.0
     }
     override val componentName = "Pendul"

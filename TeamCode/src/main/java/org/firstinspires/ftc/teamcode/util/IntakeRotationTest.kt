@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.hardware.Intake
 class IntakeRotationTest(hardwareMap: HardwareMap) : TestPosition(Intake(hardwareMap).rotate) {
     companion object {
         @JvmField
+        @Volatile
         var CURRENT_POSITION: Double = 0.0
     }
     override val componentName = "Intake Rotation"
