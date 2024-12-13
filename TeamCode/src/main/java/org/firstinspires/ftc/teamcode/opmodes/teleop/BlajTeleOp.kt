@@ -5,46 +5,86 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
+import org.firstinspires.ftc.teamcode.hardware.lift.LiftPosition
+import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
+
+const val MULTIPLIER_EXTEND = 0.003
 
 @TeleOp
 class BlajTeleOp : LinearOpMode() {
-    lateinit var robotHardware: RobotHardware
+    val actionList = mutableListOf<Action>()
 
-    lateinit var actionList: List<Action>
+    private fun runActions(telemetryPacket: TelemetryPacket) {
+        val iterator = actionList.iterator()
+        while (iterator.hasNext()) {
+            val action = iterator.next()
+            if (!action.run(telemetryPacket)) iterator.remove()
+        }
+    }
 
-    internal fun runActions(telemetryPacket: TelemetryPacket) {
-        actionList.forEach { it.run(telemetryPacket) }
+    /**
+     * @return Triple(Poziție pendul, Poziție lift, Poziție intake rotation)
+     */
+    // FIXME: Pozițiile la intake
+    private fun basketPositions(pendulUp: Boolean) = when (pendulUp) {
+        true -> Triple(PendulPosition.UP, LiftPosition.UP, 0.6)
+        false -> Triple(PendulPosition.DOWN, LiftPosition.DOWN, 0.1)
     }
 
     override fun runOpMode() {
-        robotHardware = RobotHardware(hardwareMap)
+        val robot = RobotHardware(hardwareMap)
 
-        actionList = listOf(
-            robotHardware.intake,
-        )
-
-        val moveGamepad = gamepad1
-        val controlGamepad = gamepad2
+        val moveGamepad: Gamepad = gamepad1
+        val controlGamepad: Gamepad = gamepad2
 
         val dashboard = FtcDashboard.getInstance()
 
         waitForStart()
 
+        actionList.addAll(
+            listOf(
+                robot.intake,
+                robot.intake.rotate,
+                robot.pendul,
+                robot.extend
+            )
+        )
+
+        var pendulUp = false
+        var ticksSincePendulChange = 0
+
         while(opModeIsActive()) {
             // Movement
-            robotHardware.move(moveGamepad)
+            robot.move(moveGamepad)
 
-            // Actions for other hardware (intake, lift, etc)
+            // Actions for other hardware (intake, lift, etc.)
             val telemetryPacket = TelemetryPacket()
             runActions(telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
 
-            // Finite State Machine
-            when {
 
+            // Pendul + Intake Rotate + Lift (Gamepad2.y)
+            /* Delay de 10 ticks ca să nu acționeze prea repede butonul */
+            when (ticksSincePendulChange) {
+                in 0..10 -> ticksSincePendulChange += 1
+                else -> if (controlGamepad.y) {
+                    pendulUp = pendulUp xor controlGamepad.y
+                    ticksSincePendulChange = 0
+                }
             }
-            robotHardware.extend.power = controlGamepad.right_stick_y.toDouble()
+
+            val (pendulPosition, liftPosition, intakeRotatePosition) = basketPositions(pendulUp)
+            robot.pendul.targetPosition = pendulPosition
+            robot.lift.targetPosition = liftPosition
+            robot.intake.rotate.targetPosition = intakeRotatePosition
+
+
+            // Extend
+            robot.extend.power = moveGamepad.right_stick_y * MULTIPLIER_EXTEND
+
+            robot.extend.power = controlGamepad.right_stick_y.toDouble()
         }
     }
 }
