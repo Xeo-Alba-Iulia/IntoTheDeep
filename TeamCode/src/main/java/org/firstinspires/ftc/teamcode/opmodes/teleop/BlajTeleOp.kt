@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationPosition
-import org.firstinspires.ftc.teamcode.hardware.lift.LiftPosition
 import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
 
 private const val MULTIPLIER_PENDUL = 0.001
@@ -57,34 +56,29 @@ class BlajTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
 
             // Pendul + Lift (Gamepad2.up_button)
-            val (pendulPosition, liftPosition, intakeRotatePosition) = when {
-                controlGamepad.dpad_up -> Triple(
+            val (pendulPosition, intakeRotatePosition) = when {
+                controlGamepad.dpad_up -> Pair(
                     PendulPosition.BAR.positionValue,
-                    LiftPosition.UP,
                     IntakeRotationPosition.PARALLEL
                 )
 
-                controlGamepad.dpad_left -> Triple(
+                controlGamepad.dpad_left -> Pair(
                     PendulPosition.BAR.positionValue,
-                    LiftPosition.HALF,
                     IntakeRotationPosition.PERPENDICULAR
                 )
 
-                controlGamepad.dpad_down -> Triple(
+                controlGamepad.dpad_down -> Pair(
                     PendulPosition.DOWN.positionValue,
-                    LiftPosition.DOWN,
                     IntakeRotationPosition.PARALLEL
                 )
 
-                else -> Triple(
+                else -> Pair(
                     robot.pendul.pendulManual.targetPosition,
-                    robot.lift.targetPosition,
                     robot.intakeRotation.targetPosition
                 )
             }
 
             robot.pendul.pendulManual.targetPosition = pendulPosition
-            robot.lift.targetPosition = liftPosition
             robot.intakeRotation.targetPosition = intakeRotatePosition
 
             // Lift
