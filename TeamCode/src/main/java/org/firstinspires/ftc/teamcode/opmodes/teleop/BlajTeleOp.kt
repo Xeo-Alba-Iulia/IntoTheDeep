@@ -73,7 +73,15 @@ class BlajTeleOp : LinearOpMode() {
                 )
 
                 controlGamepad.dpad_right -> Pair(
+                    PendulPosition.SLAM.positionValue,
+                    IntakeRotationPosition.PERPENDICULAR
+                )
+                controlGamepad.left_bumper -> Pair(
                     PendulPosition.BAR.positionValue,
+                    IntakeRotationPosition.REVERSE
+                )
+                controlGamepad.right_bumper -> Pair(
+                    PendulPosition.SLAM.positionValue,
                     IntakeRotationPosition.REVERSE
                 )
 
@@ -82,6 +90,7 @@ class BlajTeleOp : LinearOpMode() {
                     robot.intakeRotation.targetPosition
                 )
             }
+
 
             robot.pendul.pendulManual.targetPosition = pendulPosition
             robot.intakeRotation.targetPosition = intakeRotatePosition
@@ -93,7 +102,7 @@ class BlajTeleOp : LinearOpMode() {
             robot.intake.intakePower = when {
                 moveGamepad.a -> 0.6
                 moveGamepad.x -> -1.0
-                else -> 0.005
+                else -> 0.1
             }
 
             // Pendul manual
