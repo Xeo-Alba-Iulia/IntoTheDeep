@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
 
 class Intake(hardwareMap: HardwareMap) : Action {
     private val intakeMotor = hardwareMap.crservo.get("IntakeMotor")
@@ -27,6 +26,7 @@ class Intake(hardwareMap: HardwareMap) : Action {
 
     override fun run(p: TelemetryPacket): Boolean {
         intakeMotor.power = intakePower
+        p.put("Intake Motor Power", intakePower)
         return true
     }
 }
