@@ -93,7 +93,7 @@ class BlajTeleOp : LinearOpMode() {
             robot.intake.intakePower = when {
                 moveGamepad.a -> 0.6
                 moveGamepad.x -> -1.0
-                else -> 0.0
+                else -> 0.005
             }
 
             // Pendul manual
