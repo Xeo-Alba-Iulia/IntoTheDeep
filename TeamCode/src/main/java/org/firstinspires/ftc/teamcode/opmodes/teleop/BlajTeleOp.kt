@@ -72,6 +72,11 @@ class BlajTeleOp : LinearOpMode() {
                     IntakeRotationPosition.PARALLEL
                 )
 
+                controlGamepad.dpad_right -> Pair(
+                    PendulPosition.BAR.positionValue,
+                    IntakeRotationPosition.REVERSE
+                )
+
                 else -> Pair(
                     robot.pendul.pendulManual.targetPosition,
                     robot.intakeRotation.targetPosition
