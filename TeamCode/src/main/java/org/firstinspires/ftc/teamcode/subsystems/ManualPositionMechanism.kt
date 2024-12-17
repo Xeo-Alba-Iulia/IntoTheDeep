@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware
-
-import org.firstinspires.ftc.teamcode.hardware.actionUtil.CancelableAction
+package org.firstinspires.ftc.teamcode.subsystems
 
 interface ManualPositionMechanism : CancelableAction {
     /**

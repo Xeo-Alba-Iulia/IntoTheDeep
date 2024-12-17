@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.util
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
-import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
+import org.firstinspires.ftc.teamcode.subsystems.ManualPositionMechanism
 
 /**
  * Clasă pentru a găsi poziții la servo-uri

@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.util
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.hardware.lift.LiftManual
+import org.firstinspires.ftc.teamcode.subsystems.Lift
 
 @Config
-class LiftTest(hardwareMap: HardwareMap) : TestPosition(LiftManual(hardwareMap)) {
+class LiftTest(hardwareMap: HardwareMap) : TestPosition(Lift(hardwareMap)) {
     companion object {
         @JvmField
         @Volatile
