@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop.tests
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
-import org.firstinspires.ftc.teamcode.hardware.Movement
+import org.firstinspires.ftc.teamcode.subsystems.Movement
 
 @TeleOp
 class TestOpMode : OpMode() {

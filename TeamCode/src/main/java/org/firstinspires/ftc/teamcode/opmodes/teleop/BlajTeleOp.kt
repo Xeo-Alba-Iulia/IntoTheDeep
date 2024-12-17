@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationPosition
-import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
+import org.firstinspires.ftc.teamcode.subsystems.Positions
 
 private const val MULTIPLIER_PENDUL = 0.001
 
@@ -38,17 +37,17 @@ class BlajTeleOp : LinearOpMode() {
             listOf(
                 robot.intake,
                 robot.intakeRotation,
-                robot.pendul.pendulManual,
+                robot.pendul,
                 robot.extend,
-                robot.lift.liftManual
+                robot.lift
             )
         )
 
-        robot.lift.liftManual.targetPosition = PendulPosition.DOWN.positionValue
+        robot.lift.targetPosition = Positions.lift.down
 
         while(opModeIsActive()) {
             // Movement
-            robot.move(moveGamepad)
+            robot.movement.move(moveGamepad)
 
             // Actions for other hardware (intake, lift, etc.)
             val telemetryPacket = TelemetryPacket()
@@ -58,45 +57,40 @@ class BlajTeleOp : LinearOpMode() {
             // Pendul + Lift (Gamepad2.up_button)
             val (pendulPosition, intakeRotatePosition) = when {
                 controlGamepad.dpad_up -> Pair(
-                    PendulPosition.BAR.positionValue,
-                    IntakeRotationPosition.PARALLEL
+                    Positions.pendul.bar,
+                    Positions.intakeRotate.parallel
                 )
-
                 controlGamepad.dpad_left -> Pair(
-                    PendulPosition.BAR.positionValue,
-                    IntakeRotationPosition.PERPENDICULAR
+                    Positions.pendul.bar,
+                    Positions.intakeRotate.perpendicular
                 )
-
                 controlGamepad.dpad_down -> Pair(
-                    PendulPosition.DOWN.positionValue,
-                    IntakeRotationPosition.PARALLEL
+                    Positions.pendul.down,
+                    Positions.intakeRotate.parallel
                 )
-
                 controlGamepad.dpad_right -> Pair(
-                    PendulPosition.SLAM.positionValue,
-                    IntakeRotationPosition.PERPENDICULAR
+                    Positions.pendul.slam,
+                    Positions.intakeRotate.perpendicular
                 )
                 controlGamepad.left_bumper -> Pair(
-                    PendulPosition.BAR.positionValue,
-                    IntakeRotationPosition.REVERSE
+                    Positions.pendul.bar,
+                    Positions.intakeRotate.reverse
                 )
                 controlGamepad.right_bumper -> Pair(
-                    PendulPosition.SLAM.positionValue,
-                    IntakeRotationPosition.REVERSE
+                    Positions.pendul.slam,
+                    Positions.intakeRotate.reverse
                 )
 
                 else -> Pair(
-                    robot.pendul.pendulManual.targetPosition,
+                    robot.pendul.targetPosition,
                     robot.intakeRotation.targetPosition
                 )
             }
-
-
-            robot.pendul.pendulManual.targetPosition = pendulPosition
+            robot.pendul.targetPosition = pendulPosition
             robot.intakeRotation.targetPosition = intakeRotatePosition
 
             // Lift
-            robot.lift.liftManual.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
+            robot.lift.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
 
             // Intake
             robot.intake.intakePower = when {
@@ -106,7 +100,7 @@ class BlajTeleOp : LinearOpMode() {
             }
 
             // Pendul manual
-            robot.pendul.pendulManual.targetPosition -= controlGamepad.left_stick_y * MULTIPLIER_PENDUL
+            robot.pendul.targetPosition -= controlGamepad.left_stick_y * MULTIPLIER_PENDUL
 
             robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
         }

@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.hardware.intake.IntakeRotationPosition
-import org.firstinspires.ftc.teamcode.hardware.lift.LiftPosition
-import org.firstinspires.ftc.teamcode.hardware.pendul.PendulPosition
+import org.firstinspires.ftc.teamcode.subsystems.lift.LiftPosition
+import org.firstinspires.ftc.teamcode.subsystems.pendul.PendulPosition
 
 private const val MULTIPLIER_PENDUL = 0.001
 
@@ -39,13 +38,13 @@ class TeleOpSingleController : LinearOpMode() {
             listOf(
                 robot.intake,
                 robot.intakeRotation,
-                robot.pendul.pendulManual,
+                robot.pendul.pendul,
                 robot.extend,
 //                robot.lift.liftManual
             )
         )
 
-        robot.lift.liftManual.targetPosition = PendulPosition.DOWN.positionValue
+        robot.lift.lift.targetPosition = PendulPosition.DOWN.positionValue
 
         while (opModeIsActive()) {
             // Movement
@@ -77,18 +76,18 @@ class TeleOpSingleController : LinearOpMode() {
                 )
 
                 else -> Triple(
-                    robot.pendul.pendulManual.targetPosition,
+                    robot.pendul.pendul.targetPosition,
                     robot.lift.targetPosition,
                     robot.intakeRotation.targetPosition
                 )
             }
 
-            robot.pendul.pendulManual.targetPosition = pendulPosition
+            robot.pendul.pendul.targetPosition = pendulPosition
             robot.lift.targetPosition = liftPosition
             robot.intakeRotation.targetPosition = intakeRotatePosition
 
             // Lift
-            robot.lift.liftManual.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
+            robot.lift.lift.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
 
             // Intake
             robot.intake.intakePower = when {
@@ -98,7 +97,7 @@ class TeleOpSingleController : LinearOpMode() {
             }
 
             // Pendul manual
-            robot.pendul.pendulManual.targetPosition -= (if (moveGamepad.right_bumper) 1.0 else 0.0 - if (moveGamepad.left_bumper) 1.0 else 0.0) * MULTIPLIER_PENDUL
+            robot.pendul.pendul.targetPosition -= (if (moveGamepad.right_bumper) 1.0 else 0.0 - if (moveGamepad.left_bumper) 1.0 else 0.0) * MULTIPLIER_PENDUL
 
             robot.extend.power = (moveGamepad.left_trigger - moveGamepad.right_trigger).toDouble()
         }

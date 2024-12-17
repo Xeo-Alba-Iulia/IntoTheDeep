@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware.lift
+package org.firstinspires.ftc.teamcode.subsystems
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
-import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
 
 @Config
-class LiftManual(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : ManualPositionMechanism {
+class Lift(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : ManualPositionMechanism {
     companion object {
         @JvmField
         @Volatile

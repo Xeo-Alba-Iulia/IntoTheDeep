@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.util
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.hardware.pendul.PendulManual
+import org.firstinspires.ftc.teamcode.subsystems.Pendul
 
 @Config
-class PendulTest(hardwareMap: HardwareMap) : TestPosition(PendulManual(hardwareMap)) {
+class PendulTest(hardwareMap: HardwareMap) : TestPosition(Pendul(hardwareMap)) {
     companion object {
         @JvmField
         @Volatile

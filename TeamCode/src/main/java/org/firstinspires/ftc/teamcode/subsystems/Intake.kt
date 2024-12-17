@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware.intake
+package org.firstinspires.ftc.teamcode.subsystems
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
@@ -13,7 +13,6 @@ class Intake(hardwareMap: HardwareMap) : Action {
     }
 
     // Implementing Action interface for the actual Intake
-    private var isCanceled = false
 
     /**
      * Power to set the intake to

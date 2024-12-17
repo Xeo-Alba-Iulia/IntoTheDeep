@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.hardware.intake
+package org.firstinspires.ftc.teamcode.subsystems
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.hardware.ManualPositionMechanism
 
-class IntakeRotationManual(hardwareMap: HardwareMap) : ManualPositionMechanism {
+class IntakeRotation(hardwareMap: HardwareMap) : ManualPositionMechanism {
     private val intakeRotation: Servo = hardwareMap.servo.get("IntakeRotation")
 
     private var isCanceled = false
