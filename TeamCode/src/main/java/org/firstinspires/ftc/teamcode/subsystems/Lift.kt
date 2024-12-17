@@ -10,8 +10,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
 
+/**
+ * Lift subsystem
+ *
+ * @param hardwareMap the [HardwareMap] object from the OpMode
+ * @param isVerbose whether to print debug information
+ */
 @Config
-class Lift(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : ManualPositionMechanism {
+class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : ManualPositionMechanism {
     companion object {
         @JvmField
         @Volatile
@@ -28,16 +34,16 @@ class Lift(hardwareMap: HardwareMap, val isVerbose: Boolean = true) : ManualPosi
         var kA = 0.0
     }
 
-    val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
-    val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
+    private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
+    private val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
 
     val encoder = RawEncoder(liftRight)
 
     private var isCanceled = false
 
-    val lift = listOf(liftLeft, liftRight)
+    private val lift = listOf(liftLeft, liftRight)
 
-    val controller = PIDFController(coefficients, kV, kA, kStatic)
+    private val controller = PIDFController(coefficients, kV, kA, kStatic)
 
     override var targetPosition
         get() = controller.targetPosition

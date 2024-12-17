@@ -5,6 +5,11 @@ import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 
+/**
+ * Intake subsystem
+ *
+ * @param hardwareMap the [HardwareMap] object from the OpMode
+ */
 class Intake(hardwareMap: HardwareMap) : Action {
     private val intakeMotor = hardwareMap.crservo.get("IntakeMotor")
 
