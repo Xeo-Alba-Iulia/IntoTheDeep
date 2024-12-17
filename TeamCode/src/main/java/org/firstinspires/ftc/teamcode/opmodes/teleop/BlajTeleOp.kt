@@ -13,7 +13,7 @@ private const val MULTIPLIER_PENDUL = 0.001
 
 @TeleOp
 class BlajTeleOp : LinearOpMode() {
-    val actionList = mutableListOf<Action>()
+    private val actionList = mutableListOf<Action>()
 
     private fun runActions(telemetryPacket: TelemetryPacket) {
         val iterator = actionList.iterator()
