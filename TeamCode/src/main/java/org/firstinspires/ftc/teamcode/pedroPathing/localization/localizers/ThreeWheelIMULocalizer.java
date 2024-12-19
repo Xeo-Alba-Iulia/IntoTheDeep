@@ -96,12 +96,12 @@ public class ThreeWheelIMULocalizer extends Localizer {
         // TODO: replace strafe encode position
         leftEncoderPose = new Pose(5.90551, 3.70079, 0);
         rightEncoderPose = new Pose(5.90551, -3.70079, 0);
-        strafeEncoderPose = new Pose(-5.67, 2.677, Math.toRadians(90));
+        strafeEncoderPose = new Pose(-5.67, -2.677, Math.toRadians(90));
 
 
         // TODO: replace these with your encoder ports
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LiftLeft"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "MotorBackLeft"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "MotorBackLeft"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LiftLeft"));
         strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "MotorBackRight"));
 
         // TODO: reverse any encoders necessary
