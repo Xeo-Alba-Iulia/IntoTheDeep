@@ -77,22 +77,21 @@ public class ThreeWheelLocalizer extends Localizer {
      * @param setStartPose the Pose to start from
      */
     public ThreeWheelLocalizer(HardwareMap map, Pose setStartPose) {
-        // TODO: replace these with your encoder positions
-        leftEncoderPose = new Pose(-18.5/25.4 - 0.1, 164.4/25.4, 0);
-        rightEncoderPose = new Pose(-18.4/25.4 - 0.1, -159.6/25.4, 0);
-        strafeEncoderPose = new Pose(0*(-107.9/25.4+8)+-107.9/25.4+0.25, -1.1/25.4-0.23, Math.toRadians(90));
+        leftEncoderPose = new Pose(5.90551, 3.70079, 0);
+        rightEncoderPose = new Pose(5.90551, -3.70079, 0);
+        strafeEncoderPose = new Pose(-5.67, -2.677, Math.toRadians(90));
 
         hardwareMap = map;
 
         // TODO: replace these with your encoder ports
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
-        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "strafeEncoder"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "MotorBackLeft"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LiftLeft"));
+        strafeEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "MotorBackRight"));
 
         // TODO: reverse any encoders necessary
         leftEncoder.setDirection(Encoder.REVERSE);
         rightEncoder.setDirection(Encoder.REVERSE);
-        strafeEncoder.setDirection(Encoder.FORWARD);
+        strafeEncoder.setDirection(Encoder.REVERSE);
 
         setStartPose(setStartPose);
         timer = new NanoTimer();
