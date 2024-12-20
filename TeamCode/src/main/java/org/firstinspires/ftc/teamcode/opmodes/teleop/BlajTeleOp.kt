@@ -102,7 +102,7 @@ class BlajTeleOp : LinearOpMode() {
             // Pendul manual
             robot.pendul.targetPosition -= controlGamepad.left_stick_y * MULTIPLIER_PENDUL
 
-            robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
+//            robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
         }
     }
 }
