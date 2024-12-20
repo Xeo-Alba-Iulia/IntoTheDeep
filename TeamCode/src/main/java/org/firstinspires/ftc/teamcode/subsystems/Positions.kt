@@ -19,4 +19,9 @@ object Positions {
         const val half = 70.0
         const val up = 110.0
     }
+
+    object extend {
+        const val `in` = 0.0
+        const val out = 0.5
+    }
 }
