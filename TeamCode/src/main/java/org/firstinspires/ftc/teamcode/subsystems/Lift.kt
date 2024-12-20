@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
+import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
+import org.firstinspires.ftc.teamcode.profile.MotionState
 
 /**
  * Lift subsystem
@@ -32,6 +34,18 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         @JvmField
         @Volatile
         var kA = 0.0
+
+        @JvmField
+        @Volatile
+        var maxVel = 30.0
+
+        @JvmField
+        @Volatile
+        var maxAccel = 15.0
+
+        @JvmField
+        @Volatile
+        var maxJerk = 3.0
     }
 
     private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
@@ -45,10 +59,26 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
 
     private val controller = PIDFController(coefficients, kV, kA, kStatic)
 
-    override var targetPosition
-        get() = controller.targetPosition
+    private var profile = MotionProfileGenerator.generateSimpleMotionProfile(
+        MotionState(0.0, 0.0),
+        MotionState(0.0, 0.0),
+        maxVel,
+        maxAccel,
+        maxJerk
+    )
+
+    override var targetPosition = 0.0
         set(value) {
-            controller.targetPosition = value
+            if (value != field) {
+                profile = MotionProfileGenerator.generateSimpleMotionProfile(
+                    MotionState(measuredPosition, measuredVelocity),
+                    MotionState(value, 0.0),
+                    maxVel,
+                    maxAccel,
+                    maxJerk
+                )
+                field = value
+            }
         }
 
     /**
@@ -74,7 +104,8 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         liftRight.direction = DcMotorSimple.Direction.REVERSE
         encoder.direction = DcMotorSimple.Direction.REVERSE
 
-        controller.targetVelocity = 10.0
+        controller.setInputBounds(0.0, 1000.0)
+        controller.setOutputBounds(-1.0, 1.0)
     }
 
     var power = 0.0
@@ -91,25 +122,32 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
             return false
         }
 
-//        val positionVelocityPair = encoder.getPositionAndVelocity()
-//        measuredPosition = positionVelocityPair.position.toDouble()
-//        measuredVelocity = positionVelocityPair.velocity.toDouble()
-//
-//        power = controller.update(measuredPosition, measuredVelocity)
-//
-//        if (isVerbose) {
-//            p.putAll(
-//                mapOf(
-//                    "liftPosition" to measuredPosition,
-//                    "liftVelocity" to measuredVelocity,
-//                    "liftPower" to power
-//                )
-//            )
-//        }
+        val positionVelocityPair = encoder.getPositionAndVelocity()
+        measuredPosition = positionVelocityPair.position.toDouble()
+        measuredVelocity = positionVelocityPair.velocity.toDouble()
 
-        for (motor in lift) {
-            motor.power = power
+        val state = profile[measuredPosition]
+        controller.apply {
+            targetPosition = state.x
+            targetVelocity = state.v
+            targetAcceleration = state.a
         }
+        power = controller.update(measuredPosition, measuredVelocity)
+
+        if (isVerbose) {
+            p.putAll(
+                mapOf(
+                    "liftPosition" to measuredPosition,
+                    "liftVelocity" to measuredVelocity,
+                    "liftPower" to power,
+                    "liftProfile" to profile
+                )
+            )
+        }
+
+//        for (motor in lift) {
+//            motor.power = power
+//        }
 
         return true
     }
