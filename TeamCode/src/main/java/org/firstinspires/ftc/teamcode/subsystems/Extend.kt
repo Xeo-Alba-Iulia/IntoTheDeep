@@ -21,6 +21,8 @@ class Extend(hardwareMap: HardwareMap) : ManualPositionMechanism {
             return false
         }
 
+        p.put("Extend Position", targetPosition)
+
         return true
     }
 
