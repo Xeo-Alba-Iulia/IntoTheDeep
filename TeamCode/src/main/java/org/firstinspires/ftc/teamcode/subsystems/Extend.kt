@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo
 class Extend(hardwareMap: HardwareMap) : ManualPositionMechanism {
     private val extend = hardwareMap.get("Extend") as Servo
 
+    init {
+        extend.direction = Servo.Direction.REVERSE
+    }
+
     var isCanceled = false
 
     override var targetPosition
