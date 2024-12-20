@@ -1,25 +1,30 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.acmerobotics.roadrunner.Action
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.Servo
 
-class Extend(hardwareMap: HardwareMap) : Action {
-    private val extendLeft = hardwareMap.crservo.get("ExtendLeft")
-    private val extendRight = hardwareMap.crservo.get("ExtendRight")
+class Extend(hardwareMap: HardwareMap) : ManualPositionMechanism {
+    private val extend = hardwareMap.get("Extend") as Servo
 
-    init {
-        extendLeft.direction = DcMotorSimple.Direction.REVERSE
-    }
+    var isCanceled = false
 
-    val motors = arrayListOf(extendLeft, extendRight)
-
-    var power = 0.0
+    override var targetPosition
+        get() = extend.position
+        set(value) {
+            extend.position = value
+        }
 
     override fun run(p: TelemetryPacket): Boolean {
-        motors.forEach { it.power = power }
+        if (isCanceled) {
+            isCanceled = false
+            return false
+        }
 
         return true
+    }
+
+    override fun cancel() {
+        isCanceled = true
     }
 }
