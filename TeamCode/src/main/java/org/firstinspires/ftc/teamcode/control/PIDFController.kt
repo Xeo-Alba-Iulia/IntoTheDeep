@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.control
 
 import org.firstinspires.ftc.teamcode.util.NanoClock
+import org.firstinspires.ftc.teamcode.util.epsilonEquals
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
-
-private const val EPSILON = 1e-6
-private infix fun Double.epsilonEquals(other: Double) = abs(this - other) < EPSILON
 
 /**
  * PID controller with various feedforward components.
