@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop.tests
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -15,8 +16,10 @@ class ExtendTest : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
-            extend.power = gamepad1.right_stick_y * MULTIPLIER
-            extend.run(TelemetryPacket())
+            extend.targetPosition += gamepad1.right_stick_y * MULTIPLIER
+            val telemetryPacket = TelemetryPacket()
+            extend.run(telemetryPacket)
+            FtcDashboard.getInstance().sendTelemetryPacket(telemetryPacket)
         }
     }
 
