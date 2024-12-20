@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 
 class Extend(hardwareMap: HardwareMap) : ManualPositionMechanism {
+    companion object {
+        const val MULTIPLIER = 0.001
+    }
+    
     private val extend = hardwareMap.get("Extend") as Servo
 
     init {
