@@ -21,7 +21,7 @@ object Positions {
     }
 
     object extend {
-        const val `in` = 0.0
-        const val out = 0.5
+        const val `in` = 0.2
+        const val out = 0.8
     }
 }
