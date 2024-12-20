@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
 import org.firstinspires.ftc.teamcode.profile.MotionState
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
+import kotlin.math.abs
 
 /**
  * Lift subsystem
@@ -70,7 +71,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
 
     override var targetPosition = 0.0
         set(value) {
-            if (value != field) {
+            if (abs(value - field) > 100.0) {
                 profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     MotionState(measuredPosition, measuredVelocity),
                     MotionState(value, 0.0),
@@ -78,8 +79,8 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
                     maxAccel,
                     maxJerk
                 )
-                field = value
             }
+            field = value
         }
 
     /**
