@@ -40,7 +40,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ac
         var height = 100.0
     }
 
-    private enum class SimpleState {
+    enum class SimpleState {
         DOWN, UP
     }
 
@@ -164,4 +164,13 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ac
             state = State.GOING_DOWN
         }
     }
+
+    var targetPosition
+        get() = state.simpleState
+        set(value) {
+            when (value) {
+                SimpleState.UP -> goUp()
+                SimpleState.DOWN -> goDown()
+            }
+        }
 }
