@@ -11,7 +11,9 @@ import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
 import org.firstinspires.ftc.teamcode.profile.MotionState
-import kotlin.math.abs
+import org.firstinspires.ftc.teamcode.util.absoluteDistance
+
+private const val PIDHeight = 100.0
 
 /**
  * Lift subsystem
@@ -56,7 +58,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
 
     private var isCanceled = false
 
-    private val lift = listOf(liftLeft, liftRight)
+    private val lifts = arrayOf(liftLeft, liftRight)
 
     private val controller = PIDFController(coefficients, kV, kA, kStatic)
 
@@ -68,12 +70,13 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         maxJerk
     )
 
+    //noinspection uninitialized_property_access
     override var targetPosition = 0.0
         set(value) {
             if (value == field)
                 return
 
-            if (abs(value - measuredPosition) > 100.0) {
+            if (absoluteDistance(measuredPosition, value) > 100.0) {
                 profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     MotionState(measuredPosition, measuredVelocity),
                     MotionState(value, 0.0),
@@ -98,11 +101,8 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         private set
 
     init {
-        lift.forEach {
+        lifts.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
-            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
@@ -130,12 +130,21 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         measuredPosition = positionVelocityPair.position.toDouble()
         measuredVelocity = positionVelocityPair.velocity.toDouble()
 
-        val state = profile[measuredPosition]
         controller.apply {
-            targetPosition = state.x
-            targetVelocity = state.v
-            targetAcceleration = state.a
+            if (absoluteDistance(targetPosition, measuredPosition) > PIDHeight) {
+                val state = profile[measuredPosition]
+
+                targetPosition = state.x
+                targetVelocity = state.v
+                targetAcceleration = state.a
+            } else {
+                targetPosition = this@Lift.targetPosition
+
+                targetVelocity = 0.0
+                targetAcceleration = 0.0
+            }
         }
+
         power = controller.update(measuredPosition, measuredVelocity)
 
         if (isVerbose) {
@@ -149,7 +158,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
             )
         }
 
-//        for (motor in lift) {
+//        for (motor in lifts) {
 //            motor.power = power
 //        }
 
