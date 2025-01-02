@@ -8,5 +8,5 @@ class IntakeRotation(
     hardwareMap: HardwareMap,
     isVerbose: Boolean = false
 ) : ServoPositionMechanism(Positions.intakeRotate.parallel, isVerbose) {
-    override val servos: Array<Servo> = arrayOf(hardwareMap.servo.get("IntakeRotation"))
+    override val servos: Array<Servo> = arrayOf(hardwareMap.servo["IntakeRotation"])
 }

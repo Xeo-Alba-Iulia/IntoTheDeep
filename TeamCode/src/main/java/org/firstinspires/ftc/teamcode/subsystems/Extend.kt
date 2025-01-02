@@ -9,5 +9,5 @@ class Extend(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.extend
         const val MULTIPLIER = 0.001
     }
 
-    override val servos: Array<Servo> = arrayOf(hardwareMap.servo.get("Extend"))
+    override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Extend"])
 }
