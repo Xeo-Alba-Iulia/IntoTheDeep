@@ -12,7 +12,9 @@ import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
 import org.firstinspires.ftc.teamcode.profile.MotionState
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
-import kotlin.math.abs
+import org.firstinspires.ftc.teamcode.util.absoluteDistance
+
+private const val PIDHeight = 100.0
 
 /**
  * Lift subsystem
@@ -74,7 +76,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
             if (value == field)
                 return
 
-            if (abs(value - measuredPosition) > 100.0) {
+            if (absoluteDistance(measuredPosition, value) > 100.0) {
                 profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     MotionState(measuredPosition, measuredVelocity),
                     MotionState(value, 0.0),
@@ -101,9 +103,6 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
     init {
         lift.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
-            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
@@ -137,6 +136,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
             targetVelocity = state.v
             targetAcceleration = state.a
         }
+
         power = controller.update(measuredPosition, measuredVelocity)
 
         if (isVerbose) {
