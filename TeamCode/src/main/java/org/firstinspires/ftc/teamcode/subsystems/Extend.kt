@@ -1,40 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.subsystems.util.ServoPositionMechanism
 
-class Extend(hardwareMap: HardwareMap) : ManualPositionMechanism {
+class Extend(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.extend.`in`, true) {
     companion object {
         const val MULTIPLIER = 0.001
     }
-    
-    private val extend = hardwareMap.get("Extend") as Servo
 
-    init {
-        extend.direction = Servo.Direction.REVERSE
-    }
-
-    var isCanceled = false
-
-    override var targetPosition
-        get() = extend.position
-        set(value) {
-            extend.position = value
-        }
-
-    override fun run(p: TelemetryPacket): Boolean {
-        if (isCanceled) {
-            isCanceled = false
-            return false
-        }
-
-        p.put("Extend Position", targetPosition)
-
-        return true
-    }
-
-    override fun cancel() {
-        isCanceled = true
-    }
+    override val servos: Array<Servo> = arrayOf(hardwareMap.servo.get("Extend"))
 }
