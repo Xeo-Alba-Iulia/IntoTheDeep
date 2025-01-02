@@ -76,7 +76,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
             if (value == field)
                 return
 
-            if (absoluteDistance(measuredPosition, value) > 100.0) {
+//            if (absoluteDistance(measuredPosition, value) > 100.0) {
                 profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     MotionState(measuredPosition, measuredVelocity),
                     MotionState(value, 0.0),
@@ -84,7 +84,7 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
                     maxAccel,
                     maxJerk
                 )
-            }
+//            }
             field = value
         }
 
@@ -131,18 +131,18 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         measuredVelocity = positionVelocityPair.velocity.toDouble()
 
         controller.apply {
-            if (absoluteDistance(targetPosition, measuredPosition) > PIDHeight) {
+//            if (absoluteDistance(targetPosition, measuredPosition) > PIDHeight) {
                 val state = profile[measuredPosition]
 
                 targetPosition = state.x
                 targetVelocity = state.v
                 targetAcceleration = state.a
-            } else {
-                targetPosition = this@Lift.targetPosition
-
-                targetVelocity = 0.0
-                targetAcceleration = 0.0
-            }
+//            } else {
+//                targetPosition = this@Lift.targetPosition
+//
+//                targetVelocity = 0.0
+//                targetAcceleration = 0.0
+//            }
         }
 
         power = controller.update(measuredPosition, measuredVelocity)
