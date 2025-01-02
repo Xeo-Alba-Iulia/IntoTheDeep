@@ -70,7 +70,10 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
 
     override var targetPosition = 0.0
         set(value) {
-            if (abs(value - field) > 100.0) {
+            if (value == field)
+                return
+
+            if (abs(value - measuredPosition) > 100.0) {
                 profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     MotionState(measuredPosition, measuredVelocity),
                     MotionState(value, 0.0),
