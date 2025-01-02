@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.subsystems.Extend
 import org.firstinspires.ftc.teamcode.subsystems.Intake
