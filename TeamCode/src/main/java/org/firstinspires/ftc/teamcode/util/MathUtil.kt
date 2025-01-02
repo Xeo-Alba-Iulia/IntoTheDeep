@@ -19,3 +19,6 @@ fun solveQuadratic(a: Double, b: Double, c: Double): List<Double> {
 const val EPSILON = 1e-6
 
 infix fun Double.epsilonEquals(other: Double) = abs(this - other) < EPSILON
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun absoluteDistance(a: Double, b: Double) = abs(a - b)
