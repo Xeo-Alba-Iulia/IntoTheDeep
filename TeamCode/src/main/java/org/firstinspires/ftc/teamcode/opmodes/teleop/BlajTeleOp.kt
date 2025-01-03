@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.subsystems.Positions
+import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 
 private const val MULTIPLIER_PENDUL = 0.001
 

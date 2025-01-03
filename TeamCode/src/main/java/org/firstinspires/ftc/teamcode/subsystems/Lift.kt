@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode.subsystems
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.ftc.RawEncoder
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
+import org.firstinspires.ftc.teamcode.subsystems.util.ManualMechanismTeleOp
+import org.firstinspires.ftc.teamcode.subsystems.util.ManualPositionMechanism
 
 /**
  * Lift subsystem
@@ -114,3 +117,6 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         return true
     }
 }
+
+@TeleOp
+class LiftTest : ManualMechanismTeleOp(::Lift)
