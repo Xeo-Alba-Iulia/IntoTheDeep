@@ -22,9 +22,9 @@ class IntakeMotor(hardwareMap: HardwareMap) : Action {
     /**
      * Power to set the intake to
      */
-    var intakePower: Double = 0.6
+    var intakePower: Double = 0.0
         set(value) {
-            require(value in -1.0..1.0) { "Intake power must be between 0 and 1" }
+            require(value in -1.0..1.0) { "Intake power must be between -1 and 1" }
             field = value
         }
 
