@@ -25,9 +25,8 @@ class Intake(hardwareMap: HardwareMap) : Action {
 
     var intakePosition: IntakePosition
         get() = when (intakePendul.targetPosition) {
-            Positions.IntakePendul.down -> IntakePosition.INTAKE
             Positions.IntakePendul.up -> IntakePosition.TRANSFER
-            else -> throw IllegalStateException("Intake pendul position is not set")
+            else -> IntakePosition.INTAKE
         }
         set(value) {
             when (value) {
@@ -51,10 +50,10 @@ enum class IntakePosition {
 
 @TeleOp
 class IntakeTest : LinearOpMode() {
-    private val intake = Intake(hardwareMap)
 
     override fun runOpMode() {
         waitForStart()
+        val intake = Intake(hardwareMap)
 
         while (opModeIsActive()) {
             intake.intakePower = gamepad1.left_stick_y.toDouble()
