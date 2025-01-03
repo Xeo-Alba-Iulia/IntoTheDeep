@@ -7,9 +7,8 @@ object Positions {
     }
 
     object Pendul {
-        const val transfer = 0.6
-        const val outtake = 0.2
-        const val init = 0.4
+        const val transfer = 0.98
+        const val outtake = 0.0
     }
 
     object Lift {
