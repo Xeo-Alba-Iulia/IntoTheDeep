@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.subsystems.util.ServoPositionMechanism
 
-private const val MAX_POSITION = 0.9
+private const val MAX_POSITION = 0.835
 
 class Extend(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Extend.`in`) {
     companion object {
@@ -14,6 +14,10 @@ class Extend(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Extend
     }
 
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Extend"])
+
+    init {
+        servos[0].direction = Servo.Direction.REVERSE
+    }
 
     override var targetPosition: Double
         get() = super.targetPosition
