@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeMotor
 import org.firstinspires.ftc.teamcode.subsystems.IntakeRotation
 import kotlin.properties.Delegates
 
-@TeleOp
+//@TeleOp
 class IntakeTest : LinearOpMode() {
     companion object {
         private const val MULTIPLIER = 0.003
