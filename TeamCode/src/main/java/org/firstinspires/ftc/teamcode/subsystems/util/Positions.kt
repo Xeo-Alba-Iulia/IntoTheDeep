@@ -8,10 +8,8 @@ object Positions {
     }
 
     object Pendul {
-        const val down = 0.275
-        const val bar = 0.85
-        const val basket = 0.7
-        const val slam = 0.6
+        const val transfer = 0.6
+        const val outtake = 0.2
     }
 
     object Lift {
