@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.subsystems.util.ServoPositionMechanism
 
-private const val MAX_POSITION = 0.835
+private const val MAX_POSITION = 0.62
 
 class Extend(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Extend.`in`) {
     companion object {

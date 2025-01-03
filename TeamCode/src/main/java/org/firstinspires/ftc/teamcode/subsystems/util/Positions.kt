@@ -19,7 +19,7 @@ object Positions {
 
     object Extend {
         const val `in` = 0.08
-        const val out = 0.79
+        const val out = 0.6
     }
 
     object IntakePendul {
