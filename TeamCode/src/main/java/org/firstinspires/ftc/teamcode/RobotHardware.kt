@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.subsystems.Claw
+import org.firstinspires.ftc.teamcode.subsystems.ClawRotate
 import org.firstinspires.ftc.teamcode.subsystems.Extend
 import org.firstinspires.ftc.teamcode.subsystems.Lift
 import org.firstinspires.ftc.teamcode.subsystems.Movement
@@ -21,5 +23,7 @@ class RobotHardware @JvmOverloads constructor(
     val lift: Lift = Lift(hardwareMap),
     val pendul: Pendul = Pendul(hardwareMap),
     val intake: Intake = Intake(hardwareMap),
-    val extend: Extend = Extend(hardwareMap)
+    val extend: Extend = Extend(hardwareMap),
+    val claw: Claw = Claw(hardwareMap),
+    val clawRotate: ClawRotate = ClawRotate(hardwareMap),
 )
