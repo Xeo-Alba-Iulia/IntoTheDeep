@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.subsystems.Intake
+import org.firstinspires.ftc.teamcode.subsystems.IntakeMotor
 import org.firstinspires.ftc.teamcode.subsystems.IntakeRotation
 import kotlin.properties.Delegates
 
@@ -15,7 +15,7 @@ class IntakeTest : LinearOpMode() {
     }
 
     override fun runOpMode() {
-        val intake = Intake(hardwareMap)
+        val intake = IntakeMotor(hardwareMap)
         val intakeRotation = IntakeRotation(hardwareMap)
 
         waitForStart()

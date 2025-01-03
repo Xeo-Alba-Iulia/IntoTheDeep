@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 
 class IntakeRotation(
     hardwareMap: HardwareMap,
-) : ServoPositionMechanism(Positions.intakeRotate.parallel) {
+) : ServoPositionMechanism(Positions.IntakeRotation.parallel) {
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["IntakeRotation"])
 }
 
