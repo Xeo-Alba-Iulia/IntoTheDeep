@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.util.ManualPositionMechanism
  * @param isVerbose whether to print debug information
  */
 @Config
-class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : ManualPositionMechanism {
+class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
     companion object {
         @JvmField
         @Volatile
