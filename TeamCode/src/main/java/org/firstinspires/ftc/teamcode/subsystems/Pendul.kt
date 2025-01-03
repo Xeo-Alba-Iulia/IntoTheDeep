@@ -9,6 +9,10 @@ import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 
 class Pendul(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Pendul.down) {
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Pendul"])
+
+    companion object {
+        const val MULTIPLIER = 0.001
+    }
 }
 
 @TeleOp(group = "Servo Subsystems")
