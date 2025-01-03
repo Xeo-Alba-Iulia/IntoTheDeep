@@ -13,10 +13,10 @@ import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
 import org.firstinspires.ftc.teamcode.profile.MotionState
 import org.firstinspires.ftc.teamcode.util.absoluteDistance
-
-private const val PIDHeight = 100.0
 import org.firstinspires.ftc.teamcode.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.subsystems.util.ManualPositionMechanism
+
+private const val PIDHeight = 100.0
 
 /**
  * Lift subsystem
