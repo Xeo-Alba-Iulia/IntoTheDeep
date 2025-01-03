@@ -32,6 +32,5 @@ abstract class ManualMechanismTeleOp(private val factory: ManualPositionFactory)
         )
 
         telemetry.update()
-
     }
 }
