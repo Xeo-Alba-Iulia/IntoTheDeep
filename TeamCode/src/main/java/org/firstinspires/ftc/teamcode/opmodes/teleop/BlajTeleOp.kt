@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.subsystems.Positions
+import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 
 private const val MULTIPLIER_PENDUL = 0.001
 
@@ -102,7 +102,7 @@ class BlajTeleOp : LinearOpMode() {
             // Pendul manual
             robot.pendul.targetPosition -= controlGamepad.left_stick_y * MULTIPLIER_PENDUL
 
-            robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
+//            robot.extend.power = (controlGamepad.left_trigger - controlGamepad.right_trigger).toDouble()
         }
     }
 }

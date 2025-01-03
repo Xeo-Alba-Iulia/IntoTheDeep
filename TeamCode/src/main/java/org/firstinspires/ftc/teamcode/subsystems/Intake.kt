@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
  * @param hardwareMap the [HardwareMap] object from the OpMode
  */
 class Intake(hardwareMap: HardwareMap) : Action {
-    private val intakeMotor = hardwareMap.crservo.get("IntakeMotor")
+    private val intakeMotor = hardwareMap.crservo["IntakeMotor"]
 
     init {
         intakeMotor.direction = DcMotorSimple.Direction.REVERSE

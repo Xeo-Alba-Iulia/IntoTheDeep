@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems
+package org.firstinspires.ftc.teamcode.subsystems.util
 
 object Positions {
     object intakeRotate {
@@ -18,5 +18,10 @@ object Positions {
         const val down = 0.0
         const val half = 70.0
         const val up = 110.0
+    }
+
+    object extend {
+        const val `in` = 0.08
+        const val out = 0.9
     }
 }
