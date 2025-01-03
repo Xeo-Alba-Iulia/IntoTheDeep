@@ -23,7 +23,7 @@ object Positions {
     }
 
     object IntakePendul {
-        const val down = 0.1365
-        const val up = 0.53
+        const val down = 0.22
+        const val up = 0.75
     }
 }
