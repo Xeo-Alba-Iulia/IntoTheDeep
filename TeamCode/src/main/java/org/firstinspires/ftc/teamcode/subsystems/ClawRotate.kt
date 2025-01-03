@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.subsystems.util.ServoPositionMechanism
 
+// FIXME: Init position
 class ClawRotate(hardwareMap: HardwareMap) : ServoPositionMechanism(0.0) {
     override val servos = arrayOf(hardwareMap.servo["ClawRotate"])
 }
