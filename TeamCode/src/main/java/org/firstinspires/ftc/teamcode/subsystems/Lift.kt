@@ -35,6 +35,7 @@ class Lift(hardwareMap: HardwareMap) : CancelableAction {
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
+        liftLeft.direction = DcMotorSimple.Direction.REVERSE
     }
 
     var power = 0.0
