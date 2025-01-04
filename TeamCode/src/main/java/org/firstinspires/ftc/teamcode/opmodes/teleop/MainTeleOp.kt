@@ -15,14 +15,6 @@ import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 class MainTeleOp : LinearOpMode() {
     private val actionList = mutableListOf<Action>()
 
-    private fun runActions(telemetryPacket: TelemetryPacket) {
-        val iterator = actionList.iterator()
-        while (iterator.hasNext()) {
-            val action = iterator.next()
-            if (!action.run(telemetryPacket)) iterator.remove()
-        }
-    }
-
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
@@ -45,58 +37,100 @@ class MainTeleOp : LinearOpMode() {
 
         while (!isStarted) {
             val telemetryPacket = TelemetryPacket()
-            runActions(telemetryPacket)
             telemetryPacket.addLine("Initializing")
+            runActions(telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
         }
 
         waitForStart()
 
-        dashboard.telemetry.clearAll()
+        dashboard.clearTelemetry()
 
         while (opModeIsActive()) {
             // Movement
             robot.movement.move(moveGamepad)
+            robot.applyPositions(controlGamepad)
 
             // Actions for other hardware (intake, lift, etc.)
             val telemetryPacket = TelemetryPacket()
             runActions(telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
 
-            // Intake position
-            robot.intake.intakePosition = when {
-                controlGamepad.dpad_down -> IntakePosition.INTAKE
-                controlGamepad.dpad_right -> IntakePosition.TRANSFER
-                else -> robot.intake.intakePosition
-            }
-
             // Lift
             robot.lift.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
 
             // Intake Power
             robot.intake.intakePower = when {
-                moveGamepad.a -> 0.6
+                moveGamepad.a -> 0.8
                 moveGamepad.x -> -1.0
-                else -> 0.1
+                else -> 0.07
             }
 
             // Pendul manual
 //            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
 
             // Extend
-            robot.extend.targetPosition = when {
-                controlGamepad.dpad_down -> Positions.Extend.`in`
-                controlGamepad.dpad_right -> Positions.Extend.out
-                else -> robot.extend.targetPosition
-            }
             robot.extend.targetPosition -= controlGamepad.right_stick_y * Extend.MULTIPLIER
 
-            // Pendul
-            robot.pendul.targetPosition = when {
-                controlGamepad.dpad_down -> Positions.Pendul.outtake
-                controlGamepad.dpad_right -> Positions.Pendul.transfer
-                else -> robot.pendul.targetPosition
+            if (controlGamepad.x &&
+                robot.pendul.targetPosition == Positions.Pendul.transfer &&
+                robot.intake.intakePosition == IntakePosition.TRANSFER
+            ) {
+                // FIXME: S-ar putea să fie nevoie de ceva timing aici
+                robot.intake.intakePower = -0.05
+                robot.claw.targetPosition = Positions.Claw.close
             }
         }
+    }
+
+    private fun runActions(telemetryPacket: TelemetryPacket) {
+        val iterator = actionList.iterator()
+        while (iterator.hasNext()) {
+            val action = iterator.next()
+            if (!action.run(telemetryPacket)) iterator.remove()
+        }
+    }
+
+    private fun RobotHardware.applyPositions(gamepad: Gamepad) {
+        intake.intakePosition = when {
+            gamepad.dpad_down -> IntakePosition.INTAKE
+            gamepad.dpad_right -> IntakePosition.TRANSFER
+            else -> intake.intakePosition
+        }
+
+        val (pendulPosition, extendPosition, clawPosition, clawRotatePosition) = when {
+            gamepad.dpad_down -> listOf(
+                pendul.targetPosition,
+                Positions.Extend.out,
+                claw.targetPosition,
+                clawRotate.targetPosition
+            )
+
+            gamepad.dpad_right -> listOf(
+                Positions.Pendul.transfer,
+                Positions.Extend.`in`,
+                Positions.Claw.open,
+                Positions.ClawRotate.transfer
+            )
+
+            gamepad.dpad_up -> listOf(
+                Positions.Pendul.outtake,
+                extend.targetPosition,
+                claw.targetPosition,
+                Positions.ClawRotate.outtake
+            )
+
+            else -> listOf(
+                pendul.targetPosition,
+                extend.targetPosition,
+                claw.targetPosition,
+                clawRotate.targetPosition
+            )
+        }
+
+        pendul.targetPosition = pendulPosition
+        extend.targetPosition = extendPosition
+        claw.targetPosition = clawPosition
+        clawRotate.targetPosition = clawRotatePosition
     }
 }

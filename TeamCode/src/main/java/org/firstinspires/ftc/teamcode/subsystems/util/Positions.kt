@@ -26,4 +26,14 @@ object Positions {
         const val down = 0.22
         const val up = 0.75
     }
+
+    object Claw {
+        val open: Double = TODO("Find positions for claw")
+        val close: Double = TODO("Find positions for claw")
+    }
+
+    object ClawRotate {
+        val transfer: Double = TODO("Find positions for claw rotate")
+        val outtake: Double = TODO("Find positions for claw rotate")
+    }
 }
