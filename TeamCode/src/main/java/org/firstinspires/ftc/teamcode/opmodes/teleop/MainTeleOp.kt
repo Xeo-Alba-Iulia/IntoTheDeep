@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.IntakePosition
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.subsystems.Extend
+import org.firstinspires.ftc.teamcode.subsystems.Lift
 import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 
 @TeleOp
@@ -54,6 +55,11 @@ class MainTeleOp : LinearOpMode() {
 
             // Lift
             robot.lift.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
+            robot.lift.power = if (moveGamepad.left_trigger < 0.1) {
+                moveGamepad.right_trigger.toDouble()
+            } else {
+                Lift.staticPower(moveGamepad.left_trigger.toDouble())
+            }
 
             // Intake Power
             robot.intake.intakePower = when {

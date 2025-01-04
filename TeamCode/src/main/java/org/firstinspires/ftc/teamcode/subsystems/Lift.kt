@@ -2,85 +2,45 @@ package org.firstinspires.ftc.teamcode.subsystems
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.acmerobotics.roadrunner.ftc.RawEncoder
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.control.PIDCoefficients
-import org.firstinspires.ftc.teamcode.control.PIDFController
-import org.firstinspires.ftc.teamcode.subsystems.util.ManualMechanismTeleOp
-import org.firstinspires.ftc.teamcode.subsystems.util.ManualPositionMechanism
+import org.firstinspires.ftc.teamcode.subsystems.util.CancelableAction
 
 /**
  * Lift subsystem
  *
- * @param hardwareMap the [HardwareMap] object from the OpMode
- * @param isVerbose whether to print debug information
+ * @param hardwareMap the [HardwareMap] instance from OpMode
  */
 @Config
-class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
+class Lift(hardwareMap: HardwareMap) : CancelableAction {
     companion object {
         @JvmField
-        @Volatile
-        var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
+        var kV = 0.3
 
-        @JvmField
-        @Volatile
-        var kStatic = 0.0
-        @JvmField
-        @Volatile
-        var kV = 0.0
-        @JvmField
-        @Volatile
-        var kA = 0.0
+        fun staticPower(power: Double) = (power + kV * 3.0) / 4.0
     }
 
     private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
     private val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
 
-    val encoder = RawEncoder(liftRight)
-
     private var isCanceled = false
 
-    private val lift = listOf(liftLeft, liftRight)
-
-    private val controller = PIDFController(coefficients, kV, kA, kStatic)
-
-    override var targetPosition
-        get() = controller.targetPosition
-        set(value) {
-            controller.targetPosition = value
-        }
-
-    /**
-     * Actual position of the lift, as measured while the action is running
-     */
-    var measuredPosition = 0.0
-        private set
-
-    /**
-     * Measured velocity of the lift, as measured while the action is running
-     */
-    var measuredVelocity = 0.0
-        private set
+    private val liftMotors = listOf(liftLeft, liftRight)
 
     init {
-        lift.forEach {
-            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
-            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        liftMotors.forEach {
+            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
-        encoder.direction = DcMotorSimple.Direction.REVERSE
-
-        controller.targetVelocity = 10.0
     }
 
     var power = 0.0
+        set(value) {
+            field = value.coerceIn(-1.0, 1.0)
+        }
 
     override fun cancel() {
         isCanceled = true
@@ -110,13 +70,12 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
 //            )
 //        }
 
-        for (motor in lift) {
+        for (motor in liftMotors) {
             motor.power = power
         }
+
+        p.put("Lift Power", power)
 
         return true
     }
 }
-
-@TeleOp
-class LiftTest : ManualMechanismTeleOp(::Lift)
