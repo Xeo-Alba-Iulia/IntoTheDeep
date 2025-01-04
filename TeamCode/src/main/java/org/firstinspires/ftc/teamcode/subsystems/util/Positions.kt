@@ -18,18 +18,18 @@ object Positions {
     }
 
     object Extend {
-        const val `in` = 0.08
+        const val `in` = 0.258
         const val out = 0.6
     }
 
     object IntakePendul {
-        const val down = 0.31
+        const val down = 0.37
         const val up = 0.84
     }
 
     object Claw {
-        val open: Double = 0.0
-        val close: Double = TODO("Find positions for claw")
+        val open: Double = 0.4
+        val close: Double = 1.0
     }
 
     object ClawRotate {
