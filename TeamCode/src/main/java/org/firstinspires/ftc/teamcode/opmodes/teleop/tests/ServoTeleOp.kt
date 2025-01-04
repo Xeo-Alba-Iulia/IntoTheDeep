@@ -24,7 +24,6 @@ class PositionsTeleOp : LinearOpMode() {
          * Lista cu toate mecanismele care vor fi testate.
          */
         // TODO: Se poate obține întreaga lista de mecanisme prin reflection.
-        // FIXME: Adaugă mecanismele noi aici
         val servoPositions = listOf(
             IntakeRotation(hardwareMap),
             Pendul(hardwareMap),
