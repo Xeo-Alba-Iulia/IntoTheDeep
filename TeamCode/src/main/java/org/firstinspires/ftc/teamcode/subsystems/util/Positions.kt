@@ -33,7 +33,7 @@ object Positions {
     }
 
     object ClawRotate {
-        val transfer: Double = TODO("Find positions for claw rotate")
-        val outtake: Double = TODO("Find positions for claw rotate")
+        val transfer: Double = 0.9
+        val outtake: Double = 0.5
     }
 }
