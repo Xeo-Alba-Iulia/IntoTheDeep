@@ -23,8 +23,8 @@ object Positions {
     }
 
     object IntakePendul {
-        const val down = 0.22
-        const val up = 0.75
+        const val down = 0.31
+        const val up = 0.84
     }
 
     object Claw {
