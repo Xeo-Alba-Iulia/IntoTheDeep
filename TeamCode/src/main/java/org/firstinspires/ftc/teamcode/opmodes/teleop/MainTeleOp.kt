@@ -66,7 +66,8 @@ class MainTeleOp : LinearOpMode() {
 //            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
 
             // Extend
-            robot.extend.targetPosition -= controlGamepad.right_stick_y * Extend.MULTIPLIER
+            // FIXME: E necesar Extend.MULTIPLIER sau nu
+            robot.extend.targetPosition -= (controlGamepad.right_trigger - controlGamepad.left_trigger)
 
             if (controlGamepad.x &&
                 robot.pendul.targetPosition == Positions.Pendul.transfer &&
