@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 
 @TeleOp
 class MainTeleOp : LinearOpMode() {
-    private val actionList = mutableListOf<Action>()
-
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
@@ -23,22 +21,20 @@ class MainTeleOp : LinearOpMode() {
 
         val dashboard = FtcDashboard.getInstance()
 
-        actionList.addAll(
-            listOf(
-                robot.intake,
-                robot.pendul,
-                robot.extend,
-                robot.lift,
-                robot.pendul,
-                robot.claw,
-                robot.clawRotate
-            )
+        val actionList = mutableListOf(
+            robot.intake,
+            robot.pendul,
+            robot.extend,
+            robot.lift,
+            robot.pendul,
+            robot.claw,
+            robot.clawRotate
         )
 
         while (!isStarted) {
             val telemetryPacket = TelemetryPacket()
             telemetryPacket.addLine("Initializing")
-            runActions(telemetryPacket)
+            runActions(actionList, telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
         }
 
@@ -53,7 +49,7 @@ class MainTeleOp : LinearOpMode() {
 
             // Actions for other hardware (intake, lift, etc.)
             val telemetryPacket = TelemetryPacket()
-            runActions(telemetryPacket)
+            runActions(actionList, telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
 
             // Lift
@@ -83,7 +79,10 @@ class MainTeleOp : LinearOpMode() {
         }
     }
 
-    private fun runActions(telemetryPacket: TelemetryPacket) {
+    /**
+     * Runs all Actions in [actionList], deleting every finished [Action]
+     */
+    fun runActions(actionList: MutableList<Action>, telemetryPacket: TelemetryPacket) {
         val iterator = actionList.iterator()
         while (iterator.hasNext()) {
             val action = iterator.next()
@@ -91,46 +90,56 @@ class MainTeleOp : LinearOpMode() {
         }
     }
 
-    private fun RobotHardware.applyPositions(gamepad: Gamepad) {
+    /**
+     * Apply positions to the robot hardware based on the gamepad input
+     *
+     * @throws RuntimeException if the target position is not implemented
+     * (workaround for DriverStation not displaying NotImplementedException)
+     */
+    fun RobotHardware.applyPositions(gamepad: Gamepad) {
         intake.intakePosition = when {
             gamepad.dpad_down -> IntakePosition.INTAKE
             gamepad.dpad_right -> IntakePosition.TRANSFER
             else -> intake.intakePosition
         }
 
-        val (pendulPosition, extendPosition, clawPosition, clawRotatePosition) = when {
-            gamepad.dpad_down -> listOf(
-                pendul.targetPosition,
-                Positions.Extend.out,
-                claw.targetPosition,
-                clawRotate.targetPosition
-            )
+        try {
+            val (pendulPosition, extendPosition, clawPosition, clawRotatePosition) = when {
+                gamepad.dpad_down -> listOf(
+                    pendul.targetPosition,
+                    Positions.Extend.out,
+                    claw.targetPosition,
+                    clawRotate.targetPosition
+                )
 
-            gamepad.dpad_right -> listOf(
-                Positions.Pendul.transfer,
-                Positions.Extend.`in`,
-                Positions.Claw.open,
-                Positions.ClawRotate.transfer
-            )
+                gamepad.dpad_right -> listOf(
+                    Positions.Pendul.transfer,
+                    Positions.Extend.`in`,
+                    Positions.Claw.open,
+                    Positions.ClawRotate.transfer
+                )
 
-            gamepad.dpad_up -> listOf(
-                Positions.Pendul.outtake,
-                extend.targetPosition,
-                claw.targetPosition,
-                Positions.ClawRotate.outtake
-            )
+                gamepad.dpad_up -> listOf(
+                    Positions.Pendul.outtake,
+                    extend.targetPosition,
+                    claw.targetPosition,
+                    Positions.ClawRotate.outtake
+                )
 
-            else -> listOf(
-                pendul.targetPosition,
-                extend.targetPosition,
-                claw.targetPosition,
-                clawRotate.targetPosition
-            )
+                else -> listOf(
+                    pendul.targetPosition,
+                    extend.targetPosition,
+                    claw.targetPosition,
+                    clawRotate.targetPosition
+                )
+            }
+            pendul.targetPosition = pendulPosition
+            extend.targetPosition = extendPosition
+            claw.targetPosition = clawPosition
+            clawRotate.targetPosition = clawRotatePosition
+        } catch (e: NotImplementedError) {
+            // Driver station nu arata NotImplementedError, doar oprește OpMode
+            throw RuntimeException(e)
         }
-
-        pendul.targetPosition = pendulPosition
-        extend.targetPosition = extendPosition
-        claw.targetPosition = clawPosition
-        clawRotate.targetPosition = clawRotatePosition
     }
 }
