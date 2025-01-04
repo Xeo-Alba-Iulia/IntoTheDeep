@@ -28,7 +28,7 @@ object Positions {
     }
 
     object Claw {
-        val open: Double = TODO("Find positions for claw")
+        val open: Double = 0.0
         val close: Double = TODO("Find positions for claw")
     }
 
