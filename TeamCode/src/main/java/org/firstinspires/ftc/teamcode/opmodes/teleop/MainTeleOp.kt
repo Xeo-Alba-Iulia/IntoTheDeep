@@ -8,13 +8,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.IntakePosition
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.subsystems.Lift
+import org.firstinspires.ftc.teamcode.subsystems.Extend
 import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 
 @TeleOp
 class MainTeleOp : LinearOpMode() {
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
+
+        fun inTransfer() = robot.intake.intakePosition == IntakePosition.TRANSFER &&
+                robot.pendul.targetPosition == Positions.Pendul.transfer
 
         val moveGamepad: Gamepad = gamepad1
         val controlGamepad: Gamepad = gamepad2
@@ -54,11 +57,6 @@ class MainTeleOp : LinearOpMode() {
 
             // Lift
             robot.lift.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
-            robot.lift.power = if (moveGamepad.left_trigger < 0.1) {
-                moveGamepad.right_trigger.toDouble()
-            } else {
-                Lift.staticPower(moveGamepad.left_trigger.toDouble())
-            }
 
             // Intake Power
             robot.intake.intakePower = when {
@@ -71,16 +69,21 @@ class MainTeleOp : LinearOpMode() {
 //            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
 
             // Extend
-            // FIXME: E necesar Extend.MULTIPLIER sau nu
-            robot.extend.targetPosition -= (controlGamepad.right_trigger - controlGamepad.left_trigger)
+            robot.extend.targetPosition +=
+                (controlGamepad.right_trigger - controlGamepad.left_trigger) * Extend.MULTIPLIER
 
-            if (controlGamepad.x &&
-                robot.pendul.targetPosition == Positions.Pendul.transfer &&
-                robot.intake.intakePosition == IntakePosition.TRANSFER
-            ) {
+            if (controlGamepad.x && inTransfer()) {
                 // FIXME: S-ar putea să fie nevoie de ceva timing aici
                 robot.intake.intakePower = -0.05
                 robot.claw.targetPosition = Positions.Claw.close
+            }
+
+            if (!inTransfer()) {
+                robot.claw.targetPosition = when {
+                    moveGamepad.right_bumper -> Positions.Claw.close
+                    moveGamepad.left_bumper -> Positions.Claw.open
+                    else -> robot.claw.targetPosition
+                }
             }
         }
     }
