@@ -50,7 +50,6 @@ enum class IntakePosition {
 
 @TeleOp
 class IntakeTest : LinearOpMode() {
-
     override fun runOpMode() {
         waitForStart()
         val intake = Intake(hardwareMap)
