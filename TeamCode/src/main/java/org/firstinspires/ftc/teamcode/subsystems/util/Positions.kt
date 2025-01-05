@@ -29,7 +29,7 @@ object Positions {
 
     object Claw {
         val open: Double = 0.4
-        val close: Double = 1.0
+        val close: Double = 0.85
     }
 
     object ClawRotate {

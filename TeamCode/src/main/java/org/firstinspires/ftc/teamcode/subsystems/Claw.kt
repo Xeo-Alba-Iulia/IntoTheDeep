@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.subsystems.util.ServoPositionMechanism
 
-class Claw(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Claw.open) {
+class Claw(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Claw.close) {
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Claw"])
 }
 
