@@ -6,14 +6,12 @@ import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.IntakePosition
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.subsystems.Extend
 import org.firstinspires.ftc.teamcode.subsystems.util.Positions
+import java.util.concurrent.TimeUnit
 
 @TeleOp
 class MainTeleOp : LinearOpMode() {
@@ -103,6 +101,9 @@ class MainTeleOp : LinearOpMode() {
         }
     }
 
+    private val timer = ElapsedTime()
+    private var pendulIsActioned = false
+
     /**
      * Apply positions to the robot hardware based on the gamepad input
      *
@@ -110,23 +111,6 @@ class MainTeleOp : LinearOpMode() {
      * (workaround for DriverStation not displaying NotImplementedException)
      */
     fun RobotHardware.applyPositions(gamepad: Gamepad) {
-
-        fun executeInNewThread(block: suspend () -> Unit) {
-            // Launch a coroutine on a new thread
-            GlobalScope.launch(Dispatchers.Default) {
-                try {
-                    // Asynchronous delay
-                    delay(500)
-
-                    // Execute the block of code
-                    block()
-                } catch (e: Exception) {
-                    // Handle exceptions
-                    e.printStackTrace()
-                }
-            }
-        }
-
         intake.intakePosition = when {
             gamepad.dpad_down -> IntakePosition.INTAKE
             gamepad.dpad_right -> IntakePosition.TRANSFER
@@ -141,13 +125,15 @@ class MainTeleOp : LinearOpMode() {
             }
         }
 
-//        if(gamepad.dpad_right) {
-//            val task: () -> Unit = {
-//                pendul.targetPosition = Positions.Pendul.transfer
-//            }
-//
-//            executeInNewThread(task)
-//        }
+        if (gamepad.dpad_right) {
+            pendulIsActioned = true
+            timer.reset()
+        }
+
+        if (pendulIsActioned && timer.time(TimeUnit.MILLISECONDS) >= 500) {
+            pendul.targetPosition = Positions.Pendul.transfer
+            pendulIsActioned = false
+        }
 
         try {
             val (pendulPosition, extendPosition, clawPosition, clawRotatePosition) = when {
