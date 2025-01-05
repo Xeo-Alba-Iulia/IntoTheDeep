@@ -125,7 +125,7 @@ class MainTeleOp : LinearOpMode() {
             }
         }
 
-        if (gamepad.dpad_right) {
+        if (gamepad.dpad_right && !pendulIsActioned) {
             pendulIsActioned = true
             timer.reset()
         }
