@@ -39,13 +39,19 @@ class Intake(hardwareMap: HardwareMap) : Action {
                     intakePendul.targetPosition = Positions.IntakePendul.up
                     intakeRotation.targetPosition = Positions.IntakeRotation.perpendicular
                 }
+
+                IntakePosition.ENTRANCE -> {
+                    intakePendul.targetPosition = Positions.IntakePendul.entrance
+                    intakeRotation.targetPosition = Positions.IntakeRotation.parallel
+                }
             }
         }
 }
 
 enum class IntakePosition {
     INTAKE,
-    TRANSFER
+    TRANSFER,
+    ENTRANCE
 }
 
 @TeleOp

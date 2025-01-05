@@ -7,8 +7,9 @@ object Positions {
     }
 
     object Pendul {
-        const val transfer = 0.98
-        const val outtake = 0.0
+        const val transfer = 0.927
+        const val outtake = 0.2
+        const val smash = 0.0
     }
 
     object Lift {
@@ -18,12 +19,13 @@ object Positions {
     }
 
     object Extend {
-        const val `in` = 0.258
+        const val `in` = 0.35
         const val out = 0.6
     }
 
     object IntakePendul {
-        const val down = 0.37
+        const val down = 0.36
+        const val entrance = 0.45
         const val up = 0.84
     }
 
@@ -34,6 +36,6 @@ object Positions {
 
     object ClawRotate {
         val transfer: Double = 0.9
-        val outtake: Double = 0.5
+        val outtake: Double = 0.4
     }
 }

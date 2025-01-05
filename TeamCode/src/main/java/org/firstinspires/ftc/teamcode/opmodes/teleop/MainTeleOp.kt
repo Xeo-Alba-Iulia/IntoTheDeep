@@ -56,7 +56,7 @@ class MainTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
 
             // Lift
-            robot.lift.power = (moveGamepad.right_trigger - moveGamepad.left_trigger).toDouble()
+            robot.lift.power = ((moveGamepad.right_trigger - moveGamepad.left_trigger) * (moveGamepad.right_trigger + moveGamepad.left_trigger)).toDouble()
 
             // Intake Power
             robot.intake.intakePower = when {
@@ -78,13 +78,13 @@ class MainTeleOp : LinearOpMode() {
                 robot.claw.targetPosition = Positions.Claw.close
             }
 
-            if (!inTransfer()) {
+            //if (!inTransfer()) {
                 robot.claw.targetPosition = when {
-                    moveGamepad.right_bumper -> Positions.Claw.close
-                    moveGamepad.left_bumper -> Positions.Claw.open
+                    moveGamepad.right_bumper || controlGamepad.right_bumper -> Positions.Claw.close
+                    moveGamepad.left_bumper || controlGamepad.left_bumper -> Positions.Claw.open
                     else -> robot.claw.targetPosition
                 }
-            }
+            //}
         }
     }
 
@@ -112,19 +112,21 @@ class MainTeleOp : LinearOpMode() {
             else -> intake.intakePosition
         }
 
+        if (intake.intakePosition != IntakePosition.TRANSFER) {
+            intake.intakePosition = when {
+                extend.targetPosition > 0.3 -> IntakePosition.INTAKE
+                extend.targetPosition <= 0.3 -> IntakePosition.ENTRANCE
+                else -> intake.intakePosition
+            }
+        }
+
         try {
             val (pendulPosition, extendPosition, clawPosition, clawRotatePosition) = when {
-                gamepad.dpad_down -> listOf(
-                    pendul.targetPosition,
-                    Positions.Extend.out,
-                    claw.targetPosition,
-                    clawRotate.targetPosition
-                )
 
                 gamepad.dpad_right -> listOf(
                     Positions.Pendul.transfer,
                     Positions.Extend.`in`,
-                    Positions.Claw.open,
+                    claw.targetPosition,
                     Positions.ClawRotate.transfer
                 )
 
@@ -132,6 +134,13 @@ class MainTeleOp : LinearOpMode() {
                     Positions.Pendul.outtake,
                     extend.targetPosition,
                     claw.targetPosition,
+                    Positions.ClawRotate.outtake
+                )
+
+                gamepad.dpad_left -> listOf(
+                    Positions.Pendul.smash,
+                    extend.targetPosition,
+                    Positions.Claw.open,
                     Positions.ClawRotate.outtake
                 )
 
