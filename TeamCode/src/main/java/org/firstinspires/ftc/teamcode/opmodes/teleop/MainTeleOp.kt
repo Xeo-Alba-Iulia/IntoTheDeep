@@ -6,6 +6,10 @@ import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.firstinspires.ftc.teamcode.IntakePosition
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.subsystems.Extend
@@ -106,6 +110,23 @@ class MainTeleOp : LinearOpMode() {
      * (workaround for DriverStation not displaying NotImplementedException)
      */
     fun RobotHardware.applyPositions(gamepad: Gamepad) {
+
+        fun executeInNewThread(block: suspend () -> Unit) {
+            // Launch a coroutine on a new thread
+            GlobalScope.launch(Dispatchers.Default) {
+                try {
+                    // Asynchronous delay
+                    delay(500)
+
+                    // Execute the block of code
+                    block()
+                } catch (e: Exception) {
+                    // Handle exceptions
+                    e.printStackTrace()
+                }
+            }
+        }
+
         intake.intakePosition = when {
             gamepad.dpad_down -> IntakePosition.INTAKE
             gamepad.dpad_right -> IntakePosition.TRANSFER
@@ -120,14 +141,22 @@ class MainTeleOp : LinearOpMode() {
             }
         }
 
+//        if(gamepad.dpad_right) {
+//            val task: () -> Unit = {
+//                pendul.targetPosition = Positions.Pendul.transfer
+//            }
+//
+//            executeInNewThread(task)
+//        }
+
         try {
             val (pendulPosition, extendPosition, clawPosition, clawRotatePosition) = when {
 
                 gamepad.dpad_right -> listOf(
-                    Positions.Pendul.transfer,
+                    Positions.Pendul.outtake,
                     Positions.Extend.`in`,
                     claw.targetPosition,
-                    Positions.ClawRotate.transfer
+                    Positions.Pendul.transfer
                 )
 
                 gamepad.dpad_up -> listOf(
