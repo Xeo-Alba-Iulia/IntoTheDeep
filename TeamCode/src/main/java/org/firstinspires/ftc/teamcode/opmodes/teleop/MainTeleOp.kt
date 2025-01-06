@@ -103,6 +103,7 @@ class MainTeleOp : LinearOpMode() {
 
     private val timer = ElapsedTime()
     private var pendulIsActioned = false
+    private var intakeIsUp = false
 
     /**
      * Apply positions to the robot hardware based on the gamepad input
@@ -111,6 +112,11 @@ class MainTeleOp : LinearOpMode() {
      * (workaround for DriverStation not displaying NotImplementedException)
      */
     fun RobotHardware.applyPositions(gamepad: Gamepad) {
+        if (gamepad.dpad_down && intakeIsUp) {
+            intakeIsUp = false
+            timer.reset()
+        }
+
         intake.intakePosition = when {
             gamepad.dpad_down -> IntakePosition.INTAKE
             gamepad.dpad_right -> IntakePosition.TRANSFER
@@ -119,14 +125,15 @@ class MainTeleOp : LinearOpMode() {
 
         if (intake.intakePosition != IntakePosition.TRANSFER) {
             intake.intakePosition = when {
-                extend.targetPosition > 0.3 -> IntakePosition.INTAKE
-                extend.targetPosition <= 0.3 -> IntakePosition.ENTRANCE
-                else -> intake.intakePosition
+                extend.targetPosition > 0.3 && timer.time(TimeUnit.MILLISECONDS) >= 500 -> IntakePosition.INTAKE
+                extend.targetPosition <= 0.3 && timer.time(TimeUnit.MILLISECONDS) >= 500 -> IntakePosition.ENTRANCE
+                else -> IntakePosition.ENTRANCE
             }
         }
 
         if (gamepad.dpad_right && !pendulIsActioned) {
             pendulIsActioned = true
+            intakeIsUp = true
             timer.reset()
         }
 
