@@ -159,6 +159,13 @@ class MainTeleOp : LinearOpMode() {
                     Positions.ClawRotate.outtake
                 )
 
+                gamepad.cross -> listOf(
+                    Positions.Pendul.basket,
+                    extend.targetPosition,
+                    claw.targetPosition,
+                    Positions.ClawRotate.outtake
+                )
+
                 else -> listOf(
                     pendul.targetPosition,
                     extend.targetPosition,

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeMotor
 import org.firstinspires.ftc.teamcode.subsystems.IntakePendul
 import org.firstinspires.ftc.teamcode.subsystems.IntakeRotation
 import org.firstinspires.ftc.teamcode.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.util.ServoSmoothing
 
 class Intake(hardwareMap: HardwareMap) : Action {
     private val intakeMotor = IntakeMotor(hardwareMap)
@@ -31,7 +32,7 @@ class Intake(hardwareMap: HardwareMap) : Action {
         set(value) {
             when (value) {
                 IntakePosition.INTAKE -> {
-                    intakePendul.targetPosition = Positions.IntakePendul.down
+                    intakePendul.targetPosition = ServoSmoothing.servoSmoothing(intakePendul.getPosition(), Positions.IntakePendul.down)
                     intakeRotation.targetPosition = Positions.IntakeRotation.parallel
                 }
 
