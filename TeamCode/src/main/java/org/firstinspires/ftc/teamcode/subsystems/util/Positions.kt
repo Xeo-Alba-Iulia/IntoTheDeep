@@ -1,43 +1,84 @@
 package org.firstinspires.ftc.teamcode.subsystems.util
 
+import com.acmerobotics.dashboard.config.Config
+
+@Config
 object Positions {
     object IntakeRotation {
-        const val parallel = 0.345
-        const val perpendicular = 0.6466
+        @JvmField
+        @Volatile
+        var parallel = 0.345
+        @JvmField
+        @Volatile
+        var perpendicular = 0.6466
     }
 
     object Pendul {
-        const val transfer = 0.93
-        const val outtake = 0.2
-        const val smash = 0.0
-        const val basket = 0.49
+        @JvmField
+        @Volatile
+        var transfer = 0.93
+        @JvmField
+        @Volatile
+        var outtake = 0.2
+        @JvmField
+        @Volatile
+        var smash = 0.0
+        @JvmField
+        @Volatile
+        var basket = 0.49
     }
 
     object Lift {
-        const val down = 0.0
-        const val half = 70.0
-        const val up = 110.0
+        @JvmField
+        @Volatile
+        var down = 0.0
+        @JvmField
+        @Volatile
+        var half = 70.0
+        @JvmField
+        @Volatile
+        var up = 110.0
     }
 
     object Extend {
-        const val `in` = 0.32
-        const val out = 0.6
+        @JvmField
+        @Volatile
+        var `in` = 0.32
+        @JvmField
+        @Volatile
+        var out = 0.6
     }
 
     object IntakePendul {
-        const val down = 0.43
-        const val entrance = 0.50
-        const val up = 0.84
+        @JvmField
+        @Volatile
+        var down = 0.43
+        @JvmField
+        @Volatile
+        var entrance = 0.50
+        @JvmField
+        @Volatile
+        var up = 0.84
     }
 
     object Claw {
-        val open: Double = 0.4
-        val close: Double = 0.95
+        @JvmField
+        @Volatile
+        var open: Double = 0.4
+        @JvmField
+        @Volatile
+        var close: Double = 0.95
     }
 
     object ClawRotate {
-        val transfer: Double = 0.9
-        val outtake: Double = 0.4
-        val basket: Double = 0.3
+        @JvmField
+        @Volatile
+        var transfer: Double = 0.9
+        @JvmField
+        @Volatile
+        var outtake: Double = 0.4
+        @JvmField
+        @Volatile
+        var basket: Double = 0.3
     }
 }
