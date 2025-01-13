@@ -5,10 +5,11 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.subsystems.IntakeMotor
+import org.firstinspires.ftc.teamcode.subsystems.IntakePendul
 import org.firstinspires.ftc.teamcode.subsystems.IntakeRotation
 import kotlin.properties.Delegates
 
-//@TeleOp
+@TeleOp(name = "Intake Test", group = "B")
 class IntakeTest : LinearOpMode() {
     companion object {
         private const val MULTIPLIER = 0.003
@@ -17,6 +18,7 @@ class IntakeTest : LinearOpMode() {
     override fun runOpMode() {
         val intake = IntakeMotor(hardwareMap)
         val intakeRotation = IntakeRotation(hardwareMap)
+        val intakePendul = IntakePendul(hardwareMap)
 
         waitForStart()
 
@@ -27,7 +29,8 @@ class IntakeTest : LinearOpMode() {
 //            intake.stop()
 //        )))
 
-        var position: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
+        var rotationPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
+        var pendulPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0}
 
         val dash = FtcDashboard.getInstance()
         var isRunning = true
@@ -35,8 +38,12 @@ class IntakeTest : LinearOpMode() {
         while (opModeIsActive() && isRunning) {
             val packet = TelemetryPacket()
 
-            position += MULTIPLIER * gamepad1.left_stick_y
-            intakeRotation.targetPosition = position
+            rotationPosition += MULTIPLIER * gamepad1.left_stick_y
+            pendulPosition += MULTIPLIER * gamepad1.right_stick_y
+
+            intakeRotation.targetPosition = rotationPosition
+            intakePendul.targetPosition = pendulPosition
+
             isRunning = intakeRotation.run(packet)
 
             intake.intakePower = when {
