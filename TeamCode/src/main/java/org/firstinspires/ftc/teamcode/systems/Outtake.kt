@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
 class Outtake(hardwareMap: HardwareMap) : Action {
-    private val rotation = ClawRotate(hardwareMap)
-    private val pendul = Pendul(hardwareMap)
+    val rotation = ClawRotate(hardwareMap)
+    val pendul = Pendul(hardwareMap)
 
     override fun run(p: TelemetryPacket) =rotation.run(p) && pendul.run(p)
 
