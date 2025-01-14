@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import java.util.concurrent.TimeUnit
 
-@TeleOp
+@TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)

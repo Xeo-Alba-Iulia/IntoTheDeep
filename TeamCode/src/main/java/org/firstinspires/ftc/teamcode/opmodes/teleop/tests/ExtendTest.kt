@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
-@TeleOp
+@TeleOp(name = "Extend position test", group = "B")
 @Config
 class ExtendTest : LinearOpMode() {
     companion object {

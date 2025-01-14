@@ -14,5 +14,5 @@ class Pendul(hardwareMap: HardwareMap) : ServoPositionMechanism(0.69) {
     }
 }
 
-@TeleOp(group = "Servo Subsystems")
+@TeleOp(name = "Outtake pendul test", group = "C")
 class PendulTest : ManualMechanismTeleOp(::Pendul)

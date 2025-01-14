@@ -10,5 +10,5 @@ class ClawRotate(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Cl
     override val servos = arrayOf(hardwareMap.servo["ClawRotate"])
 }
 
-@TeleOp(group = "Servo Subsystems")
+@TeleOp(name = "Outtake rotation test", group = "C")
 class ClawRotateTest : ManualMechanismTeleOp(::ClawRotate)

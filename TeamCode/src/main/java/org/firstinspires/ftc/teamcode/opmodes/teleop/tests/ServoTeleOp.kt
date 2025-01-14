@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
  *
  * *Cel mai ușor se dă comment la mecanismele nefolosite si se rulează testul.*
  */
-@TeleOp(name = "Position Tests", group = "Tests")
+@TeleOp(name = "Position Tests", group = "B")
 class PositionsTeleOp : LinearOpMode() {
     override fun runOpMode() {
         val dashboard = FtcDashboard.getInstance()

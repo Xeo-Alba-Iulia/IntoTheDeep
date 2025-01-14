@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.MecanumDrive
 import org.firstinspires.ftc.teamcode.trajectoryAction
 
-@Autonomous
+@Autonomous(name = "Trajectory test", group = "B")
 class TrajectoryTest : LinearOpMode() {
     override fun runOpMode() {
 

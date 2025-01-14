@@ -11,5 +11,5 @@ class Claw(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.Claw.clo
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Claw"])
 }
 
-@TeleOp(group = "Servo Subsystems")
+@TeleOp(name = "Claw test", group = "C")
 class ClawTest : ManualMechanismTeleOp(::Claw)

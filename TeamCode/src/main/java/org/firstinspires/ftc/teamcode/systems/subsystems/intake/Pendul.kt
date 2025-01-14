@@ -10,5 +10,5 @@ class IntakePendul(hardwareMap: HardwareMap) : ServoPositionMechanism(0.9) {
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["IntakePendul"])
 }
 
-@TeleOp(group = "Servo Subsystems")
+@TeleOp(name = "Intake pendul test", group = "C")
 class IntakePendulTest : ManualMechanismTeleOp(::IntakePendul)
