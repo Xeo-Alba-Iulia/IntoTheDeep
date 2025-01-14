@@ -4,9 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.subsystems.Claw
-import org.firstinspires.ftc.teamcode.subsystems.ClawRotate
-import org.firstinspires.ftc.teamcode.subsystems.Pendul
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Claw
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.ClawRotate
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import kotlin.properties.Delegates
 
 @TeleOp(name = "Outtake Test", group = "B")

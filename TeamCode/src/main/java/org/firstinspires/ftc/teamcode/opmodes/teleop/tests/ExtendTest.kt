@@ -5,8 +5,8 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.subsystems.Extend
-import org.firstinspires.ftc.teamcode.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
 @TeleOp
 @Config

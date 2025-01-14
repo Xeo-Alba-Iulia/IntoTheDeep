@@ -4,9 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.subsystems.IntakeMotor
-import org.firstinspires.ftc.teamcode.subsystems.IntakePendul
-import org.firstinspires.ftc.teamcode.subsystems.IntakeRotation
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeMotor
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
 import kotlin.properties.Delegates
 
 @TeleOp(name = "Intake Test", group = "B")

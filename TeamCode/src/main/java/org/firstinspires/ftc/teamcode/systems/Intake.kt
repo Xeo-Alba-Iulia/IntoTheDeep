@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.systems
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.subsystems.IntakeMotor
-import org.firstinspires.ftc.teamcode.subsystems.IntakePendul
-import org.firstinspires.ftc.teamcode.subsystems.IntakeRotation
-import org.firstinspires.ftc.teamcode.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeMotor
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.ServoSmoothing
 
 class Intake(hardwareMap: HardwareMap) : Action {
@@ -55,7 +55,7 @@ enum class IntakePosition {
     ENTRANCE
 }
 
-@TeleOp
+@TeleOp(name = "Intake positions Test", group = "B")
 class IntakeTest : LinearOpMode() {
     override fun runOpMode() {
         waitForStart()
@@ -66,6 +66,7 @@ class IntakeTest : LinearOpMode() {
             intake.intakePosition = when {
                 gamepad1.a -> IntakePosition.INTAKE
                 gamepad1.b -> IntakePosition.TRANSFER
+                gamepad1.x -> IntakePosition.ENTRANCE
                 else -> intake.intakePosition
             }
 

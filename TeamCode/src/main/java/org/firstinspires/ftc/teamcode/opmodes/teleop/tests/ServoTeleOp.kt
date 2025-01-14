@@ -4,10 +4,10 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.subsystems.IntakePendul
-import org.firstinspires.ftc.teamcode.subsystems.IntakeRotation
-import org.firstinspires.ftc.teamcode.subsystems.Lift
-import org.firstinspires.ftc.teamcode.subsystems.Pendul
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
+import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 
 /**
  * TeleOp principal pentru testarea simultană a pozițiilor mecanismelor.

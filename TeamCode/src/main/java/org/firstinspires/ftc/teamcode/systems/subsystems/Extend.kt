@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.subsystems
+package org.firstinspires.ftc.teamcode.systems.subsystems
 
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.Range
-import org.firstinspires.ftc.teamcode.subsystems.util.ServoPositionMechanism
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
 
 private const val MAX_POSITION = 0.9
 

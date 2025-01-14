@@ -7,10 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.IntakePosition
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.subsystems.Extend
-import org.firstinspires.ftc.teamcode.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.systems.IntakePosition
+import org.firstinspires.ftc.teamcode.systems.OuttakePosition
+import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import java.util.concurrent.TimeUnit
 
 @TeleOp
@@ -19,7 +20,7 @@ class MainTeleOp : LinearOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
         fun inTransfer() = robot.intake.intakePosition == IntakePosition.TRANSFER &&
-                robot.pendul.targetPosition == Positions.Pendul.transfer
+                robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
         val moveGamepad: Gamepad = gamepad1
         val controlGamepad: Gamepad = gamepad2
@@ -28,12 +29,9 @@ class MainTeleOp : LinearOpMode() {
 
         val actionList = mutableListOf(
             robot.intake,
-            robot.pendul,
+            robot.outtake,
             robot.extend,
-            robot.lift,
-            robot.pendul,
-            robot.claw,
-            robot.clawRotate
+            robot.lift
         )
 
         while (!isStarted) {
@@ -138,52 +136,46 @@ class MainTeleOp : LinearOpMode() {
         }
 
         if (pendulIsActioned && timer.time(TimeUnit.MILLISECONDS) >= 500) {
-            pendul.targetPosition = Positions.Pendul.transfer
+            outtake.pendul.targetPosition = Positions.Pendul.transfer
             pendulIsActioned = false
         }
 
         try {
-            val (pendulPosition, extendPosition, clawPosition, clawRotatePosition) = when {
+            val (outtakePosition, extendPosition, clawPosition) = when {
 
                 gamepad.dpad_right -> listOf(
-                    Positions.Pendul.outtake,
+                    OuttakePosition.TRANSFER,
                     Positions.Extend.`in`,
-                    claw.targetPosition,
-                    Positions.Pendul.transfer
+                    claw.targetPosition
                 )
 
                 gamepad.dpad_up -> listOf(
-                    Positions.Pendul.outtake,
+                    OuttakePosition.OUTTAKE,
                     extend.targetPosition,
-                    claw.targetPosition,
-                    Positions.ClawRotate.outtake
+                    claw.targetPosition
                 )
 
                 gamepad.dpad_left -> listOf(
-                    Positions.Pendul.smash,
+                    OuttakePosition.SMASH,
                     extend.targetPosition,
-                    Positions.Claw.open,
-                    Positions.ClawRotate.outtake
+                    Positions.Claw.open
                 )
 
                 gamepad.cross -> listOf(
-                    Positions.Pendul.basket,
+                    OuttakePosition.BASKET,
                     extend.targetPosition,
-                    claw.targetPosition,
-                    Positions.ClawRotate.outtake
+                    claw.targetPosition
                 )
 
                 else -> listOf(
-                    pendul.targetPosition,
+                    outtake.outtakePosition,
                     extend.targetPosition,
-                    claw.targetPosition,
-                    clawRotate.targetPosition
+                    claw.targetPosition
                 )
             }
-            pendul.targetPosition = pendulPosition
-            extend.targetPosition = extendPosition
-            claw.targetPosition = clawPosition
-            clawRotate.targetPosition = clawRotatePosition
+            outtake.outtakePosition = outtakePosition as OuttakePosition
+            extend.targetPosition = extendPosition as Double
+            claw.targetPosition = clawPosition as Double
         } catch (e: NotImplementedError) {
             // Driver station nu arata NotImplementedError, doar oprește OpMode
             throw RuntimeException(e)
