@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.subsystems.Claw
-import org.firstinspires.ftc.teamcode.subsystems.ClawRotate
-import org.firstinspires.ftc.teamcode.subsystems.Extend
-import org.firstinspires.ftc.teamcode.subsystems.Lift
-import org.firstinspires.ftc.teamcode.subsystems.Movement
-import org.firstinspires.ftc.teamcode.subsystems.Pendul
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Claw
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.ClawRotate
+import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
+import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
+import org.firstinspires.ftc.teamcode.systems.subsystems.Movement
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
+import org.firstinspires.ftc.teamcode.systems.Intake
 
 /**
  * Class containing all hardware of the robot

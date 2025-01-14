@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
-import org.firstinspires.ftc.teamcode.IntakePosition
+import org.firstinspires.ftc.teamcode.systems.IntakePosition
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.subsystems.Extend
-import org.firstinspires.ftc.teamcode.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import java.util.concurrent.TimeUnit
 
 @TeleOp
