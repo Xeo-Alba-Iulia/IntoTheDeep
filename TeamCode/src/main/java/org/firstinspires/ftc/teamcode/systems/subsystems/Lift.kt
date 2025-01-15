@@ -2,45 +2,80 @@ package org.firstinspires.ftc.teamcode.systems.subsystems
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.systems.subsystems.util.CancelableAction
+import org.firstinspires.ftc.teamcode.control.PIDCoefficients
+import org.firstinspires.ftc.teamcode.control.PIDFController
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
 
-/**
- * Lift subsystem
- *
- * @param hardwareMap the [HardwareMap] instance from OpMode
- */
 @Config
-class Lift(hardwareMap: HardwareMap) : CancelableAction {
+class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
     companion object {
         @JvmField
-        var kV = 0.3
+        @Volatile
+        var coefficients = PIDCoefficients(0.0, 0.0, 0.0)
 
-        fun staticPower(power: Double) = (power + kV * 3.0) / 4.0
+        @JvmField
+        @Volatile
+        var kStatic = 0.0
+        @JvmField
+        @Volatile
+        var kV = 0.0
+        @JvmField
+        @Volatile
+        var kA = 0.0
     }
 
-    private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
-    private val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
+    val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
+    val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
+
+    val encoder = RawEncoder(liftRight)
 
     private var isCanceled = false
 
-    private val liftMotors = listOf(liftLeft, liftRight)
+    val lift = listOf(liftLeft, liftRight)
+
+    val controller = PIDFController(coefficients, kV, kA, kStatic)
+
+    override var targetPosition
+        get() = controller.targetPosition
+        set(value) {
+            controller.targetPosition = value
+        }
+
+    /**
+     * Actual position of the lift, as measured while the action is running
+     */
+    var measuredPosition = 0.0
+        private set
+
+    /**
+     * Measured velocity of the lift, as measured while the action is running
+     */
+    var measuredVelocity = 0.0
+        private set
 
     init {
-        liftMotors.forEach {
-            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        lift.forEach {
+            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
-        liftLeft.direction = DcMotorSimple.Direction.REVERSE
+        encoder.direction = DcMotorSimple.Direction.REVERSE
+
+        controller.targetVelocity = 10.0
     }
 
-    var power = 0.0
+    private var power = 0.0
         set(value) {
-            field = value.coerceIn(-1.0, 1.0)
+            field = value
+            liftRight.power = value
         }
 
     override fun cancel() {
@@ -55,27 +90,19 @@ class Lift(hardwareMap: HardwareMap) : CancelableAction {
             return false
         }
 
-//        val positionVelocityPair = encoder.getPositionAndVelocity()
-//        measuredPosition = positionVelocityPair.position.toDouble()
-//        measuredVelocity = positionVelocityPair.velocity.toDouble()
-//
-//        power = controller.update(measuredPosition, measuredVelocity)
-//
-//        if (isVerbose) {
-//            p.putAll(
-//                mapOf(
-//                    "liftPosition" to measuredPosition,
-//                    "liftVelocity" to measuredVelocity,
-//                    "liftPower" to power
-//                )
-//            )
-//        }
+        val positionVelocityPair = encoder.getPositionAndVelocity()
+        measuredPosition = positionVelocityPair.position.toDouble()
+        measuredVelocity = positionVelocityPair.velocity.toDouble()
 
-        for (motor in liftMotors) {
-            motor.power = power
-        }
+        power = controller.update(measuredPosition, measuredVelocity)
 
-        p.put("Lift Power", power)
+            p.putAll(
+                mapOf(
+                    "liftPosition" to measuredPosition,
+                    "liftVelocity" to measuredVelocity,
+                    "liftPower" to power
+                )
+            )
 
         return true
     }
