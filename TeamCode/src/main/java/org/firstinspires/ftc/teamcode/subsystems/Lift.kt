@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
 import org.firstinspires.ftc.teamcode.profile.MotionState
-import org.firstinspires.ftc.teamcode.util.absoluteDistance
 import org.firstinspires.ftc.teamcode.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.subsystems.util.ManualPositionMechanism
 
@@ -106,12 +105,13 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
     init {
         lifts.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
         encoder.direction = DcMotorSimple.Direction.REVERSE
 
-        controller.setInputBounds(0.0, 1000.0)
+        controller.setInputBounds(0.0, 1500.0)
         controller.setOutputBounds(-1.0, 1.0)
     }
 
@@ -133,10 +133,10 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
         measuredPosition = positionVelocityPair.position.toDouble()
         measuredVelocity = positionVelocityPair.velocity.toDouble()
 
+        val state = profile[measuredPosition]
+
         controller.apply {
 //            if (absoluteDistance(targetPosition, measuredPosition) > PIDHeight) {
-                val state = profile[measuredPosition]
-
                 targetPosition = state.x
                 targetVelocity = state.v
                 targetAcceleration = state.a
@@ -156,7 +156,8 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
                     "liftPosition" to measuredPosition,
                     "liftVelocity" to measuredVelocity,
                     "liftPower" to power,
-                    "liftProfile" to profile
+                    "liftProfile" to profile,
+                    "liftState" to state
                 )
             )
         }
