@@ -42,8 +42,8 @@ public class EncoderDirections extends OpMode {
         encoders = List.of(leftEncoder, rightEncoder, strafeEncoder);
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetryA.addData("This will allow you to test the directions of your encoders. You can change the directions in FTCDashboard -> LocalizerConstants.", "");
-        telemetryA.addData("Restart OpMode to view the changes you made.", "");
+        telemetryA.addLine("This will allow you to test the directions of your encoders. You can change the directions in FTCDashboard -> LocalizerConstants.");
+        telemetryA.addLine("Restart OpMode to view the changes you made.");
         telemetryA.update();
     }
 
@@ -62,5 +62,6 @@ public class EncoderDirections extends OpMode {
         telemetryA.addData("Left Encoder Ticks", this.leftEncoderPosition);
         telemetryA.addData("Right Encoder Ticks", this.rightEncoderPosition);
         telemetryA.addData("Strafe Encoder Ticks", this.strafeEncoderPosition);
+        telemetryA.update();
     }
 }
