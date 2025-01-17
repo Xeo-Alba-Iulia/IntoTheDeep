@@ -27,14 +27,14 @@ public class FConstants {
         FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.1, 0.0, 0.0, 0.0);
         FollowerConstants.useSecondaryTranslationalPID = false;
 
-        FollowerConstants.headingPIDFCoefficients.setCoefficients(2.0, 0.0, 0.1, 0.0);
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(2.0, 0.0, 0.001, 0.0);
         FollowerConstants.useSecondaryHeadingPID = false;
 
         FollowerConstants.drivePIDFCoefficients.setCoefficients(0.1, 0.0, 0.0, 0.6, 0.0);
         FollowerConstants.useSecondaryDrivePID = false;
 
         FollowerConstants.zeroPowerAccelerationMultiplier = 4.0;
-        FollowerConstants.centripetalScaling = 0.0005;
+        FollowerConstants.centripetalScaling = 0.005;
 
         FollowerConstants.pathEndTimeoutConstraint = 500.0;
         FollowerConstants.pathEndTValueConstraint = 0.995;
