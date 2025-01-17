@@ -24,15 +24,12 @@ class Intake(hardwareMap: HardwareMap) : Action {
             intakeMotor.intakePower = value
         }
 
-    var intakePosition: IntakePosition
-        get() = when (intakePendul.targetPosition) {
-            Positions.IntakePendul.up -> IntakePosition.TRANSFER
-            else -> IntakePosition.INTAKE
-        }
+    var intakePosition = IntakePosition.INIT
         set(value) {
             when (value) {
                 IntakePosition.INTAKE -> {
-                    intakePendul.targetPosition = ServoSmoothing.servoSmoothing(intakePendul.getPosition(), Positions.IntakePendul.down)
+                    intakePendul.targetPosition =
+                        ServoSmoothing.servoSmoothing(intakePendul.getPosition(), Positions.IntakePendul.down)
                     intakeRotation.targetPosition = Positions.IntakeRotation.parallel
                 }
 
@@ -45,14 +42,21 @@ class Intake(hardwareMap: HardwareMap) : Action {
                     intakePendul.targetPosition = Positions.IntakePendul.entrance
                     intakeRotation.targetPosition = Positions.IntakeRotation.parallel
                 }
+
+                else -> {
+                    throw IllegalArgumentException("Invalid intake position")
+                }
             }
+
+            field = value
         }
 }
 
 enum class IntakePosition {
     INTAKE,
     TRANSFER,
-    ENTRANCE
+    ENTRANCE,
+    INIT
 }
 
 @TeleOp(name = "Intake positions Test", group = "B")
