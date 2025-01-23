@@ -12,8 +12,6 @@ import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
 import org.firstinspires.ftc.teamcode.profile.MotionState
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
-import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
-import org.firstinspires.ftc.teamcode.util.absoluteDistance
 
 private const val PIDHeight = 100.0
 
@@ -21,10 +19,9 @@ private const val PIDHeight = 100.0
  * Lift subsystem
  *
  * @param hardwareMap the [HardwareMap] object from the OpMode
- * @param isVerbose whether to print debug information
  */
 @Config
-class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : ManualPositionMechanism {
+class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
     companion object {
         @JvmField
         @Volatile
@@ -150,17 +147,15 @@ class Lift(hardwareMap: HardwareMap, private val isVerbose: Boolean = true) : Ma
 
         power = controller.update(measuredPosition, measuredVelocity)
 
-        if (isVerbose) {
-            p.putAll(
-                mapOf(
-                    "liftPosition" to measuredPosition,
-                    "liftVelocity" to measuredVelocity,
-                    "liftPower" to power,
-                    "liftProfile" to profile,
-                    "liftState" to state
-                )
+        p.putAll(
+            mapOf(
+                "liftPosition" to measuredPosition,
+                "liftVelocity" to measuredVelocity,
+                "liftPower" to power,
+                "liftProfile" to profile,
+                "liftState" to state
             )
-        }
+        )
 
 //        for (motor in lifts) {
 //            motor.power = power
