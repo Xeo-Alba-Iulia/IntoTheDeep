@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.systems.subsystems
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.ftc.RawEncoder
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -11,9 +12,12 @@ import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
 import org.firstinspires.ftc.teamcode.profile.MotionState
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
+import org.firstinspires.ftc.teamcode.util.absoluteDistance
+import org.firstinspires.ftc.teamcode.util.epsilonEquals
 
-private const val PIDHeight = 100.0
+private const val maxPIDDistance = 200.0
 
 /**
  * Lift subsystem
@@ -47,7 +51,7 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
 
         @JvmField
         @Volatile
-        var maxJerk = 3.0
+        var maxJerk = 0.0
     }
 
     private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
@@ -69,22 +73,18 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
         maxJerk
     )
 
-    //noinspection uninitialized_property_access
-    override var targetPosition = 0.0
+    override var targetPosition
+        get() = profile.end().x
         set(value) {
-            if (value == field)
-                return
-
-//            if (absoluteDistance(measuredPosition, value) > 100.0) {
-                profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                    MotionState(measuredPosition, measuredVelocity),
-                    MotionState(value, 0.0),
-                    maxVel,
-                    maxAccel,
-                    maxJerk
-                )
-//            }
-            field = value
+            require(value in 0.0..1500.0) { "target position $value is invalid" }
+            if (value epsilonEquals profile.end().x) return // Repeated set from TeleOP
+            profile = MotionProfileGenerator.generateSimpleMotionProfile(
+                MotionState(measuredPosition, measuredVelocity),
+                MotionState(value, 0.0),
+                maxVel,
+                maxAccel,
+                maxJerk
+            )
         }
 
     /**
@@ -99,10 +99,12 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
     var measuredVelocity = 0.0
         private set
 
+    val busy
+        get() = absoluteDistance(measuredPosition, targetPosition) < 10 && measuredPosition epsilonEquals 0.0
+
     init {
         lifts.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
@@ -113,6 +115,7 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
     }
 
     var power = 0.0
+        private set
 
     override fun cancel() {
         isCanceled = true
@@ -133,7 +136,7 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
         val state = profile[measuredPosition]
 
         controller.apply {
-//            if (absoluteDistance(targetPosition, measuredPosition) > PIDHeight) {
+//            if (busy) {
                 targetPosition = state.x
                 targetVelocity = state.v
                 targetAcceleration = state.a
@@ -157,10 +160,23 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
             )
         )
 
-//        for (motor in lifts) {
-//            motor.power = power
-//        }
+        for (motor in lifts) {
+            motor.power = power
+        }
 
         return true
+    }
+}
+
+@TeleOp(name = "Lift Test")
+class LiftTest : ManualMechanismTeleOp(::Lift) {
+    override fun loop() {
+        if (gamepad1.a) {
+            manualPositionMechanism.targetPosition = 1000.0
+        } else if (gamepad1.b) {
+            manualPositionMechanism.targetPosition = 0.0
+        }
+        this.telemetry.addData("isBusy", (manualPositionMechanism as Lift)::busy::get)
+        super.loop()
     }
 }
