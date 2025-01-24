@@ -54,10 +54,8 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
         var maxJerk = 0.0
     }
 
-    private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
-    private val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
-
-    val encoder = RawEncoder(liftRight)
+    private val liftLeft = motorEncoderPair(hardwareMap, "LiftLeft")
+    private val liftRight = motorEncoderPair(hardwareMap, "LiftRight")
 
     private var isCanceled = false
 
@@ -104,11 +102,10 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
 
     init {
         lifts.forEach {
-            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+            it.first.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
         }
 
-        liftRight.direction = DcMotorSimple.Direction.REVERSE
-        encoder.direction = DcMotorSimple.Direction.REVERSE
+        liftRight.first.direction = DcMotorSimple.Direction.REVERSE
 
         controller.setInputBounds(0.0, 1500.0)
         controller.setOutputBounds(-1.0, 1.0)
@@ -129,26 +126,33 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
             return false
         }
 
-        val positionVelocityPair = encoder.getPositionAndVelocity()
-        measuredPosition = positionVelocityPair.position.toDouble()
-        measuredVelocity = positionVelocityPair.velocity.toDouble()
+        measuredPosition = 0.0
+        measuredVelocity = 0.0
+        power = 0.0
 
-        val state = profile[measuredPosition]
+        for (lift in lifts) {
+            val positionVelocityPair = lift.second.getPositionAndVelocity()
+            val measuredPosition = positionVelocityPair.position.toDouble()
+            val measuredVelocity = positionVelocityPair.velocity.toDouble()
 
-        controller.apply {
-//            if (busy) {
+            controller.apply {
+                val state = profile[measuredPosition]
+
                 targetPosition = state.x
                 targetVelocity = state.v
                 targetAcceleration = state.a
-//            } else {
-//                targetPosition = this@Lift.targetPosition
-//
-//                targetVelocity = 0.0
-//                targetAcceleration = 0.0
-//            }
+            }
+
+            lift.first.power = controller.update(measuredPosition, measuredVelocity)
+
+            this.measuredPosition += measuredPosition
+            this.measuredVelocity += measuredVelocity
+            this.power += lift.first.power
         }
 
-        power = controller.update(measuredPosition, measuredVelocity)
+        measuredPosition /= lifts.size
+        measuredVelocity /= lifts.size
+        power /= lifts.size
 
         p.putAll(
             mapOf(
@@ -156,16 +160,17 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
                 "liftVelocity" to measuredVelocity,
                 "liftPower" to power,
                 "liftProfile" to profile,
-                "liftState" to state
             )
         )
 
-        for (motor in lifts) {
-            motor.power = power
-        }
-
         return true
     }
+}
+
+private fun motorEncoderPair(hardwareMap: HardwareMap, name: String): Pair<DcMotorEx, RawEncoder> {
+    val motor = hardwareMap.dcMotor[name] as DcMotorEx
+    val encoder = RawEncoder(motor)
+    return motor to encoder
 }
 
 @TeleOp(name = "Lift Test")
