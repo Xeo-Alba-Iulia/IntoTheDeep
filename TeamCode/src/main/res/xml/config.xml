@@ -8,7 +8,7 @@
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0"/>
-            <goBILDA5202SeriesMotor name="MotorBackLeft" port="1"/>
+            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3"/>
             <ControlHubImuBHI260AP name="imu" bus="0" port="0"/>
         </LynxModule>
     </LynxUsbDevice>
