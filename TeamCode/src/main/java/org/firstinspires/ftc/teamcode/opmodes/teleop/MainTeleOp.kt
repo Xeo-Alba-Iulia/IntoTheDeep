@@ -56,7 +56,7 @@ class MainTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
 
             // Lift
-            robot.lift.power = ((moveGamepad.right_trigger - moveGamepad.left_trigger) * (moveGamepad.right_trigger + moveGamepad.left_trigger)).toDouble()
+//            robot.lift.power = ((moveGamepad.right_trigger - moveGamepad.left_trigger) * (moveGamepad.right_trigger + moveGamepad.left_trigger)).toDouble()
 
             // Intake Power
             robot.intake.intakePower = when {
