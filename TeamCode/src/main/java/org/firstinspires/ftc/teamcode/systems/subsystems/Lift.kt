@@ -111,7 +111,7 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
         controller.setOutputBounds(-1.0, 1.0)
     }
 
-    var power = 0.0
+    var averagePower = 0.0
         private set
 
     override fun cancel() {
@@ -121,14 +121,14 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
     override fun run(p: TelemetryPacket): Boolean {
         if (isCanceled) {
             isCanceled = false
-            power = 0.0
+            averagePower = 0.0
 
             return false
         }
 
         measuredPosition = 0.0
         measuredVelocity = 0.0
-        power = 0.0
+        averagePower = 0.0
 
         for (lift in lifts) {
             val positionVelocityPair = lift.second.getPositionAndVelocity()
@@ -148,7 +148,7 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
 
             this.measuredPosition += measuredPosition
             this.measuredVelocity += measuredVelocity
-            this.power += lift.first.power
+            this.averagePower += lift.first.power
 
             val deviceName = lift.first.deviceName
 
@@ -164,7 +164,7 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
 
         measuredPosition /= lifts.size
         measuredVelocity /= lifts.size
-        power /= lifts.size
+        averagePower /= lifts.size
 
         return true
     }
