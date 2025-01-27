@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode.systems.subsystems
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.CancelableAction
 
 /**
@@ -14,7 +11,9 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.CancelableAction
  * @param hardwareMap the [HardwareMap] instance from OpMode
  */
 @Config
-class Lift(hardwareMap: HardwareMap) : CancelableAction {
+class Lift(
+    hardwareMap: HardwareMap,
+) : CancelableAction {
     companion object {
         @JvmField
         var kV = 0.3

@@ -11,14 +11,14 @@ import org.firstinspires.ftc.teamcode.trajectoryAction
 @Autonomous(name = "Trajectory test", group = "B")
 class TrajectoryTest : LinearOpMode() {
     override fun runOpMode() {
-
         val beginPose = Pose2d(0.0, 0.0, 0.0)
         val drive = MecanumDrive(hardwareMap, beginPose)
 
-        val action = drive.trajectoryAction(beginPose) {
-            lineToX(10.0)
-            lineToY(10.0)
-        }
+        val action =
+            drive.trajectoryAction(beginPose) {
+                lineToX(10.0)
+                lineToY(10.0)
+            }
 
         val dashboard = FtcDashboard.getInstance()
         val telemetry = dashboard.telemetry

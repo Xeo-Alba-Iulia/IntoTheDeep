@@ -8,7 +8,5 @@ import org.firstinspires.ftc.teamcode.RobotHardware
 class BlajAuto : LinearOpMode() {
     override fun runOpMode() {
         val robotHardware = RobotHardware(hardwareMap)
-
-
     }
 }

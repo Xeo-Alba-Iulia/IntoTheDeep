@@ -23,11 +23,12 @@ class ExtendTest : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
-            currentPosition = when {
-                gamepad1.dpad_left -> Positions.Extend.`in`
-                gamepad1.dpad_down -> Positions.Extend.out
-                else -> currentPosition - gamepad1.right_stick_y * Extend.MULTIPLIER
-            }
+            currentPosition =
+                when {
+                    gamepad1.dpad_left -> Positions.Extend.`in`
+                    gamepad1.dpad_down -> Positions.Extend.out
+                    else -> currentPosition - gamepad1.right_stick_y * Extend.MULTIPLIER
+                }
             extend.targetPosition = currentPosition
             currentPosition = extend.targetPosition
 
@@ -36,5 +37,4 @@ class ExtendTest : LinearOpMode() {
             FtcDashboard.getInstance().sendTelemetryPacket(telemetryPacket)
         }
     }
-
 }

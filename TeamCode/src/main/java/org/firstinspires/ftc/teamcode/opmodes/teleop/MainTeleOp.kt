@@ -19,7 +19,8 @@ class MainTeleOp : LinearOpMode() {
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
-        fun inTransfer() = robot.intake.intakePosition == IntakePosition.TRANSFER &&
+        fun inTransfer() =
+            robot.intake.intakePosition == IntakePosition.TRANSFER &&
                 robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
         val moveGamepad: Gamepad = gamepad1
@@ -27,12 +28,13 @@ class MainTeleOp : LinearOpMode() {
 
         val dashboard = FtcDashboard.getInstance()
 
-        val actionList = mutableListOf(
-            robot.intake,
-            robot.outtake,
-            robot.extend,
-            robot.lift
-        )
+        val actionList =
+            mutableListOf(
+                robot.intake,
+                robot.outtake,
+                robot.extend,
+                robot.lift
+            )
 
         while (!isStarted) {
             val telemetryPacket = TelemetryPacket()
@@ -56,14 +58,19 @@ class MainTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
 
             // Lift
-            robot.lift.power = ((moveGamepad.right_trigger - moveGamepad.left_trigger) * (moveGamepad.right_trigger + moveGamepad.left_trigger)).toDouble()
+            robot.lift.power =
+                (
+                    (moveGamepad.right_trigger - moveGamepad.left_trigger) *
+                        (moveGamepad.right_trigger + moveGamepad.left_trigger)
+                ).toDouble()
 
             // Intake Power
-            robot.intake.intakePower = when {
-                moveGamepad.a -> 0.8
-                moveGamepad.x -> -1.0
-                else -> 0.07
-            }
+            robot.intake.intakePower =
+                when {
+                    moveGamepad.a -> 0.8
+                    moveGamepad.x -> -1.0
+                    else -> 0.07
+                }
 
             // Pendul manual
 //            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
@@ -78,20 +85,24 @@ class MainTeleOp : LinearOpMode() {
                 robot.claw.targetPosition = Positions.Claw.close
             }
 
-            //if (!inTransfer()) {
-                robot.claw.targetPosition = when {
+            // if (!inTransfer()) {
+            robot.claw.targetPosition =
+                when {
                     moveGamepad.right_bumper || controlGamepad.right_bumper -> Positions.Claw.close
                     moveGamepad.left_bumper || controlGamepad.left_bumper -> Positions.Claw.open
                     else -> robot.claw.targetPosition
                 }
-            //}
+            // }
         }
     }
 
     /**
      * Runs all Actions in [actionList], deleting every finished [Action]
      */
-    fun runActions(actionList: MutableList<Action>, telemetryPacket: TelemetryPacket) {
+    fun runActions(
+        actionList: MutableList<Action>,
+        telemetryPacket: TelemetryPacket,
+    ) {
         val iterator = actionList.iterator()
         while (iterator.hasNext()) {
             val action = iterator.next()
@@ -115,18 +126,28 @@ class MainTeleOp : LinearOpMode() {
             timer.reset()
         }
 
-        intake.intakePosition = when {
-            gamepad.dpad_down -> IntakePosition.INTAKE
-            gamepad.dpad_right -> IntakePosition.TRANSFER
-            else -> intake.intakePosition
-        }
+        intake.intakePosition =
+            when {
+                gamepad.dpad_down -> IntakePosition.INTAKE
+                gamepad.dpad_right -> IntakePosition.TRANSFER
+                else -> intake.intakePosition
+            }
 
         if (intake.intakePosition != IntakePosition.TRANSFER) {
-            intake.intakePosition = when {
-                extend.targetPosition > 0.3 && timer.time(TimeUnit.MILLISECONDS) >= 500 -> IntakePosition.INTAKE
-                extend.targetPosition <= 0.3 && timer.time(TimeUnit.MILLISECONDS) >= 500 -> IntakePosition.ENTRANCE
-                else -> IntakePosition.ENTRANCE
-            }
+            intake.intakePosition =
+                when {
+                    extend.targetPosition > 0.3 &&
+                        timer.time(
+                            TimeUnit.MILLISECONDS
+                        ) >= 500 -> IntakePosition.INTAKE
+
+                    extend.targetPosition <= 0.3 &&
+                        timer.time(
+                            TimeUnit.MILLISECONDS
+                        ) >= 500 -> IntakePosition.ENTRANCE
+
+                    else -> IntakePosition.ENTRANCE
+                }
         }
 
         if (gamepad.dpad_right && !pendulIsActioned) {
@@ -141,38 +162,48 @@ class MainTeleOp : LinearOpMode() {
         }
 
         try {
-            val (outtakePosition, extendPosition, clawPosition) = when {
+            val (outtakePosition, extendPosition, clawPosition) =
+                when {
+                    gamepad.dpad_right -> {
+                        listOf(
+                            OuttakePosition.TRANSFER,
+                            Positions.Extend.`in`,
+                            claw.targetPosition
+                        )
+                    }
 
-                gamepad.dpad_right -> listOf(
-                    OuttakePosition.TRANSFER,
-                    Positions.Extend.`in`,
-                    claw.targetPosition
-                )
+                    gamepad.dpad_up -> {
+                        listOf(
+                            OuttakePosition.OUTTAKE,
+                            extend.targetPosition,
+                            claw.targetPosition
+                        )
+                    }
 
-                gamepad.dpad_up -> listOf(
-                    OuttakePosition.OUTTAKE,
-                    extend.targetPosition,
-                    claw.targetPosition
-                )
+                    gamepad.dpad_left -> {
+                        listOf(
+                            OuttakePosition.SMASH,
+                            extend.targetPosition,
+                            Positions.Claw.open
+                        )
+                    }
 
-                gamepad.dpad_left -> listOf(
-                    OuttakePosition.SMASH,
-                    extend.targetPosition,
-                    Positions.Claw.open
-                )
+                    gamepad.cross -> {
+                        listOf(
+                            OuttakePosition.BASKET,
+                            extend.targetPosition,
+                            claw.targetPosition
+                        )
+                    }
 
-                gamepad.cross -> listOf(
-                    OuttakePosition.BASKET,
-                    extend.targetPosition,
-                    claw.targetPosition
-                )
-
-                else -> listOf(
-                    outtake.outtakePosition,
-                    extend.targetPosition,
-                    claw.targetPosition
-                )
-            }
+                    else -> {
+                        listOf(
+                            outtake.outtakePosition,
+                            extend.targetPosition,
+                            claw.targetPosition
+                        )
+                    }
+                }
             outtake.outtakePosition = outtakePosition as OuttakePosition
             extend.targetPosition = extendPosition as Double
             claw.targetPosition = clawPosition as Double

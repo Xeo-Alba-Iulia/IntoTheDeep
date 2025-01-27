@@ -6,7 +6,9 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTel
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
 
-class ClawRotate(hardwareMap: HardwareMap) : ServoPositionMechanism(Positions.ClawRotate.transfer) {
+class ClawRotate(
+    hardwareMap: HardwareMap,
+) : ServoPositionMechanism(Positions.ClawRotate.transfer) {
     override val servos = arrayOf(hardwareMap.servo["ClawRotate"])
 }
 
