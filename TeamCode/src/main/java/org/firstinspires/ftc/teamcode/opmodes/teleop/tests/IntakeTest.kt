@@ -30,7 +30,7 @@ class IntakeTest : LinearOpMode() {
 //        )))
 
         var rotationPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
-        var pendulPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0}
+        var pendulPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
 
         val dash = FtcDashboard.getInstance()
         var isRunning = true
@@ -46,11 +46,12 @@ class IntakeTest : LinearOpMode() {
 
             isRunning = intakeRotation.run(packet)
 
-            intake.intakePower = when {
-                gamepad1.a -> 1.0
-                gamepad1.b -> -1.0
-                else -> 0.0
-            }
+            intake.intakePower =
+                when {
+                    gamepad1.a -> 1.0
+                    gamepad1.b -> -1.0
+                    else -> 0.0
+                }
 
             intake.run(packet)
 

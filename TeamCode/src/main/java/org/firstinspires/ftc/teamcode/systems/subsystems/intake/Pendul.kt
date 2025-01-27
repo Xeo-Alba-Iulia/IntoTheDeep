@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
 
-class IntakePendul(hardwareMap: HardwareMap) : ServoPositionMechanism(0.9) {
+class IntakePendul(
+    hardwareMap: HardwareMap,
+) : ServoPositionMechanism(0.9) {
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["IntakePendul"])
 }
 

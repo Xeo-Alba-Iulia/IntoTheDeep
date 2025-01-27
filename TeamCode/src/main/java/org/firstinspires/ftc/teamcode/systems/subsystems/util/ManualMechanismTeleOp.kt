@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 
 private const val MULTIPLIER = 0.003
 
-abstract class ManualMechanismTeleOp(private val factory: ManualPositionFactory) : OpMode() {
+abstract class ManualMechanismTeleOp(
+    private val factory: ManualPositionFactory,
+) : OpMode() {
     protected lateinit var manualPositionMechanism: ManualPositionMechanism
     val dashboard = FtcDashboard.getInstance() as FtcDashboard
 

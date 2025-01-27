@@ -4,9 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
-import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 
 /**
@@ -21,16 +21,18 @@ class PositionsTeleOp : LinearOpMode() {
 
         waitForStart()
 
+        // TODO: Se poate obține întreaga lista de mecanisme prin reflection.
+
         /**
          * Lista cu toate mecanismele care vor fi testate.
          */
-        // TODO: Se poate obține întreaga lista de mecanisme prin reflection.
-        val servoPositions = listOf(
-            IntakeRotation(hardwareMap),
-            IntakePendul(hardwareMap),
-            Pendul(hardwareMap),
-            Lift(hardwareMap)
-        )
+        val servoPositions =
+            listOf(
+                IntakeRotation(hardwareMap),
+                IntakePendul(hardwareMap),
+                Pendul(hardwareMap),
+                Lift(hardwareMap)
+            )
 
         while (opModeIsActive()) {
             val telemetryPacket = TelemetryPacket()

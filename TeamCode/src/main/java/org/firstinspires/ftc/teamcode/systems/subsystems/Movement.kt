@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems
 
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.Gamepad
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.*
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -13,7 +9,9 @@ import kotlin.math.max
  *
  * @param hardwareMap The hardware map from the OpMode
  */
-open class Movement(hardwareMap: HardwareMap) {
+open class Movement(
+    hardwareMap: HardwareMap,
+) {
     val frontLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "MotorFrontLeft")
     val frontRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "MotorFrontRight")
     val backLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "MotorBackLeft")

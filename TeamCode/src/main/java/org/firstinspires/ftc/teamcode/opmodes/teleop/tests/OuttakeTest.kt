@@ -22,9 +22,9 @@ class OuttakeTest : LinearOpMode() {
 
         waitForStart()
 
-        var clawPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0}
-        var clawRotatePosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0}
-        var pendulPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0}
+        var clawPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
+        var clawRotatePosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
+        var pendulPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
 
         val dash = FtcDashboard.getInstance()
 

@@ -10,7 +10,9 @@ import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -25,10 +27,12 @@ import pedroPathing.constants.LConstants;
  */
 @Autonomous(name = "Triangle", group = "Examples")
 public class Triangle extends OpMode {
-    private final Pose startPose = new Pose(0, 0, Math.toRadians(0));
+    private Follower follower;
+
+    private final Pose startPose = new Pose(0,0, Math.toRadians(0));
     private final Pose interPose = new Pose(24, -24, Math.toRadians(90));
     private final Pose endPose = new Pose(24, 24, Math.toRadians(45));
-    private Follower follower;
+
     private PathChain triangle;
 
     private Telemetry telemetryA;

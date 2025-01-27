@@ -4,17 +4,16 @@ package org.firstinspires.ftc.teamcode.util
  * Clock interface with nanosecond precision and no guarantee about its origin (that is, this is only suited for
  * measuring relative/elapsed time).
  */
-// interface breaks companion object JVM static modifier
 abstract class NanoClock {
-
     companion object {
         /**
          * Returns a [NanoClock] backed by [System.nanoTime].
          */
         @JvmStatic
-        fun system() = object : NanoClock() {
-            override fun seconds() = System.nanoTime() / 1e9
-        }
+        fun system() =
+            object : NanoClock() {
+                override fun seconds() = System.nanoTime() / 1e9
+            }
     }
 
     /**

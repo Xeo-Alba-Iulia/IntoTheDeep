@@ -11,7 +11,9 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.ServoSmoothing
 
-class Intake(hardwareMap: HardwareMap) : Action {
+class Intake(
+    hardwareMap: HardwareMap,
+) : Action {
     private val intakeMotor = IntakeMotor(hardwareMap)
     private val intakeRotation = IntakeRotation(hardwareMap)
     private val intakePendul = IntakePendul(hardwareMap)
@@ -56,7 +58,7 @@ enum class IntakePosition {
     INTAKE,
     TRANSFER,
     ENTRANCE,
-    INIT
+    INIT,
 }
 
 @TeleOp(name = "Intake positions Test", group = "B")
@@ -67,12 +69,13 @@ class IntakeTest : LinearOpMode() {
 
         while (opModeIsActive()) {
             intake.intakePower = gamepad1.left_stick_y.toDouble()
-            intake.intakePosition = when {
-                gamepad1.a -> IntakePosition.INTAKE
-                gamepad1.b -> IntakePosition.TRANSFER
-                gamepad1.x -> IntakePosition.ENTRANCE
-                else -> intake.intakePosition
-            }
+            intake.intakePosition =
+                when {
+                    gamepad1.a -> IntakePosition.INTAKE
+                    gamepad1.b -> IntakePosition.TRANSFER
+                    gamepad1.x -> IntakePosition.ENTRANCE
+                    else -> intake.intakePosition
+                }
 
             val packet = TelemetryPacket()
             intake.run(packet)

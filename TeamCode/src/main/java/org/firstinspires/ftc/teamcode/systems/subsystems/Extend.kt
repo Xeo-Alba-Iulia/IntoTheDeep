@@ -7,7 +7,9 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMecha
 
 private const val MAX_POSITION = 0.9
 
-class Extend(hardwareMap: HardwareMap) : ServoPositionMechanism(0.258) {
+class Extend(
+    hardwareMap: HardwareMap,
+) : ServoPositionMechanism(0.258) {
     companion object {
         const val MULTIPLIER = 0.005
     }
@@ -25,5 +27,5 @@ class Extend(hardwareMap: HardwareMap) : ServoPositionMechanism(0.258) {
         }
 }
 
-//@TeleOp(group = "Servo Subsystems")
-//class ExtendTest : ManualMechanismTeleOp(::Extend)
+// @TeleOp(group = "Servo Subsystems")
+// class ExtendTest : ManualMechanismTeleOp(::Extend)
