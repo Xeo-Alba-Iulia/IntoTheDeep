@@ -135,8 +135,9 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
             val measuredPosition = positionVelocityPair.position.toDouble()
             val measuredVelocity = positionVelocityPair.velocity.toDouble()
 
+            val state = profile[measuredPosition]
+
             controller.apply {
-                val state = profile[measuredPosition]
 
                 targetPosition = state.x
                 targetVelocity = state.v
@@ -148,20 +149,22 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
             this.measuredPosition += measuredPosition
             this.measuredVelocity += measuredVelocity
             this.power += lift.first.power
+
+            val deviceName = lift.first.deviceName
+
+            p.putAll(
+                mapOf(
+                    "Position for $deviceName" to measuredPosition,
+                    "Velocity for $deviceName" to measuredVelocity,
+                    "Power for $deviceName" to lift.first.power,
+                    "State for $deviceName" to state
+                )
+            )
         }
 
         measuredPosition /= lifts.size
         measuredVelocity /= lifts.size
         power /= lifts.size
-
-        p.putAll(
-            mapOf(
-                "liftPosition" to measuredPosition,
-                "liftVelocity" to measuredVelocity,
-                "liftPower" to power,
-                "liftProfile" to profile,
-            )
-        )
 
         return true
     }
@@ -175,13 +178,17 @@ private fun motorEncoderPair(hardwareMap: HardwareMap, name: String): Pair<DcMot
 
 @TeleOp(name = "Lift Test")
 class LiftTest : ManualMechanismTeleOp(::Lift) {
+    override fun init() {
+        super.init()
+        this.telemetry.addData("isBusy", (manualPositionMechanism as Lift)::busy::get)
+    }
+
     override fun loop() {
+        super.loop()
         if (gamepad1.a) {
             manualPositionMechanism.targetPosition = 1000.0
         } else if (gamepad1.b) {
             manualPositionMechanism.targetPosition = 0.0
         }
-        this.telemetry.addData("isBusy", (manualPositionMechanism as Lift)::busy::get)
-        super.loop()
     }
 }
