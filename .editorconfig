@@ -15,6 +15,7 @@ ij_kotlin_allow_trailing_comma = true
 ij_kotlin_allow_trailing_comma_on_call_site = false
 ij_any_align_consecutive_variable_declarations = true
 ktlint_standard_backing-property-naming = enabled
+ktlint_standard_no-wildcard-imports = disabled
 
 ij_kotlin_name_count_to_use_star_import = 4
 ij_kotlin_name_count_to_use_star_import_for_members = 4
