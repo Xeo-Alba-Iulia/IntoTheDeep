@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems
 
+import android.util.Log
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.teamcode.control.PIDCoefficients
 import org.firstinspires.ftc.teamcode.control.PIDFController
 import org.firstinspires.ftc.teamcode.profile.MotionProfileGenerator
@@ -17,15 +15,15 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMech
 import org.firstinspires.ftc.teamcode.util.absoluteDistance
 import org.firstinspires.ftc.teamcode.util.epsilonEquals
 
-private const val maxPIDDistance = 200.0
-
 /**
  * Lift subsystem
  *
  * @param hardwareMap the [HardwareMap] object from the OpMode
  */
 @Config
-class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
+class Lift(
+    hardwareMap: HardwareMap,
+) : ManualPositionMechanism {
     companion object {
         @JvmField
         @Volatile
@@ -34,20 +32,22 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
         @JvmField
         @Volatile
         var kStatic = 0.0
+
         @JvmField
         @Volatile
         var kV = 0.0
+
         @JvmField
         @Volatile
         var kA = 0.0
 
         @JvmField
         @Volatile
-        var maxVel = 30.0
+        var maxVel = 6.0
 
         @JvmField
         @Volatile
-        var maxAccel = 15.0
+        var maxAccel = 1.0
 
         @JvmField
         @Volatile
@@ -63,26 +63,30 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
 
     private val controller = PIDFController(coefficients, kV, kA, kStatic)
 
-    private var profile = MotionProfileGenerator.generateSimpleMotionProfile(
-        MotionState(0.0, 0.0),
-        MotionState(0.0, 0.0),
-        maxVel,
-        maxAccel,
-        maxJerk
-    )
+    private var profile =
+        MotionProfileGenerator.generateSimpleMotionProfile(
+            MotionState(0.0, 0.0),
+            MotionState(0.0, 0.0),
+            maxVel,
+            maxAccel,
+            maxJerk
+        )
 
     override var targetPosition
         get() = profile.end().x
         set(value) {
-            require(value in 0.0..1500.0) { "target position $value is invalid" }
+            require(value in -1.0..1500.0) { "target position $value is invalid" }
             if (value epsilonEquals profile.end().x) return // Repeated set from TeleOP
-            profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                MotionState(measuredPosition, measuredVelocity),
-                MotionState(value, 0.0),
-                maxVel,
-                maxAccel,
-                maxJerk
-            )
+            Log.d("Measured Position", measuredPosition.toString())
+            Log.d("Measured Velocity", measuredVelocity.toString())
+            profile =
+                MotionProfileGenerator.generateSimpleMotionProfile(
+                    MotionState(measuredPosition, measuredVelocity),
+                    MotionState(value, 0.0),
+                    maxVel,
+                    maxAccel,
+                    maxJerk
+                )
         }
 
     /**
@@ -105,7 +109,8 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
             it.first.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
         }
 
-        liftRight.first.direction = DcMotorSimple.Direction.REVERSE
+        liftLeft.first.direction = DcMotorSimple.Direction.REVERSE
+        liftLeft.second.direction = DcMotorSimple.Direction.REVERSE
 
         controller.setInputBounds(0.0, 1500.0)
         controller.setOutputBounds(-1.0, 1.0)
@@ -130,6 +135,8 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
         measuredVelocity = 0.0
         averagePower = 0.0
 
+        var i = 0
+
         for (lift in lifts) {
             val positionVelocityPair = lift.second.getPositionAndVelocity()
             val measuredPosition = positionVelocityPair.position.toDouble()
@@ -138,7 +145,6 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
             val state = profile[measuredPosition]
 
             controller.apply {
-
                 targetPosition = state.x
                 targetVelocity = state.v
                 targetAcceleration = state.a
@@ -150,16 +156,16 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
             this.measuredVelocity += measuredVelocity
             this.averagePower += lift.first.power
 
-            val deviceName = lift.first.deviceName
-
             p.putAll(
                 mapOf(
-                    "Position for $deviceName" to measuredPosition,
-                    "Velocity for $deviceName" to measuredVelocity,
-                    "Power for $deviceName" to lift.first.power,
-                    "State for $deviceName" to state
+                    "Position for Lift$i" to measuredPosition,
+                    "Velocity for Lift$i" to measuredVelocity,
+                    "Power for Lift$i" to lift.first.power,
+                    "State for Lift$i" to state
                 )
             )
+
+            i += 1
         }
 
         measuredPosition /= lifts.size
@@ -170,7 +176,10 @@ class Lift(hardwareMap: HardwareMap) : ManualPositionMechanism {
     }
 }
 
-private fun motorEncoderPair(hardwareMap: HardwareMap, name: String): Pair<DcMotorEx, RawEncoder> {
+private fun motorEncoderPair(
+    hardwareMap: HardwareMap,
+    name: String,
+): Pair<DcMotorEx, RawEncoder> {
     val motor = hardwareMap.dcMotor[name] as DcMotorEx
     val encoder = RawEncoder(motor)
     return motor to encoder
@@ -182,6 +191,9 @@ class LiftTest : ManualMechanismTeleOp(::Lift) {
         super.init()
         this.telemetry.addData("isBusy", (manualPositionMechanism as Lift)::busy::get)
     }
+
+    override val multiplier: Double
+        get() = 0.3
 
     override fun loop() {
         super.loop()
