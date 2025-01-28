@@ -2,8 +2,13 @@ package org.firstinspires.ftc.teamcode.systems.subsystems
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.qualcomm.robotcore.hardware.*
-import org.firstinspires.ftc.teamcode.systems.subsystems.util.CancelableAction
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
 
 /**
  * Lift subsystem
@@ -13,12 +18,12 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.CancelableAction
 @Config
 class Lift(
     hardwareMap: HardwareMap,
-) : CancelableAction {
+) : ManualPositionMechanism {
     companion object {
         @JvmField
         var kV = 0.3
 
-        fun staticPower(power: Double) = (power + kV * 3.0) / 4.0
+        // fun staticPower(power: Double) = (power + kV * 3.0) / 4.0
     }
 
     private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
@@ -31,15 +36,22 @@ class Lift(
     init {
         liftMotors.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
         liftLeft.direction = DcMotorSimple.Direction.REVERSE
     }
 
-    var power = 0.0
+    var power = 1.0
         set(value) {
             field = value.coerceIn(-1.0, 1.0)
+        }
+
+    override var targetPosition = 0.0
+        set(value) {
+            field = value.coerceIn(0.0, 10000.0)
         }
 
     override fun cancel() {
@@ -53,29 +65,37 @@ class Lift(
 
             return false
         }
-
-//        val positionVelocityPair = encoder.getPositionAndVelocity()
-//        measuredPosition = positionVelocityPair.position.toDouble()
-//        measuredVelocity = positionVelocityPair.velocity.toDouble()
-//
-//        power = controller.update(measuredPosition, measuredVelocity)
-//
-//        if (isVerbose) {
-//            p.putAll(
-//                mapOf(
-//                    "liftPosition" to measuredPosition,
-//                    "liftVelocity" to measuredVelocity,
-//                    "liftPower" to power
-//                )
-//            )
-//        }
+            p.putAll(
+                mapOf(
+                    "liftTarget" to targetPosition,
+                    "liftPower" to power
+                )
+            )
 
         for (motor in liftMotors) {
             motor.power = power
+            motor.targetPosition = targetPosition.toInt()
         }
 
         p.put("Lift Power", power)
+        p.put("Lift Target", targetPosition)
 
         return true
+    }
+}
+
+@TeleOp(name = "Lift test", group = "C")
+class LiftTest : ManualMechanismTeleOp(::Lift) {
+
+    override val multiplier: Double
+        get() = 0.3
+
+    override fun loop() {
+        super.loop()
+        if (gamepad1.a) {
+            manualPositionMechanism.targetPosition = 1000.0
+        } else if (gamepad1.b) {
+            manualPositionMechanism.targetPosition = 0.0
+        }
     }
 }
