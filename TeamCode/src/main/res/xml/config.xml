@@ -3,15 +3,15 @@
 <Robot type="FirstInspires-FTC">
     <LynxUsbDevice name="Control Hub Portal" parentModuleAddress="173" serialNumber="(embedded)">
         <LynxModule name="Expansion Hub 2" port="2">
-            <goBILDA5202SeriesMotor name="MotorFrontRight" port="0"/>
+            <goBILDA5202SeriesMotor name="MotorFrontRight" port="0"/> <!-- Right encoder -->
             <goBILDA5202SeriesMotor name="MotorBackRight" port="1"/>
-            <goBILDA5202SeriesMotor name="LiftLeft" port="2"/>
+            <goBILDA5202SeriesMotor name="LiftRight" port="2"/>
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
-            <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0"/>
-            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3"/>
+            <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0"/>  <!-- Left encoder -->
+            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3"/> <!-- Strafe encoder -->
             <ControlHubImuBHI260AP name="imu" bus="0" port="0"/>
-            <goBILDA5202SeriesMotor name="LiftRight" port="2"/>
+            <goBILDA5202SeriesMotor name="LiftLeft" port="2"/>
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
