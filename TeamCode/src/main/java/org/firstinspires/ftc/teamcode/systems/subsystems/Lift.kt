@@ -73,12 +73,14 @@ class Lift(
 @TeleOp(name = "Lift test", group = "C")
 class LiftTest : ManualMechanismTeleOp(::Lift) {
     override val multiplier: Double
-        get() = 0.3
+        get() = 15.0
 
     override fun loop() {
         super.loop()
         if (gamepad1.a) {
             manualPositionMechanism.targetPosition = 1000.0
+        } else if (gamepad1.x) {
+            manualPositionMechanism.targetPosition = 2000.0
         } else if (gamepad1.b) {
             manualPositionMechanism.targetPosition = 0.0
         }
