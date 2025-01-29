@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
+import com.pedropathing.follower.Follower
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
@@ -43,13 +44,21 @@ class MainTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
         }
 
+        val follower = Follower(hardwareMap)
+
         waitForStart()
 
         dashboard.clearTelemetry()
+        follower.startTeleopDrive()
 
         while (opModeIsActive()) {
             // Movement
-            robot.movement.move(moveGamepad)
+            follower.setTeleOpMovementVectors(
+                -moveGamepad.left_stick_y.toDouble(),
+                -moveGamepad.left_stick_x.toDouble(),
+                -moveGamepad.right_stick_x.toDouble(),
+                false
+            )
             robot.applyPositions(controlGamepad)
 
             // Actions for other hardware (intake, lift, etc.)
