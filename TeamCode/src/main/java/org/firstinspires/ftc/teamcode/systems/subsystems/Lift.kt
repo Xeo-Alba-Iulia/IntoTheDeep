@@ -43,7 +43,7 @@ class Lift(
 
     override var targetPosition = 0.0
         set(value) {
-            field = value.coerceIn(0.0, 2000.0)
+            field = value.coerceIn(0.0, 2185.0)
         }
 
     override fun cancel() {
@@ -80,7 +80,7 @@ class LiftTest : ManualMechanismTeleOp(::Lift) {
         if (gamepad1.a) {
             manualPositionMechanism.targetPosition = 1000.0
         } else if (gamepad1.x) {
-            manualPositionMechanism.targetPosition = 2000.0
+            manualPositionMechanism.targetPosition = 2100.0
         } else if (gamepad1.b) {
             manualPositionMechanism.targetPosition = 0.0
         }
