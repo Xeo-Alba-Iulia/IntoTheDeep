@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.systems.subsystems
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
 
@@ -19,13 +16,6 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMech
 class Lift(
     hardwareMap: HardwareMap,
 ) : ManualPositionMechanism {
-    companion object {
-        @JvmField
-        var kV = 0.3
-
-        // fun staticPower(power: Double) = (power + kV * 3.0) / 4.0
-    }
-
     private val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
     private val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
 
@@ -37,11 +27,13 @@ class Lift(
         liftMotors.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-            it.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
+            it.targetPosition = 0
+
+            it.mode = DcMotor.RunMode.RUN_TO_POSITION
         }
 
         liftRight.direction = DcMotorSimple.Direction.REVERSE
-        liftLeft.direction = DcMotorSimple.Direction.REVERSE
     }
 
     var power = 1.0
@@ -51,7 +43,7 @@ class Lift(
 
     override var targetPosition = 0.0
         set(value) {
-            field = value.coerceIn(0.0, 10000.0)
+            field = value.coerceIn(0.0, 2000.0)
         }
 
     override fun cancel() {
@@ -65,12 +57,6 @@ class Lift(
 
             return false
         }
-            p.putAll(
-                mapOf(
-                    "liftTarget" to targetPosition,
-                    "liftPower" to power
-                )
-            )
 
         for (motor in liftMotors) {
             motor.power = power
@@ -86,7 +72,6 @@ class Lift(
 
 @TeleOp(name = "Lift test", group = "C")
 class LiftTest : ManualMechanismTeleOp(::Lift) {
-
     override val multiplier: Double
         get() = 0.3
 
