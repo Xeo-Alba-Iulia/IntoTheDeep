@@ -11,6 +11,11 @@ class Claw(
     hardwareMap: HardwareMap,
 ) : ServoPositionMechanism(Positions.Claw.close) {
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Claw"])
+
+    init {
+        targetPosition = Positions.Claw.open
+        servos[0].direction = Servo.Direction.REVERSE
+    }
 }
 
 @TeleOp(name = "Claw test", group = "C")
