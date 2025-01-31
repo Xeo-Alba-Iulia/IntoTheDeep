@@ -17,15 +17,15 @@ object Positions {
     object Pendul {
         @JvmField
         @Volatile
-        var transfer = 0.1
+        var transfer = 0.0
 
         @JvmField
         @Volatile
-        var bar = 0.81
+        var bar = 0.71
 
         @JvmField
         @Volatile
-        var basket = 0.49
+        var basket = 0.31
     }
 
     object Lift {
