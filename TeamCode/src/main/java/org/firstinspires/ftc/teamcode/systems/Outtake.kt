@@ -36,6 +36,11 @@ class Outtake(
                     rotation.targetPosition = Positions.ClawRotate.bar
                     pendul.targetPosition = Positions.Pendul.bar
                 }
+
+                OuttakePosition.PICKUP -> {
+                    rotation.targetPosition = Positions.ClawRotate.pickup
+                    pendul.targetPosition = Positions.Pendul.pickup
+                }
             }
         }
 }
@@ -44,6 +49,7 @@ enum class OuttakePosition {
     TRANSFER,
     BASKET,
     BAR,
+    PICKUP,
 }
 
 @TeleOp(name = "Outtake positions Test", group = "B")
@@ -59,6 +65,7 @@ class OuttakeTest : LinearOpMode() {
                     gamepad1.cross -> OuttakePosition.TRANSFER
                     gamepad1.circle -> OuttakePosition.BASKET
                     gamepad1.triangle -> OuttakePosition.BAR
+                    gamepad1.square -> OuttakePosition.PICKUP
                     else -> outtake.outtakePosition
                 }
 

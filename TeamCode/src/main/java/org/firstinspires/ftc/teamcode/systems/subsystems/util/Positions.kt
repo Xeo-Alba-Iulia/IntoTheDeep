@@ -26,6 +26,8 @@ object Positions {
         @JvmField
         @Volatile
         var basket = 0.31
+
+        var pickup = 1.0
     }
 
     object Lift {
@@ -88,5 +90,7 @@ object Positions {
         @JvmField
         @Volatile
         var basket: Double = 0.7665
+
+        var pickup = 0.23
     }
 }
