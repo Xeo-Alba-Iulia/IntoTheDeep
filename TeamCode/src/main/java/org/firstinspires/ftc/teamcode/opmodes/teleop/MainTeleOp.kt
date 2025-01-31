@@ -4,14 +4,13 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.pedropathing.follower.Follower
+import com.pedropathing.localization.Pose
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.RobotHardware
-import org.firstinspires.ftc.teamcode.systems.IntakePosition
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
-import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import java.util.concurrent.TimeUnit
 
@@ -21,8 +20,8 @@ class MainTeleOp : LinearOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
         fun inTransfer() =
-            robot.intake.intakePosition == IntakePosition.TRANSFER &&
-                robot.outtake.outtakePosition == OuttakePosition.TRANSFER
+//            robot.intake.intakePosition == IntakePosition.TRANSFER &&
+            robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
         val moveGamepad: Gamepad = gamepad1
         val controlGamepad: Gamepad = gamepad2
@@ -31,9 +30,9 @@ class MainTeleOp : LinearOpMode() {
 
         val actionList =
             mutableListOf(
-                robot.intake,
+//                robot.intake,
                 robot.outtake,
-                robot.extend,
+//                robot.extend,
                 robot.lift
             )
 
@@ -44,7 +43,8 @@ class MainTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
         }
 
-        val follower = Follower(hardwareMap)
+        val follower = Follower(this.hardwareMap)
+        follower.setStartingPose(Pose(0.0, 0.0, 0.0))
 
         waitForStart()
 
@@ -59,6 +59,8 @@ class MainTeleOp : LinearOpMode() {
                 -moveGamepad.right_stick_x.toDouble(),
                 false
             )
+            follower.update()
+
             robot.applyPositions(controlGamepad)
 
             // Actions for other hardware (intake, lift, etc.)
@@ -67,32 +69,27 @@ class MainTeleOp : LinearOpMode() {
             dashboard.sendTelemetryPacket(telemetryPacket)
 
             // Lift
-            robot.lift.power =
-                (
-                    (moveGamepad.right_trigger - moveGamepad.left_trigger) *
-                        (moveGamepad.right_trigger + moveGamepad.left_trigger)
-                ).toDouble()
 
             // Intake Power
-            robot.intake.intakePower =
-                when {
-                    moveGamepad.a -> 0.8
-                    moveGamepad.x -> -1.0
-                    else -> 0.07
-                }
+//            robot.intake.intakePower =
+//                when {
+//                    moveGamepad.a -> 0.8
+//                    moveGamepad.x -> -1.0
+//                    else -> 0.07
+//                }
 
             // Pendul manual
 //            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
 
             // Extend
-            robot.extend.targetPosition +=
-                (controlGamepad.right_trigger - controlGamepad.left_trigger) * Extend.MULTIPLIER
+//            robot.extend.targetPosition +=
+//                (controlGamepad.right_trigger - controlGamepad.left_trigger) * Extend.MULTIPLIER
 
-            if (controlGamepad.x && inTransfer()) {
-                // FIXME: S-ar putea să fie nevoie de ceva timing aici
-                robot.intake.intakePower = -0.05
-                robot.claw.targetPosition = Positions.Claw.close
-            }
+//            if (controlGamepad.x && inTransfer()) {
+//                // FIXME: S-ar putea să fie nevoie de ceva timing aici
+//                robot.intake.intakePower = -0.05
+//                robot.claw.targetPosition = Positions.Claw.close
+//            }
 
             // if (!inTransfer()) {
             robot.claw.targetPosition =
@@ -135,29 +132,37 @@ class MainTeleOp : LinearOpMode() {
             timer.reset()
         }
 
-        intake.intakePosition =
+        lift.targetPosition =
             when {
-                gamepad.dpad_down -> IntakePosition.INTAKE
-                gamepad.dpad_right -> IntakePosition.TRANSFER
-                else -> intake.intakePosition
+                gamepad.square -> Positions.Lift.down
+                gamepad.triangle -> Positions.Lift.half
+                gamepad.circle -> Positions.Lift.up
+                else -> lift.targetPosition
             }
 
-        if (intake.intakePosition != IntakePosition.TRANSFER) {
-            intake.intakePosition =
-                when {
-                    extend.targetPosition > 0.3 &&
-                        timer.time(
-                            TimeUnit.MILLISECONDS
-                        ) >= 500 -> IntakePosition.INTAKE
+//        intake.intakePosition =
+//            when {
+//                gamepad.dpad_down -> IntakePosition.INTAKE
+//                gamepad.dpad_right -> IntakePosition.TRANSFER
+//                else -> intake.intakePosition
+//            }
 
-                    extend.targetPosition <= 0.3 &&
-                        timer.time(
-                            TimeUnit.MILLISECONDS
-                        ) >= 500 -> IntakePosition.ENTRANCE
-
-                    else -> IntakePosition.ENTRANCE
-                }
-        }
+//        if (intake.intakePosition != IntakePosition.TRANSFER) {
+//            intake.intakePosition =
+//                when {
+//                    extend.targetPosition > 0.3 &&
+//                        timer.time(
+//                            TimeUnit.MILLISECONDS
+//                        ) >= 500 -> IntakePosition.INTAKE
+//
+//                    extend.targetPosition <= 0.3 &&
+//                        timer.time(
+//                            TimeUnit.MILLISECONDS
+//                        ) >= 500 -> IntakePosition.ENTRANCE
+//
+//                    else -> IntakePosition.ENTRANCE
+//                }
+//        }
 
         if (gamepad.dpad_right && !pendulIsActioned) {
             pendulIsActioned = true
@@ -184,7 +189,7 @@ class MainTeleOp : LinearOpMode() {
                     gamepad.dpad_up -> {
                         listOf(
                             OuttakePosition.OUTTAKE,
-                            extend.targetPosition,
+                            0.0,
                             claw.targetPosition
                         )
                     }
@@ -192,7 +197,7 @@ class MainTeleOp : LinearOpMode() {
                     gamepad.dpad_left -> {
                         listOf(
                             OuttakePosition.SMASH,
-                            extend.targetPosition,
+                            0.0,
                             Positions.Claw.open
                         )
                     }
@@ -200,7 +205,7 @@ class MainTeleOp : LinearOpMode() {
                     gamepad.cross -> {
                         listOf(
                             OuttakePosition.BASKET,
-                            extend.targetPosition,
+                            0.0,
                             claw.targetPosition
                         )
                     }
@@ -208,13 +213,13 @@ class MainTeleOp : LinearOpMode() {
                     else -> {
                         listOf(
                             outtake.outtakePosition,
-                            extend.targetPosition,
+                            0.0,
                             claw.targetPosition
                         )
                     }
                 }
             outtake.outtakePosition = outtakePosition as OuttakePosition
-            extend.targetPosition = extendPosition as Double
+//            extend.targetPosition = extendPosition as Double
             claw.targetPosition = clawPosition as Double
         } catch (e: NotImplementedError) {
             // Driver station nu arata NotImplementedError, doar oprește OpMode
