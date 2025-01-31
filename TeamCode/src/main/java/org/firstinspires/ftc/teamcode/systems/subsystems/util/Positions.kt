@@ -21,7 +21,7 @@ object Positions {
 
         @JvmField
         @Volatile
-        var outtake = 0.2
+        var outtake = 0.838
 
         @JvmField
         @Volatile
@@ -87,7 +87,7 @@ object Positions {
 
         @JvmField
         @Volatile
-        var outtake: Double = 0.93
+        var outtake: Double = 0.63
 
         @JvmField
         @Volatile
