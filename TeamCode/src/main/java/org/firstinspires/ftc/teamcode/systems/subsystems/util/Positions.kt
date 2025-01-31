@@ -73,7 +73,7 @@ object Positions {
 
         @JvmField
         @Volatile
-        var close: Double = 0.651
+        var close: Double = 0.621
     }
 
     object ClawRotate {
