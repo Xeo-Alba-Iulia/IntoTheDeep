@@ -36,10 +36,7 @@ class Lift(
         liftRight.direction = DcMotorSimple.Direction.REVERSE
     }
 
-    var power = 1.0
-        set(value) {
-            field = value.coerceIn(-1.0, 1.0)
-        }
+    private var power = 1.0
 
     override var targetPosition = 0.0
         set(value) {
@@ -53,7 +50,6 @@ class Lift(
     override fun run(p: TelemetryPacket): Boolean {
         if (isCanceled) {
             isCanceled = false
-            power = 0.0
 
             return false
         }
