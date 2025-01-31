@@ -11,9 +11,9 @@ public class LConstants {
         ThreeWheelConstants.leftY = 5.314961;
         ThreeWheelConstants.rightY = -5.314961;
         ThreeWheelConstants.strafeX = 4.01574803;
-        ThreeWheelConstants.leftEncoder_HardwareMapName = "MotorFrontLeft";
+        ThreeWheelConstants.leftEncoder_HardwareMapName = "MotorBackLeft";
         ThreeWheelConstants.rightEncoder_HardwareMapName = "MotorFrontRight";
-        ThreeWheelConstants.strafeEncoder_HardwareMapName = "MotorBackLeft";
+        ThreeWheelConstants.strafeEncoder_HardwareMapName = "MotorFrontLeft";
         ThreeWheelConstants.leftEncoderDirection = Encoder.REVERSE;
         ThreeWheelConstants.rightEncoderDirection = Encoder.FORWARD;
         ThreeWheelConstants.strafeEncoderDirection = Encoder.FORWARD;
