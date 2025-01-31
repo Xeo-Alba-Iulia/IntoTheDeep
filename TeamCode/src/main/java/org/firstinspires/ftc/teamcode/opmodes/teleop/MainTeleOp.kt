@@ -33,7 +33,8 @@ class MainTeleOp : LinearOpMode() {
 //                robot.intake,
                 robot.outtake,
 //                robot.extend,
-                robot.lift
+                robot.lift,
+                robot.claw
             )
 
         while (!isStarted) {
@@ -188,17 +189,9 @@ class MainTeleOp : LinearOpMode() {
 
                     gamepad.dpad_up -> {
                         listOf(
-                            OuttakePosition.OUTTAKE,
+                            OuttakePosition.BAR,
                             0.0,
                             claw.targetPosition
-                        )
-                    }
-
-                    gamepad.dpad_left -> {
-                        listOf(
-                            OuttakePosition.SMASH,
-                            0.0,
-                            Positions.Claw.open
                         )
                     }
 
