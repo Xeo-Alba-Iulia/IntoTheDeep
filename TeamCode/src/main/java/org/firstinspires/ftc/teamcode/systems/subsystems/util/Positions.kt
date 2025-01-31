@@ -73,11 +73,11 @@ object Positions {
     object Claw {
         @JvmField
         @Volatile
-        var open: Double = 0.4
+        var open: Double = 0.469
 
         @JvmField
         @Volatile
-        var close: Double = 1.0
+        var close: Double = 0.651
     }
 
     object ClawRotate {
@@ -87,10 +87,10 @@ object Positions {
 
         @JvmField
         @Volatile
-        var outtake: Double = 0.4
+        var outtake: Double = 0.93
 
         @JvmField
         @Volatile
-        var basket: Double = 0.3
+        var basket: Double = 0.7665
     }
 }

@@ -9,15 +9,8 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMecha
 
 class Pendul(
     hardwareMap: HardwareMap,
-) : ServoPositionMechanism(0.69) {
-    val ServoLeft: Servo = hardwareMap.servo[DeviceNames.PLServo]
-    val ServoRight: Servo = hardwareMap.servo[DeviceNames.PRServo]
-
-    override val servos: Array<Servo> = arrayOf(ServoLeft, ServoRight)
-
-    companion object {
-        const val MULTIPLIER = 0.001
-    }
+) : ServoPositionMechanism(0.0) {
+    override val servos: Array<Servo> = arrayOf(hardwareMap.servo[DeviceNames.PLServo], hardwareMap.servo[DeviceNames.PRServo])
 }
 
 @TeleOp(name = "Outtake pendul test", group = "C")
