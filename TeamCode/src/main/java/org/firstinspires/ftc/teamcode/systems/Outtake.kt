@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -17,14 +18,9 @@ class Outtake(
 
     override fun run(p: TelemetryPacket) = rotation.run(p) && pendul.run(p)
 
-    var outtakePosition: OuttakePosition
-        get() =
-            when (pendul.targetPosition) {
-                Positions.Pendul.transfer -> OuttakePosition.TRANSFER
-                Positions.Pendul.outtake -> OuttakePosition.OUTTAKE
-                else -> OuttakePosition.BASKET
-            }
+    var outtakePosition: OuttakePosition = OuttakePosition.TRANSFER
         set(value) {
+            field = value
             when (value) {
                 OuttakePosition.TRANSFER -> {
                     rotation.targetPosition = Positions.ClawRotate.transfer
@@ -36,14 +32,9 @@ class Outtake(
                     pendul.targetPosition = Positions.Pendul.basket
                 }
 
-                OuttakePosition.OUTTAKE -> {
-                    rotation.targetPosition = Positions.ClawRotate.outtake
-                    pendul.targetPosition = Positions.Pendul.outtake
-                }
-
-                OuttakePosition.SMASH -> {
-                    rotation.targetPosition = Positions.ClawRotate.outtake
-                    pendul.targetPosition = Positions.Pendul.smash
+                OuttakePosition.BAR -> {
+                    rotation.targetPosition = Positions.ClawRotate.bar
+                    pendul.targetPosition = Positions.Pendul.bar
                 }
             }
         }
@@ -51,9 +42,8 @@ class Outtake(
 
 enum class OuttakePosition {
     TRANSFER,
-    SMASH,
     BASKET,
-    OUTTAKE,
+    BAR,
 }
 
 @TeleOp(name = "Outtake positions Test", group = "B")
@@ -61,20 +51,21 @@ class OuttakeTest : LinearOpMode() {
     override fun runOpMode() {
         waitForStart()
         val outtake = Outtake(hardwareMap)
+        val dashboard = FtcDashboard.getInstance()
 
         while (opModeIsActive()) {
             outtake.outtakePosition =
                 when {
-                    gamepad1.a -> OuttakePosition.TRANSFER
-                    gamepad1.b -> OuttakePosition.BASKET
-                    gamepad1.x -> OuttakePosition.OUTTAKE
-                    gamepad1.y -> OuttakePosition.SMASH
+                    gamepad1.cross -> OuttakePosition.TRANSFER
+                    gamepad1.circle -> OuttakePosition.BASKET
+                    gamepad1.triangle -> OuttakePosition.BAR
                     else -> outtake.outtakePosition
                 }
 
             val packet = TelemetryPacket()
             outtake.run(packet)
             telemetry.addData("Intake Position", outtake.outtakePosition)
+            dashboard.sendTelemetryPacket(packet)
             telemetry.update()
         }
     }

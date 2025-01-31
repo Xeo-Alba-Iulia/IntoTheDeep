@@ -17,15 +17,11 @@ object Positions {
     object Pendul {
         @JvmField
         @Volatile
-        var transfer = 0.93
+        var transfer = 0.1
 
         @JvmField
         @Volatile
-        var outtake = 0.838
-
-        @JvmField
-        @Volatile
-        var smash = 0.0
+        var bar = 0.81
 
         @JvmField
         @Volatile
@@ -39,11 +35,11 @@ object Positions {
 
         @JvmField
         @Volatile
-        var half = 70.0
+        var half = 450.0
 
         @JvmField
         @Volatile
-        var up = 110.0
+        var up = 2150.0
     }
 
     object Extend {
@@ -87,7 +83,7 @@ object Positions {
 
         @JvmField
         @Volatile
-        var outtake: Double = 0.63
+        var bar: Double = 0.2
 
         @JvmField
         @Volatile
