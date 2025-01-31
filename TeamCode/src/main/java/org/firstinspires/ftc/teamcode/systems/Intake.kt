@@ -31,7 +31,10 @@ class Intake(
             when (value) {
                 IntakePosition.INTAKE -> {
                     intakePendul.targetPosition =
-                        ServoSmoothing.servoSmoothing(intakePendul.getPosition(), Positions.IntakePendul.down)
+                        ServoSmoothing.servoSmoothing(
+                            intakePendul.targetPosition,
+                            Positions.IntakePendul.down
+                        )
                     intakeRotation.targetPosition = Positions.IntakeRotation.parallel
                 }
 

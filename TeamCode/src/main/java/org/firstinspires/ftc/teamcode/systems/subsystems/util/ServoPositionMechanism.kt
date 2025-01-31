@@ -15,11 +15,6 @@ abstract class ServoPositionMechanism(
             field = Range.clip(value, 0.0, 1.0)
         }
 
-    fun getPosition(): Double {
-        servos.forEach { return it.position }
-        return 0.0
-    }
-
     override fun cancel() {
         isCanceled = false
     }
