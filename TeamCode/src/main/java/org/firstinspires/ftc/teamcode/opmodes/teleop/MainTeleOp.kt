@@ -203,6 +203,14 @@ class MainTeleOp : LinearOpMode() {
                         )
                     }
 
+                    gamepad.square -> {
+                        listOf(
+                            OuttakePosition.PICKUP,
+                            0.0,
+                            claw.targetPosition
+                        )
+                    }
+
                     else -> {
                         listOf(
                             outtake.outtakePosition,
