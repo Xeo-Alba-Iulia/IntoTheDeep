@@ -47,10 +47,10 @@ class IntakeMotor(
 @TeleOp(name = "Intake Motor Test", group = "C")
 class IntakeMotorTest : OpMode() {
     private lateinit var intakeMotor: IntakeMotor
+    private val dashboard: FtcDashboard = FtcDashboard.getInstance()
 
     override fun init() {
         intakeMotor = IntakeMotor(hardwareMap)
-        val dashboard: FtcDashboard = FtcDashboard.getInstance()
     }
 
     override fun loop() {
@@ -58,6 +58,8 @@ class IntakeMotorTest : OpMode() {
 
         intakeMotor.intakePower = gamepad1.left_stick_y.toDouble()
         intakeMotor.run(packet)
+
+        dashboard.telemetry.update()
     }
 
 }
