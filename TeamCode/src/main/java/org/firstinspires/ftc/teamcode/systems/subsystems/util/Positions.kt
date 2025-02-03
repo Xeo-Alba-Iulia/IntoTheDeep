@@ -29,7 +29,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var basket = 0.31
+            var basket = 0.0
 
             @JvmField
             @Volatile
