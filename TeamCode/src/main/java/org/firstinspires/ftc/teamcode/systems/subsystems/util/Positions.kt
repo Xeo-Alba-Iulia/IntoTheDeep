@@ -33,7 +33,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 1.0
+            var pickup = 0.87
         }
     }
 
@@ -114,7 +114,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.23
+            var pickup = 0.08
         }
     }
 }
