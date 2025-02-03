@@ -186,6 +186,14 @@ class MainTeleOp : LinearOpMode() {
                         )
                     }
 
+                    gamepad.dpad_left -> {
+                        listOf(
+                            OuttakePosition.BASKET,
+                            0.0,
+                            claw.targetPosition
+                        )
+                    }
+
                     gamepad.dpad_up -> {
                         listOf(
                             OuttakePosition.BAR,
