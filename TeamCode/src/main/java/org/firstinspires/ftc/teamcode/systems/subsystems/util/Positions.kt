@@ -89,11 +89,11 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var open: Double = 0.469
+            var open: Double = 0.5
 
             @JvmField
             @Volatile
-            var close: Double = 0.621
+            var close: Double = 0.654
         }
     }
 
