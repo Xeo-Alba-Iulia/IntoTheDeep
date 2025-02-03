@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
-import java.util.concurrent.TimeUnit
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
@@ -128,10 +127,10 @@ class MainTeleOp : LinearOpMode() {
      * (workaround for DriverStation not displaying NotImplementedException)
      */
     fun RobotHardware.applyPositions(gamepad: Gamepad) {
-        if (gamepad.dpad_down && intakeIsUp) {
-            intakeIsUp = false
-            timer.reset()
-        }
+//        if (gamepad.dpad_down && intakeIsUp) {
+//            intakeIsUp = false
+//            timer.reset()
+//        }
 
         lift.targetPosition =
             when {
@@ -165,16 +164,16 @@ class MainTeleOp : LinearOpMode() {
 //                }
 //        }
 
-        if (gamepad.dpad_right && !pendulIsActioned) {
-            pendulIsActioned = true
-            intakeIsUp = true
-            timer.reset()
-        }
-
-        if (pendulIsActioned && timer.time(TimeUnit.MILLISECONDS) >= 500) {
-            outtake.pendul.targetPosition = Positions.Pendul.transfer
-            pendulIsActioned = false
-        }
+//        if (gamepad.dpad_right && !pendulIsActioned) {
+//            pendulIsActioned = true
+//            intakeIsUp = true
+//            timer.reset()
+//        }
+//
+//        if (pendulIsActioned && timer.time(TimeUnit.MILLISECONDS) >= 500) {
+//            outtake.pendul.targetPosition = Positions.Pendul.transfer
+//            pendulIsActioned = false
+//        }
 
         try {
             val (outtakePosition, extendPosition, clawPosition) =
@@ -203,7 +202,7 @@ class MainTeleOp : LinearOpMode() {
                         )
                     }
 
-                    gamepad.square -> {
+                    gamepad.dpad_down -> {
                         listOf(
                             OuttakePosition.PICKUP,
                             0.0,
