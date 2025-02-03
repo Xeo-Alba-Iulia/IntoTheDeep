@@ -17,10 +17,11 @@ import org.firstinspires.ftc.teamcode.systems.DeviceNames
 class IntakeMotor(
     hardwareMap: HardwareMap,
 ) : Action {
-    private val motors: Array<CRServo> = arrayOf(
-        hardwareMap.crservo[DeviceNames.ILMotor],
-        hardwareMap.crservo[DeviceNames.IRMotor]
-    )
+    private val motors: Array<CRServo> =
+        arrayOf(
+            hardwareMap.crservo[DeviceNames.ILMotor],
+            hardwareMap.crservo[DeviceNames.IRMotor]
+        )
 
 //    init {
 //        motors[0].direction = DcMotorSimple.Direction.REVERSE
@@ -56,10 +57,10 @@ class IntakeMotorTest : OpMode() {
     override fun loop() {
         val packet = TelemetryPacket()
 
-        intakeMotor.intakePower = gamepad1.left_stick_y.toDouble()
+        intakeMotor.intakePower = -gamepad1.left_stick_y.toDouble()
         intakeMotor.run(packet)
 
+        dashboard.sendTelemetryPacket(packet)
         dashboard.telemetry.update()
     }
-
 }
