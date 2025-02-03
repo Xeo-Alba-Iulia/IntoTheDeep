@@ -39,9 +39,9 @@ class Lift(
     private var power = 1.0
 
     override var targetPosition = 0.0
-        set(value) {
-            field = value.coerceIn(0.0, 2185.0)
-        }
+//        set(value) {
+//            field = value.coerceIn(0.0, 2185.0)
+//        }
 
     override fun cancel() {
         isCanceled = true
