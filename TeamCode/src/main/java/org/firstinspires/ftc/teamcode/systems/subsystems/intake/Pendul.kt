@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMecha
 
 class IntakePendul(
     hardwareMap: HardwareMap,
-) : ServoPositionMechanism(0.9) {
+) : ServoPositionMechanism(0.5) {
     override val servos: Array<Servo> = arrayOf(hardwareMap.servo["IntakePendul"])
 }
 
