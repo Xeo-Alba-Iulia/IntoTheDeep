@@ -16,7 +16,7 @@ class DeviceNames {
         const val CRServo = "ClawRotate" // CH p5
         const val CServo = "Claw" // EH p1
 
-        const val ILMotor = "IntakeLeft" //CH p0
+        const val ILMotor = "IntakeLeft" // CH p0
         const val IRMotor = "IntakeRight"
     }
 }
