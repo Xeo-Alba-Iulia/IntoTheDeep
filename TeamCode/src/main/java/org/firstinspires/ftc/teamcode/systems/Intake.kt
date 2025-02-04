@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeMotor
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
-import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.ServoSmoothing
 
@@ -15,10 +14,9 @@ class Intake(
     hardwareMap: HardwareMap,
 ) : Action {
     private val intakeMotor = IntakeMotor(hardwareMap)
-    private val intakeRotation = IntakeRotation(hardwareMap)
     private val intakePendul = IntakePendul(hardwareMap)
 
-    override fun run(p: TelemetryPacket) = intakePendul.run(p) && intakeRotation.run(p) && intakeMotor.run(p)
+    override fun run(p: TelemetryPacket) = intakePendul.run(p) && intakeMotor.run(p)
 
     var intakePower: Double
         get() = intakeMotor.intakePower
@@ -35,17 +33,14 @@ class Intake(
                             intakePendul.targetPosition,
                             Positions.IntakePendul.down
                         )
-                    intakeRotation.targetPosition = Positions.IntakeRotation.parallel
                 }
 
                 IntakePosition.TRANSFER -> {
                     intakePendul.targetPosition = Positions.IntakePendul.up
-                    intakeRotation.targetPosition = Positions.IntakeRotation.perpendicular
                 }
 
                 IntakePosition.ENTRANCE -> {
                     intakePendul.targetPosition = Positions.IntakePendul.entrance
-                    intakeRotation.targetPosition = Positions.IntakeRotation.parallel
                 }
 
                 else -> {
