@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.systems.subsystems.util
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.hardware.Servo
-import com.qualcomm.robotcore.util.Range
 
 abstract class ServoPositionMechanism(
     initialPosition: Double = 0.0,
@@ -12,8 +11,10 @@ abstract class ServoPositionMechanism(
     private var isCanceled = false
     override var targetPosition = initialPosition
         set(value) {
-            field = Range.clip(value, 0.0, 1.0)
+            field = value.coerceIn(0.0..1.0)
         }
+
+    private var lastPosition = targetPosition
 
     override fun cancel() {
         isCanceled = false
@@ -26,7 +27,11 @@ abstract class ServoPositionMechanism(
             return false
         }
 
-        servos.forEach { it.position = targetPosition }
+        if (targetPosition != lastPosition) {
+            servos.forEach { it.position = targetPosition }
+        }
+
+        lastPosition = targetPosition
 
         p.put("Position for ${this::class.simpleName}", targetPosition)
 
