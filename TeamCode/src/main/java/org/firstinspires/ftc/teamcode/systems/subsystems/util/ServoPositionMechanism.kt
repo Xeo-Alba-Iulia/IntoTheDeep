@@ -14,7 +14,7 @@ abstract class ServoPositionMechanism(
             field = value.coerceIn(0.0..1.0)
         }
 
-    private var lastPosition = targetPosition
+    private var lastPosition = Double.NaN
 
     override fun cancel() {
         isCanceled = false
