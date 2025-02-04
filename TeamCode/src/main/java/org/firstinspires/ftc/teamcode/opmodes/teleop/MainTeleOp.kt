@@ -29,7 +29,8 @@ class MainTeleOp : LinearOpMode() {
 
         val actionList =
             mutableListOf(
-//                robot.intake,
+                robot.intake,
+                robot.intakePendul,
                 robot.outtake,
 //                robot.extend,
                 robot.lift,
@@ -140,6 +141,12 @@ class MainTeleOp : LinearOpMode() {
                 else -> lift.targetPosition
             }
 
+        when {
+            gamepad.dpad_right -> intakePendul.targetPosition = Positions.IntakePendul.transfer
+            gamepad.cross -> intakePendul.targetPosition = Positions.IntakePendul.pickup
+            gamepad.triangle -> intakePendul.targetPosition = Positions.IntakePendul.init
+        }
+
 //        intake.intakePosition =
 //            when {
 //                gamepad.dpad_down -> IntakePosition.INTAKE
@@ -186,25 +193,17 @@ class MainTeleOp : LinearOpMode() {
                         )
                     }
 
-                    gamepad.dpad_left -> {
-                        listOf(
-                            OuttakePosition.BASKET,
-                            0.0,
-                            claw.targetPosition
-                        )
-                    }
-
                     gamepad.dpad_up -> {
                         listOf(
-                            OuttakePosition.BAR,
+                            OuttakePosition.BASKET,
                             0.0,
                             claw.targetPosition
                         )
                     }
 
-                    gamepad.cross -> {
+                    gamepad.dpad_left -> {
                         listOf(
-                            OuttakePosition.BASKET,
+                            OuttakePosition.BAR,
                             0.0,
                             claw.targetPosition
                         )
