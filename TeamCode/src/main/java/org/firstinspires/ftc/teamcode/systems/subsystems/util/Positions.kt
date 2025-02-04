@@ -4,24 +4,11 @@ import com.acmerobotics.dashboard.config.Config
 
 object Positions {
     @Config
-    class IntakeRotation {
-        companion object {
-            @JvmField
-            @Volatile
-            var parallel = 0.345
-
-            @JvmField
-            @Volatile
-            var perpendicular = 0.6466
-        }
-    }
-
-    @Config
     class Pendul {
         companion object {
             @JvmField
             @Volatile
-            var transfer = 0.0
+            var transfer = 0.03
 
             @JvmField
             @Volatile
@@ -50,7 +37,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var up = 2150.0
+            var up = 2210.0
         }
     }
 
@@ -72,15 +59,15 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var down = 0.43
+            var pickup = 0.2195
 
             @JvmField
             @Volatile
-            var entrance = 0.50
+            var init = 0.50
 
             @JvmField
             @Volatile
-            var up = 0.84
+            var transfer = 0.84
         }
     }
 
@@ -102,19 +89,19 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var transfer: Double = 0.9
+            var transfer: Double = 0.355
 
             @JvmField
             @Volatile
-            var bar: Double = 0.2
+            var bar: Double = 0.8
 
             @JvmField
             @Volatile
-            var basket: Double = 0.0
+            var basket: Double = 0.6
 
             @JvmField
             @Volatile
-            var pickup = 0.08
+            var pickup = 0.68
         }
     }
 }
