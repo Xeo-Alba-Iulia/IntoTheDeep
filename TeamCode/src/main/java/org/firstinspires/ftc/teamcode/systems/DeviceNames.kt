@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems
 
+@Suppress("ConstPropertyName")
 class DeviceNames {
     companion object {
         const val FLMotor = "MotorFrontLeft" // CH p0
