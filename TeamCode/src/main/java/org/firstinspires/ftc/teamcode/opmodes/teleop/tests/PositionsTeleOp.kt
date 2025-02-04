@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
-import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 
 /**
@@ -28,7 +27,6 @@ class PositionsTeleOp : LinearOpMode() {
          */
         val servoPositions =
             listOf(
-                IntakeRotation(hardwareMap),
                 IntakePendul(hardwareMap),
                 Pendul(hardwareMap),
                 Lift(hardwareMap)

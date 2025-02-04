@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeMotor
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
-import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotation
 import kotlin.properties.Delegates
 
 @TeleOp(name = "Intake Test", group = "B")
@@ -17,7 +16,6 @@ class IntakeTest : LinearOpMode() {
 
     override fun runOpMode() {
         val intake = IntakeMotor(hardwareMap)
-        val intakeRotation = IntakeRotation(hardwareMap)
         val intakePendul = IntakePendul(hardwareMap)
 
         waitForStart()
@@ -35,16 +33,13 @@ class IntakeTest : LinearOpMode() {
         val dash = FtcDashboard.getInstance()
         var isRunning = true
 
-        while (opModeIsActive() && isRunning) {
+        while (opModeIsActive()) {
             val packet = TelemetryPacket()
 
             rotationPosition += MULTIPLIER * gamepad1.left_stick_y
             pendulPosition += MULTIPLIER * gamepad1.right_stick_y
 
-            intakeRotation.targetPosition = rotationPosition
             intakePendul.targetPosition = pendulPosition
-
-            isRunning = intakeRotation.run(packet)
 
             intake.intakePower =
                 when {
