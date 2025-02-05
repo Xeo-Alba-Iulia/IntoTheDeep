@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.util.SinglePress
+import org.firstinspires.ftc.teamcode.util.TogglePress
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
@@ -47,6 +49,10 @@ class MainTeleOp : LinearOpMode() {
 
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(Pose(0.0, 0.0, 0.0))
+
+        val clawControlToggle by TogglePress(controlGamepad::right_bumper)
+        val clawMovementOpen by SinglePress(moveGamepad::right_bumper)
+        val clawMovementClose by SinglePress(moveGamepad::left_bumper)
 
         waitForStart()
 
@@ -94,13 +100,21 @@ class MainTeleOp : LinearOpMode() {
 //            }
 
             // if (!inTransfer()) {
-            robot.claw.targetPosition =
-                when {
-                    moveGamepad.right_bumper || controlGamepad.right_bumper -> Positions.Claw.close
-                    moveGamepad.left_bumper || controlGamepad.left_bumper -> Positions.Claw.open
-                    else -> robot.claw.targetPosition
-                }
-            // }
+            if (controlGamepad.right_bumper) {
+                robot.claw.targetPosition =
+                    when (clawControlToggle) {
+                        true -> Positions.Claw.close
+                        false -> Positions.Claw.open
+                    }
+            }
+            else {
+                robot.claw.targetPosition =
+                    when {
+                        clawMovementOpen -> Positions.Claw.open
+                        clawMovementClose -> Positions.Claw.close
+                        else -> robot.claw.targetPosition
+                    }
+            }
         }
     }
 
@@ -137,7 +151,7 @@ class MainTeleOp : LinearOpMode() {
         lift.targetPosition =
             when {
                 gamepad.square -> Positions.Lift.down
-                gamepad.triangle -> Positions.Lift.half
+                gamepad.triangle || gamepad.dpad_right -> Positions.Lift.half
                 gamepad.circle -> Positions.Lift.up
                 else -> lift.targetPosition
             }
