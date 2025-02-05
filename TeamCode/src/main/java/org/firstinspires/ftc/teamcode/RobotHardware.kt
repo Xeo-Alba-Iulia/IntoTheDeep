@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode
 import com.pedropathing.util.Constants
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.systems.Outtake
+import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeMotor
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
@@ -26,7 +27,7 @@ class RobotHardware
         val outtake: Outtake = Outtake(hardwareMap),
         val intakePendul: IntakePendul = IntakePendul(hardwareMap),
         val intake: IntakeMotor = IntakeMotor(hardwareMap),
-//        val extend: Extend = Extend(hardwareMap),
+        val extend: Extend = Extend(hardwareMap),
         val claw: Claw = Claw(hardwareMap),
     ) {
         init {

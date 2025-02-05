@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.Range
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
 
 private const val MAX_POSITION = 0.9
@@ -27,5 +29,5 @@ class Extend(
         }
 }
 
-// @TeleOp(group = "Servo Subsystems")
-// class ExtendTest : ManualMechanismTeleOp(::Extend)
+@TeleOp(group = "Servo Subsystems")
+class ExtendTest : ManualMechanismTeleOp(::Extend)

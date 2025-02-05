@@ -46,11 +46,11 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var `in` = 0.32
+            var `in` = 0.9
 
             @JvmField
             @Volatile
-            var out = 0.6
+            var out = 0.0
         }
     }
 

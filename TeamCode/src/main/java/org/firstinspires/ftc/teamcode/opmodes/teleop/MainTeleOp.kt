@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
+import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
 @TeleOp(name = "TeleOp", group = "A")
@@ -32,7 +33,7 @@ class MainTeleOp : LinearOpMode() {
                 robot.intake,
                 robot.intakePendul,
                 robot.outtake,
-//                robot.extend,
+                robot.extend,
                 robot.lift,
                 robot.claw
             )
@@ -72,19 +73,19 @@ class MainTeleOp : LinearOpMode() {
             // Lift
 
             // Intake Power
-//            robot.intake.intakePower =
-//                when {
-//                    moveGamepad.a -> 0.8
-//                    moveGamepad.x -> -1.0
-//                    else -> 0.07
-//                }
+            robot.intake.intakePower =
+                when {
+                    moveGamepad.a -> 0.8
+                    moveGamepad.x -> -1.0
+                    else -> 0.0
+                }
 
             // Pendul manual
 //            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
 
             // Extend
-//            robot.extend.targetPosition +=
-//                (controlGamepad.right_trigger - controlGamepad.left_trigger) * Extend.MULTIPLIER
+            robot.extend.targetPosition +=
+                (controlGamepad.right_trigger - controlGamepad.left_trigger) * Extend.MULTIPLIER
 
 //            if (controlGamepad.x && inTransfer()) {
 //                // FIXME: S-ar putea să fie nevoie de ceva timing aici
