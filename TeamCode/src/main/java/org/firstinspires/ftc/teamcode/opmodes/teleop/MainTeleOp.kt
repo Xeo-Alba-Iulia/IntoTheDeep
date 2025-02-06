@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.SinglePress
-import org.firstinspires.ftc.teamcode.util.TogglePress
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
@@ -50,9 +49,9 @@ class MainTeleOp : LinearOpMode() {
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(Pose(0.0, 0.0, 0.0))
 
-        val clawControlToggle by TogglePress(controlGamepad::right_bumper)
-        val clawMovementOpen by SinglePress(moveGamepad::right_bumper)
-        val clawMovementClose by SinglePress(moveGamepad::left_bumper)
+        val clawControlToggle by SinglePress(controlGamepad::right_bumper)
+        val clawMovementOpen by SinglePress(moveGamepad::left_bumper)
+        val clawMovementClose by SinglePress(moveGamepad::right_bumper)
 
         waitForStart()
 
@@ -99,22 +98,11 @@ class MainTeleOp : LinearOpMode() {
 //                robot.claw.targetPosition = Positions.Claw.close
 //            }
 
+            robot.claw.isClosed =
+                ((robot.claw.isClosed xor clawControlToggle) || clawMovementClose) &&
+                !clawMovementOpen
+
             // if (!inTransfer()) {
-            if (controlGamepad.right_bumper) {
-                robot.claw.targetPosition =
-                    when (clawControlToggle) {
-                        true -> Positions.Claw.close
-                        false -> Positions.Claw.open
-                    }
-            }
-            else {
-                robot.claw.targetPosition =
-                    when {
-                        clawMovementOpen -> Positions.Claw.open
-                        clawMovementClose -> Positions.Claw.close
-                        else -> robot.claw.targetPosition
-                    }
-            }
         }
     }
 
