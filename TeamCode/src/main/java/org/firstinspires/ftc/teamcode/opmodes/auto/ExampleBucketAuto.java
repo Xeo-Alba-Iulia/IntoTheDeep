@@ -155,6 +155,8 @@ public class ExampleBucketAuto extends OpMode {
                 if(!follower.isBusy()) {
                     /* Score Preload */
                     robotHardware.getClaw().setClosed(false);
+                    if (opmodeTimer.getElapsedTimeSeconds() < 3)
+                        return;
                     robotHardware.getOuttake().setOuttakePosition(OuttakePosition.TRANSFER);
                     robotHardware.getLift().setTargetPosition(Positions.Lift.down);
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
