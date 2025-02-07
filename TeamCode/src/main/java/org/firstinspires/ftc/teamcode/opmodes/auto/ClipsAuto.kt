@@ -7,8 +7,10 @@ import com.pedropathing.localization.Pose
 import com.pedropathing.pathgen.*
 import com.pedropathing.util.Constants
 import com.pedropathing.util.Timer
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
@@ -29,24 +31,26 @@ class ClipsAuto : LinearOpMode() {
 
         val follower = Follower(hardwareMap)
 
+        val hubList = hardwareMap.getAll(LynxModule::class.java)
+
         val robot = RobotHardware(hardwareMap)
 
         val dashboard = FtcDashboard.getInstance()
 
-        val beginPose = Pose(8.2, 60.0, Math.toRadians(180.0))
-        val scorePose = Pose(38.5, 72.5, Math.toRadians(180.001))
+        val beginPose = Pose(10.0, 60.0, Math.toRadians(180.0))
+        val scorePose = Pose(39.5, 72.0, Math.toRadians(180.001))
         val pickup1Intermediary = Pose(36.0, 36.0, 0.0)
         val pickup1Pose = Pose(60.3, 29.06, 0.0)
-        val drop1Pose = Pose(30.0, 28.0, 0.0)
+        val drop1Pose = Pose(32.0, 28.0, 0.0)
         val pickup2Pose = Pose(60.3, 20.5, 0.0)
         val pickup2Intermediary = Point(62.3, 30.0)
-        val drop2Pose = Pose(30.0, 20.5, 0.0)
+        val drop2Pose = Pose(32.0, 20.5, 0.0)
         val pickup3Pose = Pose(60.3, 13.0, 0.0)
         val pickup3Intermediary = Point(62.3, 20.0)
         val drop3Pose = Pose(18.0, 13.0, 0.0)
 
         val dropControl = Point(30.0, 24.0)
-        val humanPickup = Pose(12.7, 24.0, 0.0)
+        val humanPickup = Pose(14.0, 24.0, 0.0)
 
         val scorePreloadPath = Path(BezierLine(Point(beginPose), Point(scorePose)))
         scorePreloadPath.setConstantHeadingInterpolation(Math.toRadians(180.0))
@@ -57,7 +61,7 @@ class ClipsAuto : LinearOpMode() {
         val scorePaths =
             Array(4) {
                 val newScorePose = scorePose.copy()
-                newScorePose.y -= (0.5) * it
+                newScorePose.y += (0.5) * it
 
                 val scoreControl = Point(humanPickup.x, newScorePose.y)
                 val scoreControl2 = Point(25.0, newScorePose.y)
@@ -76,14 +80,20 @@ class ClipsAuto : LinearOpMode() {
                 val returnPath =
                     follower
                         .pathBuilder()
-                        .addPath(BezierLine(Point(newScorePose), scoreControl2))
-                        .setConstantHeadingInterpolation(newScorePose.heading)
-                        .addPath(BezierCurve(scoreControl2, dropControl, Point(humanPickup)))
-                        .setLinearHeadingInterpolation(newScorePose.heading, humanPickup.heading)
+                        .addPath(
+                            BezierCurve(
+                                Point(newScorePose),
+                                Point(10.0, 72.0),
+                                Point(48.0, 24.0),
+                                Point(humanPickup)
+                            )
+                        ).setLinearHeadingInterpolation(newScorePose.heading, humanPickup.heading)
                         .build()
 
                 Pair(goPath, returnPath)
             }
+
+        scorePose.x += 2.5
 
         val drop1Path =
             follower
@@ -114,6 +124,7 @@ class ClipsAuto : LinearOpMode() {
 
         val humanPickupPath = Path(BezierCurve(Point(drop3Pose), dropControl, Point(humanPickup)))
         humanPickupPath.setConstantHeadingInterpolation(0.0)
+        humanPickupPath.zeroPowerAccelerationMultiplier = 2.0
 
         follower.setStartingPose(beginPose)
 
@@ -129,7 +140,7 @@ class ClipsAuto : LinearOpMode() {
 
             when (state) {
                 0 -> {
-                    robot.lift.targetPosition = Positions.Lift.half - 15.0
+                    robot.lift.targetPosition = Positions.Lift.half
                     robot.outtake.outtakePosition = OuttakePosition.BAR
                     if (pathTimer.elapsedTimeSeconds >= 0.5) {
                         follower.followPath(scorePreloadPath, true)
@@ -161,27 +172,56 @@ class ClipsAuto : LinearOpMode() {
                 3 -> {
                     if (!follower.isBusy) {
                         robot.claw.isClosed = true
-                        robot.outtake.outtakePosition = OuttakePosition.BAR
-                        robot.lift.targetPosition = Positions.Lift.half
 
                         state = 4
                     }
                 }
 
                 4 -> {
+                    if (pathTimer.elapsedTimeSeconds > 0.1) {
+                        robot.outtake.outtakePosition = OuttakePosition.BAR
+                        robot.lift.targetPosition = Positions.Lift.half
+                    }
                     if (pathTimer.elapsedTimeSeconds > 0.5) {
+                        follower.headingOffset = Math.toRadians(-10.0)
                         follower.followPath(scorePaths[0].first)
+                        follower.xOffset = -3.3
                         state = 5
                     }
                 }
 
                 5 -> {
                     if (!follower.isBusy) {
-                        requestOpModeStop()
+                        follower.pose = scorePose
+                        follower.resetOffset()
+                        robot.claw.isClosed = false
+                        robot.outtake.outtakePosition = OuttakePosition.PICKUP
+                        follower.followPath(scorePaths[0].second)
+                        state = 6
+                    }
+                }
+
+                6 -> {
+                    if (pathTimer.elapsedTimeSeconds > 0.5) {
+                        robot.lift.targetPosition = Positions.Lift.down
+                    }
+
+                    if (!follower.isBusy) {
+                        robot.claw.isClosed = true
+                        robot.lift.targetPosition = Positions.Lift.half
+                        follower.followPath(scorePaths[1].first)
+                        state = 7
+                    }
+                }
+
+                7 -> {
+                    if (pathTimer.elapsedTimeSeconds > 0.5) {
+                        robot.outtake.outtakePosition = OuttakePosition.PICKUP
                     }
                 }
             }
 
+            follower.setMaxPower(11.5 / hubList.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average())
             follower.update()
             follower.drawOnDashBoard()
         }
