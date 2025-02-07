@@ -8,6 +8,8 @@ abstract class ServoPositionMechanism(
 ) : ManualPositionMechanism {
     protected abstract val servos: Array<Servo>
 
+    override val adjustMultiplier = 0.003
+
     private var isCanceled = false
     override var targetPosition = initialPosition
         set(value) {

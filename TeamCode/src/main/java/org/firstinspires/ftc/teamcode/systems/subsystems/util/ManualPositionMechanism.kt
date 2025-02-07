@@ -10,4 +10,6 @@ interface ManualPositionMechanism : CancelableAction {
      * @throws IllegalArgumentException if the target position is invalid`
      */
     var targetPosition: Double
+
+    val adjustMultiplier: Double
 }

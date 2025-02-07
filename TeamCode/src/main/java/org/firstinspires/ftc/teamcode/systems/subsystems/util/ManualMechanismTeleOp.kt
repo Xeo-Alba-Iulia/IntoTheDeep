@@ -16,8 +16,6 @@ abstract class ManualMechanismTeleOp(
     val dashboard = FtcDashboard.getInstance() as FtcDashboard
     lateinit var follower: Follower
 
-    protected open val multiplier = 0.003
-
     override fun init() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         follower = Follower(hardwareMap)
@@ -39,7 +37,7 @@ abstract class ManualMechanismTeleOp(
         follower.update()
 
         manualPositionMechanism.targetPosition +=
-            multiplier * (gamepad1.right_trigger - gamepad1.left_trigger)
+            manualPositionMechanism.adjustMultiplier * (gamepad1.right_trigger - gamepad1.left_trigger)
 
         val packet = TelemetryPacket()
 

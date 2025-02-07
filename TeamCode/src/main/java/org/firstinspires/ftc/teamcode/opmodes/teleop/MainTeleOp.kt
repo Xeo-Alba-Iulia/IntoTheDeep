@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
-import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.SinglePress
 
@@ -90,7 +89,7 @@ class MainTeleOp : LinearOpMode() {
 
             // Extend
             robot.extend.targetPosition +=
-                (controlGamepad.right_trigger - controlGamepad.left_trigger) * Extend.MULTIPLIER
+                (controlGamepad.right_trigger - controlGamepad.left_trigger) * robot.extend.adjustMultiplier
 
 //            if (controlGamepad.x && inTransfer()) {
 //                // FIXME: S-ar putea să fie nevoie de ceva timing aici

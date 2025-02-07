@@ -39,6 +39,7 @@ class Lift(
     private var power = 1.0
 
     override var targetPosition = 0.0
+    override val adjustMultiplier = 15.0
 //        set(value) {
 //            field = value.coerceIn(0.0, 2185.0)
 //        }
@@ -68,9 +69,6 @@ class Lift(
 
 @TeleOp(name = "Lift test", group = "C")
 class LiftTest : ManualMechanismTeleOp(::Lift) {
-    override val multiplier: Double
-        get() = 15.0
-
     override fun loop() {
         super.loop()
         if (gamepad1.a) {

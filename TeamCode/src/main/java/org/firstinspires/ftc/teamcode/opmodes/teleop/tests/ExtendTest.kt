@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
 @TeleOp(name = "Extend position test", group = "B")
@@ -27,7 +27,7 @@ class ExtendTest : LinearOpMode() {
                 when {
                     gamepad1.dpad_left -> Positions.Extend.`in`
                     gamepad1.dpad_down -> Positions.Extend.out
-                    else -> currentPosition - gamepad1.right_stick_y * Extend.MULTIPLIER
+                    else -> currentPosition - gamepad1.right_stick_y * extend.adjustMultiplier
                 }
             extend.targetPosition = currentPosition
             currentPosition = extend.targetPosition

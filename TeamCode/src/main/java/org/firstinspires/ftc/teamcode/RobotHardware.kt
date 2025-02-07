@@ -5,8 +5,8 @@ import com.acmerobotics.roadrunner.Action
 import com.pedropathing.util.Constants
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.systems.Outtake
-import org.firstinspires.ftc.teamcode.systems.subsystems.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.Extend
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeMotor
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Claw
