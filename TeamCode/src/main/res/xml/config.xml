@@ -17,6 +17,7 @@
             <ContinuousRotationServo name="IntakeLeft" port="0" />
             <Servo name="IntakePendul" port="1" />
             <Servo name="PendulLeft" port="4" />
+            <Servo name="ClawRotate" port="5" />
             <Servo name="Extend1" port="2" />
             <Servo name="Extend2" port="3" />
             <ControlHubImuBHI260AP name="imu" bus="0" port="0" />
