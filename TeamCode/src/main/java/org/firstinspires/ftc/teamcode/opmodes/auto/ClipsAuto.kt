@@ -10,7 +10,6 @@ import com.pedropathing.util.Timer
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
@@ -38,7 +37,7 @@ class ClipsAuto : LinearOpMode() {
         val dashboard = FtcDashboard.getInstance()
 
         val beginPose = Pose(10.0, 60.0, Math.toRadians(180.0))
-        val scorePose = Pose(39.5, 72.0, Math.toRadians(180.001))
+        val scorePose = Pose(40.0, 72.0, Math.toRadians(180.001))
         val pickup1Intermediary = Pose(36.0, 36.0, 0.0)
         val pickup1Pose = Pose(60.3, 29.06, 0.0)
         val drop1Pose = Pose(32.0, 28.0, 0.0)
@@ -183,7 +182,7 @@ class ClipsAuto : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.half
                     }
                     if (pathTimer.elapsedTimeSeconds > 0.5) {
-                        follower.headingOffset = Math.toRadians(-10.0)
+//                        follower.headingOffset = Math.toRadians(-10.0)
                         follower.followPath(scorePaths[0].first)
                         follower.xOffset = -3.3
                         state = 5
@@ -191,7 +190,7 @@ class ClipsAuto : LinearOpMode() {
                 }
 
                 5 -> {
-                    if (!follower.isBusy) {
+                    if (!follower.isBusy || pathTimer.elapsedTimeSeconds > 2.0) {
                         follower.pose = scorePose
                         follower.resetOffset()
                         robot.claw.isClosed = false
@@ -221,7 +220,7 @@ class ClipsAuto : LinearOpMode() {
                 }
             }
 
-            follower.setMaxPower(11.5 / hubList.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average())
+//            follower.setMaxPower(11.5 / hubList.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average())
             follower.update()
             follower.drawOnDashBoard()
         }

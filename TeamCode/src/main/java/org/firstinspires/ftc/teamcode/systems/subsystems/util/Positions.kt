@@ -12,7 +12,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var bar = 0.69
+            var bar = 0.7
 
             @JvmField
             @Volatile
@@ -33,7 +33,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var half = 490.0
+            var half = 475.0
 
             @JvmField
             @Volatile
