@@ -91,7 +91,7 @@ class ClipsAuto : LinearOpMode() {
                         .addPath(
                             BezierCurve(
                                 Point(newScorePose),
-                                Point(10.0, 72.0),
+                                Point(20.0, 70.0),
                                 Point(48.0, 24.0),
                                 Point(humanPickup)
                             )
