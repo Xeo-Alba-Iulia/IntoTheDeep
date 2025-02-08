@@ -185,11 +185,11 @@ class ClipsAuto : LinearOpMode() {
                 }
 
                 4 -> {
-                    if (pathTimer.elapsedTimeSeconds > 0.1) {
+                    if (pathTimer.elapsedTimeSeconds > 0.05) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                         robot.lift.targetPosition = Positions.Lift.half
                     }
-                    if (pathTimer.elapsedTimeSeconds > 0.5) {
+                    if (pathTimer.elapsedTimeSeconds > 0.15) {
                         follower.headingOffset = Math.toRadians(-10.0)
                         follower.followPath(scorePaths[0].first)
                         follower.xOffset = -3.3
