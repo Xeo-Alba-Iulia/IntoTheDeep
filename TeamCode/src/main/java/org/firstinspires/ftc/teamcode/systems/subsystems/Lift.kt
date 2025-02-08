@@ -23,6 +23,16 @@ class Lift(
 
     private val liftMotors = listOf(liftLeft, liftRight)
 
+    fun resetLifts() =
+        liftMotors.forEach {
+            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
+            it.targetPosition = 0
+
+            it.mode = DcMotor.RunMode.RUN_TO_POSITION
+        }
+
     init {
         liftMotors.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

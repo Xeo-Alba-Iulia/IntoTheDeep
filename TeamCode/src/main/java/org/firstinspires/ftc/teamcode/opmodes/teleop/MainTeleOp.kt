@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.pedropathing.follower.Follower
+import com.pedropathing.localization.Pose
+import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
@@ -16,6 +18,11 @@ import org.firstinspires.ftc.teamcode.util.SinglePress
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
+    val resetTimer = Timer()
+    var resetLift = true
+
+    val resetLiftButton by SinglePress(gamepad2::left_stick_button)
+
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
@@ -79,10 +86,14 @@ class MainTeleOp : LinearOpMode() {
             // Intake Power
             robot.intake.intakePower =
                 when {
-                    moveGamepad.a -> 0.8
+                    moveGamepad.a -> 0.9
                     moveGamepad.x -> -1.0
                     else -> 0.0
                 }
+
+            if (moveGamepad.left_trigger > 0.7) {
+                follower.pose = Pose(0.0, 0.0, 0.0)
+            }
 
             // Pendul manual
 //            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
@@ -235,6 +246,16 @@ class MainTeleOp : LinearOpMode() {
             outtake.outtakePosition = outtakePosition as OuttakePosition
             extend.targetPosition = extendPosition as Double
             intakePendul.targetPosition = intakePendulPosition as Double
+
+            if (resetLiftButton) {
+                lift.targetPosition -= Positions.Lift.half
+                resetTimer.resetTimer()
+                resetLift = true
+            }
+
+            if (resetLift && resetTimer.elapsedTimeSeconds > 0.8) {
+                lift.resetLifts()
+            }
         } catch (e: NotImplementedError) {
             // Driver station nu arata NotImplementedError, doar oprește OpMode
             throw RuntimeException(e)
