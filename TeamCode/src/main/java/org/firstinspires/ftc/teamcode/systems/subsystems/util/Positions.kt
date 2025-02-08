@@ -59,7 +59,7 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var pickup = 0.24
+            var pickup = 0.28
 
             @JvmField
             @Volatile
