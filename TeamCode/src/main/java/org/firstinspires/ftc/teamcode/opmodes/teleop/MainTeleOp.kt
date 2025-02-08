@@ -163,6 +163,10 @@ class MainTeleOp : LinearOpMode() {
                 else -> lift.targetPosition
             }
 
+        if (gamepad.circle) {
+            outtake.outtakePosition = OuttakePosition.TRANSFER
+        }
+
         when {
             gamepad.dpad_right -> intakePendul.targetPosition = Positions.IntakePendul.transfer
             gamepad.cross -> intakePendul.targetPosition = Positions.IntakePendul.pickup
