@@ -18,13 +18,10 @@ import org.firstinspires.ftc.teamcode.util.SinglePress
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
-    val resetTimer = Timer()
-    var resetLift = true
-
-    val resetLiftButton by SinglePress(gamepad2::left_stick_button)
-
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
+        val resetTimer = Timer()
+        var resetLift = false
 
         fun inTransfer() =
 //            robot.intake.intakePosition == IntakePosition.TRANSFER &&
@@ -59,6 +56,8 @@ class MainTeleOp : LinearOpMode() {
         val clawMovementOpen by SinglePress(moveGamepad::left_bumper)
         val clawMovementClose by SinglePress(moveGamepad::right_bumper)
 
+        val resetLiftButton by SinglePress(controlGamepad::left_stick_button)
+
         waitForStart()
 
         dashboard.clearTelemetry()
@@ -86,7 +85,7 @@ class MainTeleOp : LinearOpMode() {
             // Intake Power
             robot.intake.intakePower =
                 when {
-                    moveGamepad.a -> 0.9
+                    moveGamepad.right_trigger > 0.7 -> 0.9
                     moveGamepad.x -> -1.0
                     else -> 0.0
                 }
@@ -112,6 +111,16 @@ class MainTeleOp : LinearOpMode() {
                 ((robot.claw.isClosed xor clawControlToggle) || clawMovementClose) &&
                 !clawMovementOpen
 
+            if (resetLiftButton) {
+                robot.lift.targetPosition -= Positions.Lift.half
+                resetTimer.resetTimer()
+                resetLift = true
+            }
+
+            if (resetLift && resetTimer.elapsedTimeSeconds > 0.8) {
+                robot.lift.resetLifts()
+                resetLift = false
+            }
             // if (!inTransfer()) {
         }
     }
@@ -246,16 +255,6 @@ class MainTeleOp : LinearOpMode() {
             outtake.outtakePosition = outtakePosition as OuttakePosition
             extend.targetPosition = extendPosition as Double
             intakePendul.targetPosition = intakePendulPosition as Double
-
-            if (resetLiftButton) {
-                lift.targetPosition -= Positions.Lift.half
-                resetTimer.resetTimer()
-                resetLift = true
-            }
-
-            if (resetLift && resetTimer.elapsedTimeSeconds > 0.8) {
-                lift.resetLifts()
-            }
         } catch (e: NotImplementedError) {
             // Driver station nu arata NotImplementedError, doar oprește OpMode
             throw RuntimeException(e)
