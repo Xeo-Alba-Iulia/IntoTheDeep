@@ -58,7 +58,7 @@ class ClipsAuto : LinearOpMode() {
         scorePreloadPath.zeroPowerAccelerationMultiplier = 8.0
 
         scorePose.y += 2.5
-        scorePose.x += 1.0
+        scorePose.x += 1.5
 
         val humanPickupPath = Path(BezierCurve(Point(drop3Pose), dropControl, Point(humanPickup)))
         humanPickupPath.setConstantHeadingInterpolation(0.0)
@@ -102,7 +102,7 @@ class ClipsAuto : LinearOpMode() {
                 Pair(goPath, returnPath)
             }
 
-        scorePose.x -= 1.0
+        scorePose.x -= 1.5
 
         val drop1Path =
             follower
