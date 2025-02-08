@@ -12,7 +12,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var bar = 0.71
+            var bar = 0.69
 
             @JvmField
             @Volatile
@@ -46,11 +46,11 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var `in` = 0.9
+            var `in` = 0.0
 
             @JvmField
             @Volatile
-            var out = 0.0
+            var out = 0.51
         }
     }
 
@@ -59,7 +59,7 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var pickup = 0.2195
+            var pickup = 0.24
 
             @JvmField
             @Volatile
