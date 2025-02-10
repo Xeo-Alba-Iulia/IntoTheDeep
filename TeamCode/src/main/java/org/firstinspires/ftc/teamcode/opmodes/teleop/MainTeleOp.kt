@@ -9,7 +9,6 @@ import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
-import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
@@ -22,10 +21,6 @@ class MainTeleOp : LinearOpMode() {
         val robot = RobotHardware(this.hardwareMap)
         val resetTimer = Timer()
         var resetLift = false
-
-        fun inTransfer() =
-//            robot.intake.intakePosition == IntakePosition.TRANSFER &&
-            robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
         val moveGamepad: Gamepad = gamepad1
         val controlGamepad: Gamepad = gamepad2
@@ -139,81 +134,37 @@ class MainTeleOp : LinearOpMode() {
         }
     }
 
-    private val timer = ElapsedTime()
-    private var pendulIsActioned = false
-    private var intakeIsUp = false
-
     /**
      * Apply positions to the robot hardware based on the gamepad input
      *
-     * @throws RuntimeException if the target position is not implemented
+     * @throws RuntimeException if any of the target positions is not implemented
      * (workaround for DriverStation not displaying NotImplementedException)
      */
     private fun RobotHardware.applyPositions(gamepad: Gamepad) {
-//        if (gamepad.dpad_down && intakeIsUp) {
-//            intakeIsUp = false
-//            timer.reset()
-//        }
+        try {
+            lift.targetPosition =
+                when {
+                    gamepad.square -> Positions.Lift.down
+                    gamepad.triangle || gamepad.dpad_right -> Positions.Lift.half
+                    gamepad.circle -> Positions.Lift.up
+                    else -> lift.targetPosition
+                }
 
-        lift.targetPosition =
-            when {
-                gamepad.square -> Positions.Lift.down
-                gamepad.triangle || gamepad.dpad_right -> Positions.Lift.half
-                gamepad.circle -> Positions.Lift.up
-                else -> lift.targetPosition
+            if (gamepad.circle) {
+                outtake.outtakePosition = OuttakePosition.TRANSFER
             }
 
-        if (gamepad.circle) {
-            outtake.outtakePosition = OuttakePosition.TRANSFER
-        }
+            when {
+                gamepad.dpad_right -> intakePendul.targetPosition = Positions.IntakePendul.transfer
+                gamepad.cross -> intakePendul.targetPosition = Positions.IntakePendul.pickup
+                gamepad.triangle -> intakePendul.targetPosition = Positions.IntakePendul.init
+            }
 
-        when {
-            gamepad.dpad_right -> intakePendul.targetPosition = Positions.IntakePendul.transfer
-            gamepad.cross -> intakePendul.targetPosition = Positions.IntakePendul.pickup
-            gamepad.triangle -> intakePendul.targetPosition = Positions.IntakePendul.init
-        }
+            // Stick positions are inverted
+            if (gamepad.right_stick_y + gamepad.left_stick_y <= -0.4) {
+                extend.targetPosition = Positions.Extend.out
+            }
 
-        // Stick positions are inverted
-        if (gamepad.right_stick_y + gamepad.left_stick_y <= -0.4) {
-            extend.targetPosition = Positions.Extend.out
-        }
-
-//        intake.intakePosition =
-//            when {
-//                gamepad.dpad_down -> IntakePosition.INTAKE
-//                gamepad.dpad_right -> IntakePosition.TRANSFER
-//                else -> intake.intakePosition
-//            }
-
-//        if (intake.intakePosition != IntakePosition.TRANSFER) {
-//            intake.intakePosition =
-//                when {
-//                    extend.targetPosition > 0.3 &&
-//                        timer.time(
-//                            TimeUnit.MILLISECONDS
-//                        ) >= 500 -> IntakePosition.INTAKE
-//
-//                    extend.targetPosition <= 0.3 &&
-//                        timer.time(
-//                            TimeUnit.MILLISECONDS
-//                        ) >= 500 -> IntakePosition.ENTRANCE
-//
-//                    else -> IntakePosition.ENTRANCE
-//                }
-//        }
-
-//        if (gamepad.dpad_right && !pendulIsActioned) {
-//            pendulIsActioned = true
-//            intakeIsUp = true
-//            timer.reset()
-//        }
-//
-//        if (pendulIsActioned && timer.time(TimeUnit.MILLISECONDS) >= 500) {
-//            outtake.pendul.targetPosition = Positions.Pendul.transfer
-//            pendulIsActioned = false
-//        }
-
-        try {
             val (outtakePosition, extendPosition, intakePendulPosition) =
                 when {
                     gamepad.dpad_right -> {
