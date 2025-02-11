@@ -34,25 +34,27 @@ class Lift(
         }
 
     init {
-        liftMotors.forEach {
-            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-            it.targetPosition = 0
-
-            it.mode = DcMotor.RunMode.RUN_TO_POSITION
-        }
-
         liftRight.direction = DcMotorSimple.Direction.REVERSE
+        resetLifts()
     }
 
     private var power = 1.0
 
+    /**
+     * Target position of the mechanism
+     *
+     * @throws IllegalArgumentException if the target position is invalid`
+     */
     override var targetPosition = 0.0
+        set(value) {
+            val clampedValue = value.coerceIn(0.0..2310.0)
+            if (field == clampedValue) {
+                return
+            }
+            field = clampedValue
+        }
+
     override val adjustMultiplier = 15.0
-//        set(value) {
-//            field = value.coerceIn(0.0, 2185.0)
-//        }
 
     override fun cancel() {
         isCanceled = true
@@ -61,7 +63,7 @@ class Lift(
     override fun run(p: TelemetryPacket): Boolean {
         if (isCanceled) {
             isCanceled = false
-
+            power = 0.0
             return false
         }
 
