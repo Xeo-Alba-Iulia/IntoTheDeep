@@ -104,4 +104,23 @@ object Positions {
             var pickup = 0.68
         }
     }
+
+    @Config
+    class IntakeClaw {
+        companion object {
+            @JvmField @Volatile
+            var closed = 0.46
+
+            @JvmField @Volatile
+            var open = 0.79
+        }
+    }
+
+    @Config
+    class IntakeClawRotate {
+        companion object {
+            @JvmField @Volatile
+            var middle = 0.525
+        }
+    }
 }
