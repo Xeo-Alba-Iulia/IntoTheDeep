@@ -99,7 +99,7 @@ class MainTeleOp : LinearOpMode() {
 //            if (controlGamepad.x && inTransfer()) {
 //                // FIXME: S-ar putea să fie nevoie de ceva timing aici
 //                robot.intake.intakePower = -0.05
-//                robot.claw.targetPosition = Positions.Claw.close
+//                robot.claw.targetPosition = Positions.IntakeClaw.close
 //            }
 
             robot.claw.isClosed =

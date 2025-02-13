@@ -46,11 +46,11 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var `in` = 0.0
+            var `in` = 0.635
 
             @JvmField
             @Volatile
-            var out = 0.51
+            var out = 0.9
         }
     }
 
@@ -121,6 +121,17 @@ object Positions {
         companion object {
             @JvmField @Volatile
             var middle = 0.525
+        }
+    }
+
+    @Config
+    class IntakeRotate {
+        companion object {
+            @JvmField @Volatile
+            var pickup = 0.1
+
+            @JvmField @Volatile
+            var transfer = 0.9
         }
     }
 }

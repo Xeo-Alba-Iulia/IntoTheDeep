@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions.IntakeCl
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions.IntakeClaw.Companion.open
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
 
-class Claw(
+class IntakeClaw(
     hardwareMap: HardwareMap,
 ) : ServoPositionMechanism(open) {
     override val servos = arrayOf(hardwareMap.servo["IntakeClaw"])

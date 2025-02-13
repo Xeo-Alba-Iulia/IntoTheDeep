@@ -8,14 +8,13 @@
             <Servo name="PendulRight" port="0" />
             <Servo name="Claw" port="1" />
             <Servo name="IntakeClawRotate" port="3" />
-            <Servo name="Extend" port="4" />
             <Servo name="Extend1" port="2" />
-            <ContinuousRotationServo name="IntakeRight" port="5" />
+            <Servo name="IntakeRotate" port="4" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0" /> <!-- Strafe Encoder -->
             <goBILDA5202SeriesMotor name="LiftLeft" port="2" />
-            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" /> <!-- Left Encoder -->
+            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" />  <!--  Left Encoder  -->
             <ContinuousRotationServo name="IntakeLeft" port="0" />
             <Servo name="IntakeClaw" port="0" />
             <Servo name="IntakePendul" port="1" />

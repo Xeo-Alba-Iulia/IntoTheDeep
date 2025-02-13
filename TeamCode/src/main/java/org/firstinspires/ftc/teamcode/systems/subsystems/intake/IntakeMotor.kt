@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.hardware.HardwareMap
 
+@Deprecated("Nu mai exista pe robot")
 class IntakeMotor(
     hardwareMap: HardwareMap,
 ) : Action {

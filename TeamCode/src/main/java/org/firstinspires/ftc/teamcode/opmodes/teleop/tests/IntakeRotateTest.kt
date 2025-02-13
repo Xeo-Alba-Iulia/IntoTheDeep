@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop.tests
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeClaw
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeRotate
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
 
-@TeleOp(name = "Intake claw test", group = "C")
-class IntakeClawTest : ManualMechanismTeleOp(::IntakeClaw)
+@TeleOp
+class IntakeRotateTest : ManualMechanismTeleOp(::IntakeRotate)

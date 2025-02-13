@@ -25,8 +25,8 @@ class ExtendTest : LinearOpMode() {
         while (opModeIsActive()) {
             currentPosition =
                 when {
-                    gamepad1.dpad_left -> Positions.Extend.`in`
-                    gamepad1.dpad_down -> Positions.Extend.out
+                    gamepad1.dpad_up -> Positions.Extend.out
+                    gamepad1.dpad_down -> Positions.Extend.`in`
                     else -> currentPosition - gamepad1.right_stick_y * extend.adjustMultiplier
                 }
             extend.targetPosition = currentPosition

@@ -14,8 +14,8 @@ class DeviceNames {
         const val PLServo = "PendulLeft" // CH p4
         const val PRServo = "PendulRight" // EH p0
 
-        const val CRServo = "ClawRotate" // CH p5
-        const val CServo = "Claw" // EH p1
+        const val CRServo = "IntakeClawRotate" // CH p5
+        const val CServo = "IntakeClaw" // EH p1
 
         const val ILMotor = "IntakeLeft" // CH p0
         const val IRMotor = "IntakeRight"
