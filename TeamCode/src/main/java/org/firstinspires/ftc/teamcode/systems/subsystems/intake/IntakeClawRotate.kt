@@ -8,4 +8,6 @@ class IntakeClawRotate(
     hardwareMap: HardwareMap,
 ) : ServoPositionMechanism(Positions.IntakeClawRotate.middle) {
     override val servos = arrayOf(hardwareMap.servo["IntakeClawRotate"])
+
+    override val adjustMultiplier = 0.005
 }
