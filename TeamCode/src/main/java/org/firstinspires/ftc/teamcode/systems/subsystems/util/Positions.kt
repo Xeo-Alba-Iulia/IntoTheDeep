@@ -59,15 +59,19 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var pickup = 0.31
+            var pickupWait = 0.222
+
+            @JvmField @Volatile
+            var pickup = 0.1
 
             @JvmField
             @Volatile
-            var init = 0.50
+            @Deprecated("Nu mai e pozitie de init")
+            var init = 0.5
 
             @JvmField
             @Volatile
-            var transfer = 0.78
+            var transfer = 0.88
         }
     }
 
@@ -109,10 +113,10 @@ object Positions {
     class IntakeClaw {
         companion object {
             @JvmField @Volatile
-            var closed = 0.46
+            var closed = 0.79
 
             @JvmField @Volatile
-            var open = 0.79
+            var open = 0.46
         }
     }
 
@@ -128,10 +132,10 @@ object Positions {
     class IntakeRotate {
         companion object {
             @JvmField @Volatile
-            var pickup = 0.1
+            var pickup = 0.04
 
             @JvmField @Volatile
-            var transfer = 0.9
+            var transfer = 0.935
         }
     }
 }

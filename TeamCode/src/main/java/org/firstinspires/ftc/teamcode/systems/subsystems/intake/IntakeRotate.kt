@@ -6,6 +6,8 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMecha
 /**
  * Clasa pentru rotirea fata de axa paralele cu pamantul a intake-ului
  */
-class IntakeRotate(hardwareMap: HardwareMap) : ServoPositionMechanism() {
+class IntakeRotate(
+    hardwareMap: HardwareMap,
+) : ServoPositionMechanism() {
     override val servos = arrayOf(hardwareMap.servo["IntakeRotate"])
 }

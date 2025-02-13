@@ -2,21 +2,21 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop.tests
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.pedropathing.follower.Follower
+import com.pedropathing.util.Constants
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakeMotor
-import org.firstinspires.ftc.teamcode.systems.subsystems.intake.IntakePendul
-import kotlin.properties.Delegates
+import org.firstinspires.ftc.teamcode.systems.Intake
+import org.firstinspires.ftc.teamcode.systems.IntakePositions
+import pedroPathing.constants.FConstants
+import pedroPathing.constants.LConstants
 
 @TeleOp(name = "Intake Test", group = "B")
 class IntakeTest : LinearOpMode() {
-    companion object {
-        private const val MULTIPLIER = 0.003
-    }
-
     override fun runOpMode() {
-        val intake = IntakeMotor(hardwareMap)
-        val intakePendul = IntakePendul(hardwareMap)
+        val intake = Intake(hardwareMap)
+
+        Constants.setConstants(FConstants::class.java, LConstants::class.java)
 
         waitForStart()
 
@@ -27,26 +27,34 @@ class IntakeTest : LinearOpMode() {
 //            intake.stop()
 //        )))
 
-        var rotationPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
-        var pendulPosition: Double by Delegates.vetoable(0.0) { _, _, new -> new in 0.0..1.0 }
-
         val dash = FtcDashboard.getInstance()
-        var isRunning = true
+
+        val follower = Follower(hardwareMap)
+
+        follower.startTeleopDrive()
 
         while (opModeIsActive()) {
             val packet = TelemetryPacket()
 
-            rotationPosition += MULTIPLIER * gamepad1.left_stick_y
-            pendulPosition += MULTIPLIER * gamepad1.right_stick_y
+            follower.setTeleOpMovementVectors(
+                -gamepad1.left_stick_y.toDouble(),
+                -gamepad1.left_stick_x.toDouble(),
+                -gamepad1.right_stick_x.toDouble()
+            )
+            follower.update()
 
-            intakePendul.targetPosition = pendulPosition
+            when {
+                gamepad1.cross -> intake.targetPosition = IntakePositions.PICKUP
+                gamepad1.triangle -> intake.targetPosition = IntakePositions.TRANSFER
+            }
 
-            intake.intakePower =
-                when {
-                    gamepad1.a -> 1.0
-                    gamepad1.b -> -1.0
-                    else -> 0.0
-                }
+            when {
+                gamepad1.right_bumper -> intake.pickUp()
+                gamepad1.left_bumper -> intake.isClosed = false
+            }
+
+            intake.clawRotate.targetPosition +=
+                (gamepad1.right_trigger - gamepad1.left_trigger) * intake.clawRotate.adjustMultiplier
 
             intake.run(packet)
 
