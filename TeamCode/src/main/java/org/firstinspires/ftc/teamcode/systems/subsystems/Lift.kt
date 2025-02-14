@@ -65,13 +65,12 @@ class Lift(
             return false
         }
 
-        for (motor in liftMotors) {
+        for ((ind, motor) in liftMotors.withIndex()) {
             motor.power = power
             motor.targetPosition = targetPosition.toInt()
-        }
 
-        p.put("Lift Power", power)
-        p.put("Lift Target", targetPosition)
+            p.put("Motor $ind position", motor.currentPosition)
+        }
 
         return true
     }
