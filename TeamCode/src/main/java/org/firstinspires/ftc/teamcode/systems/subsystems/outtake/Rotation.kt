@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.systems.subsystems.outtake
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.systems.DeviceNames
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
@@ -10,7 +9,7 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMecha
 class ClawRotate(
     hardwareMap: HardwareMap,
 ) : ServoPositionMechanism(Positions.ClawRotate.transfer) {
-    override val servos = arrayOf(hardwareMap.servo[DeviceNames.CRServo])
+    override val servos = arrayOf(hardwareMap.servo["ClawRotate"])
 }
 
 @TeleOp(name = "Outtake rotation test", group = "C")
