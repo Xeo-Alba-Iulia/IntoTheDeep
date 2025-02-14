@@ -57,7 +57,7 @@ dependencies {
 
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
-    implementation "com.pedropathing:beta:1.0.8-beta3"
+    implementation "com.pedropathing:pedro:1.0.8"
     implementation "org.team11260:fast-load:0.1.2"
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
