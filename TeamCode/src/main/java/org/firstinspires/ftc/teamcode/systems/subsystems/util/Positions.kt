@@ -8,7 +8,7 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var transfer = 0.035
+            var transfer = 0.208
 
             @JvmField
             @Volatile
@@ -93,7 +93,7 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var transfer: Double = 0.44
+            var transfer: Double = 0.87
 
             @JvmField
             @Volatile
