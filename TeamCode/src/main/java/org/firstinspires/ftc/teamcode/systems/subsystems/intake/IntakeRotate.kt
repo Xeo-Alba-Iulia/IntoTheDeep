@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems.intake
 
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
 
 /**
@@ -8,6 +9,6 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMecha
  */
 class IntakeRotate(
     hardwareMap: HardwareMap,
-) : ServoPositionMechanism() {
+) : ServoPositionMechanism(Positions.IntakeRotate.transfer) {
     override val servos = arrayOf(hardwareMap.servo["IntakeRotate"])
 }
