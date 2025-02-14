@@ -48,8 +48,7 @@ class MainTeleOp : LinearOpMode() {
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(PositionStore.pose)
 
-        val clawControlToggle by SinglePress(controlGamepad::right_bumper)
-        val clawMovementToggle by TogglePress(moveGamepad::cross)
+        val clawControlToggle by TogglePress(controlGamepad::right_bumper)
 
         val resetLiftButton by SinglePress(controlGamepad::left_stick_button)
 
@@ -79,7 +78,16 @@ class MainTeleOp : LinearOpMode() {
                 follower.pose = Pose(0.0, 0.0, 0.0)
             }
 
-            robot.outtake.claw.isClosed = clawMovementToggle xor clawControlToggle
+            val clawControlCache = clawControlToggle
+
+            robot.outtake.claw.isClosed = clawControlCache
+
+            if (robot.intake.targetPosition == IntakePositions.TRANSFER &&
+                robot.outtake.outtakePosition == OuttakePosition.TRANSFER &&
+                robot.lift.targetPosition == Positions.Lift.down
+            ) {
+                robot.intake.isClosed = !clawControlCache
+            }
 
             when {
                 gamepad1.right_bumper -> robot.intake.pickUp()
