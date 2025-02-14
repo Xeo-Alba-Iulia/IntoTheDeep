@@ -150,6 +150,13 @@ class MainTeleOp : LinearOpMode() {
 
             val (outtakePosition, intakePosition) =
                 when {
+                    gamepad.cross -> {
+                        Pair(
+                            outtake.outtakePosition,
+                            IntakePositions.PICKUP
+                        )
+                    }
+
                     gamepad.dpad_right -> {
                         Pair(
                             OuttakePosition.TRANSFER,
