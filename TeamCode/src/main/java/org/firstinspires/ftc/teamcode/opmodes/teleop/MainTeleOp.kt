@@ -10,10 +10,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
+import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.PositionStore
 import org.firstinspires.ftc.teamcode.util.SinglePress
+import org.firstinspires.ftc.teamcode.util.TogglePress
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
@@ -30,7 +32,6 @@ class MainTeleOp : LinearOpMode() {
         val actionList =
             mutableListOf(
                 robot.intake,
-                robot.intakePendul,
                 robot.outtake,
                 robot.extend,
                 robot.lift,
@@ -48,8 +49,7 @@ class MainTeleOp : LinearOpMode() {
         follower.setStartingPose(PositionStore.pose)
 
         val clawControlToggle by SinglePress(controlGamepad::right_bumper)
-        val clawMovementOpen by SinglePress(moveGamepad::left_bumper)
-        val clawMovementClose by SinglePress(moveGamepad::right_bumper)
+        val clawMovementToggle by TogglePress(moveGamepad::cross)
 
         val resetLiftButton by SinglePress(controlGamepad::left_stick_button)
 
@@ -75,36 +75,19 @@ class MainTeleOp : LinearOpMode() {
             runActions(actionList, telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
 
-            // Lift
-
-            // Intake Power
-            robot.intake.intakePower =
-                when {
-                    moveGamepad.right_trigger > 0.7 -> 0.9
-                    moveGamepad.x -> -1.0
-                    else -> 0.0
-                }
-
-            if (moveGamepad.left_trigger > 0.7) {
+            if (moveGamepad.left_stick_button) {
                 follower.pose = Pose(0.0, 0.0, 0.0)
             }
 
-            // Pendul manual
-//            robot.pendul.targetPosition -= controlGamepad.left_stick_y * Pendul.MULTIPLIER
+            robot.outtake.claw.isClosed = clawMovementToggle xor clawControlToggle
 
-            // Extend
-            robot.extend.targetPosition +=
-                (controlGamepad.right_trigger - controlGamepad.left_trigger) * robot.extend.adjustMultiplier
+            when {
+                gamepad1.right_bumper -> robot.intake.pickUp()
+                gamepad1.left_bumper -> robot.intake.isClosed = false
+            }
 
-//            if (controlGamepad.x && inTransfer()) {
-//                // FIXME: S-ar putea să fie nevoie de ceva timing aici
-//                robot.intake.intakePower = -0.05
-//                robot.claw.targetPosition = Positions.IntakeClaw.close
-//            }
-
-            robot.claw.isClosed =
-                ((robot.claw.isClosed xor clawControlToggle) || clawMovementClose) &&
-                !clawMovementOpen
+            robot.intake.clawRotate.targetPosition +=
+                (gamepad1.right_trigger - gamepad1.left_trigger) * robot.intake.clawRotate.adjustMultiplier
 
             if (resetLiftButton) {
                 robot.lift.targetPosition -= Positions.Lift.half
@@ -150,66 +133,61 @@ class MainTeleOp : LinearOpMode() {
                     else -> lift.targetPosition
                 }
 
-            if (gamepad.circle) {
-                outtake.outtakePosition = OuttakePosition.TRANSFER
-            }
+//            if (gamepad.circle) {
+//                outtake.outtakePosition = OuttakePosition.TRANSFER
+//            }
 
-            when {
-                gamepad.dpad_right -> intakePendul.targetPosition = Positions.IntakePendul.transfer
-                gamepad.cross -> intakePendul.targetPosition = Positions.IntakePendul.pickup
-                gamepad.triangle -> intakePendul.targetPosition = Positions.IntakePendul.init
-            }
+//            when {
+//                gamepad.dpad_right -> intakePendul.targetPosition = Positions.IntakePendul.transfer
+//                gamepad.cross -> intakePendul.targetPosition = Positions.IntakePendul.pickup
+//                gamepad.triangle -> intakePendul.targetPosition = Positions.IntakePendul.init
+//            }
 
             // Stick positions are inverted
-            if (gamepad.right_stick_y + gamepad.left_stick_y <= -0.4) {
-                extend.targetPosition = Positions.Extend.out
-            }
+//            if (gamepad.right_stick_y + gamepad.left_stick_y <= -0.4) {
+//                extend.targetPosition = Positions.Extend.out
+//            }
 
-            val (outtakePosition, extendPosition, intakePendulPosition) =
+            val (outtakePosition, intakePosition) =
                 when {
                     gamepad.dpad_right -> {
-                        listOf(
+                        Pair(
                             OuttakePosition.TRANSFER,
-                            Positions.Extend.`in`,
-                            Positions.IntakePendul.transfer
+                            IntakePositions.TRANSFER
                         )
                     }
 
                     gamepad.dpad_up -> {
-                        listOf(
+                        Pair(
                             OuttakePosition.BASKET,
-                            Positions.Extend.`in`,
-                            Positions.IntakePendul.init
+                            intake.targetPosition
                         )
                     }
 
                     gamepad.dpad_left -> {
-                        listOf(
+                        Pair(
                             OuttakePosition.BAR,
-                            Positions.Extend.`in`,
-                            Positions.IntakePendul.init
+                            intake.targetPosition
                         )
                     }
 
                     gamepad.dpad_down -> {
-                        listOf(
+                        Pair(
                             OuttakePosition.PICKUP,
-                            Positions.Extend.`in`,
-                            Positions.IntakePendul.init
+                            intake.targetPosition
                         )
                     }
 
                     else -> {
-                        listOf(
+                        Pair(
                             outtake.outtakePosition,
-                            extend.targetPosition,
-                            intakePendul.targetPosition
+                            intake.targetPosition
                         )
                     }
                 }
-            outtake.outtakePosition = outtakePosition as OuttakePosition
-            extend.targetPosition = extendPosition as Double
-            intakePendul.targetPosition = intakePendulPosition as Double
+            outtake.outtakePosition = outtakePosition
+            intake.targetPosition = intakePosition
+//            intakePendul.targetPosition = intakePendulPosition as Double
         } catch (e: NotImplementedError) {
             // Driver station nu arata NotImplementedError, doar oprește OpMode
             throw RuntimeException(e)

@@ -26,11 +26,11 @@ class Intake(
             pendul.targetPosition = Positions.IntakePendul.pickup
         }
 
-        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.15) {
+        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.1) {
             isClosed = true
         }
 
-        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.3) {
+        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.2) {
             pendul.targetPosition = Positions.IntakePendul.pickupWait
             needsPickup = false
         }
@@ -39,7 +39,8 @@ class Intake(
     }
 
     var targetPosition: IntakePositions = PICKUP
-        set(value) =
+        set(value) {
+            field = value
             when (value) {
                 PICKUP -> {
                     pendul.targetPosition = Positions.IntakePendul.pickupWait
@@ -55,6 +56,7 @@ class Intake(
                     clawRotate.targetPosition = Positions.IntakeClawRotate.middle
                 }
             }
+        }
 
     var isClosed
         get() = claw.isClosed

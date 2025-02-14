@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Action
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Claw
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.ClawRotate
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
@@ -15,8 +16,9 @@ class Outtake(
 ) : Action {
     val rotation = ClawRotate(hardwareMap)
     val pendul = Pendul(hardwareMap)
+    val claw = Claw(hardwareMap)
 
-    override fun run(p: TelemetryPacket) = rotation.run(p) && pendul.run(p)
+    override fun run(p: TelemetryPacket) = rotation.run(p) && pendul.run(p) && claw.run(p)
 
     var outtakePosition: OuttakePosition = OuttakePosition.TRANSFER
         set(value) {
@@ -25,6 +27,7 @@ class Outtake(
                 OuttakePosition.TRANSFER -> {
                     rotation.targetPosition = Positions.ClawRotate.transfer
                     pendul.targetPosition = Positions.Pendul.transfer
+                    claw.isClosed = false
                 }
 
                 OuttakePosition.BASKET -> {
