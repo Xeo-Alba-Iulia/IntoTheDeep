@@ -100,8 +100,9 @@ class MainTeleOp : LinearOpMode() {
                 resettingLift = true
             }
 
-            if (resettingLift && controlGamepad.left_trigger < 0.1)
+            if (resettingLift && controlGamepad.left_trigger < 0.1) {
                 robot.lift.resetLifts()
+            }
 
             // if (!inTransfer()) {
         }
