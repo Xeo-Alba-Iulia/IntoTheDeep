@@ -147,8 +147,8 @@ class ClipsAuto : LinearOpMode() {
             dashboard.telemetry.update()
 
             if (opModeTimer.elapsedTimeSeconds >= 29.0) {
-                state = 7
-                isEmergencyState = true
+                robot.lift.targetPosition = Positions.Lift.down
+//                isEmergencyState = true
             }
 
             when (state) {
@@ -204,7 +204,7 @@ class ClipsAuto : LinearOpMode() {
                 }
 
                 5 -> {
-                    if (!follower.isBusy || pathTimer.elapsedTimeSeconds > 3.8) {
+                    if (!follower.isBusy) {
 //                        follower.resetOffset()
 //                        follower.pose = scorePose
                         follower.xOffset = -1.5
