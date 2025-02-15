@@ -39,7 +39,7 @@ class ClipsAuto : LinearOpMode() {
         val firstScorePose = Pose(40.0, 68.7, Math.toRadians(180.001))
 
         val beginPose = Pose(10.0, 60.0, Math.toRadians(180.0))
-        val scorePose = Pose(40.0, 73.0, Math.toRadians(180.001))
+        val scorePose = Pose(42.0, 73.0, Math.toRadians(180.001))
         val pickup1Intermediary = Pose(36.0, 36.0, 0.0)
         val pickup1Pose = Pose(60.3, 29.06, 0.0)
         val drop1Pose = Pose(32.0, 28.0, 0.0)
@@ -51,7 +51,7 @@ class ClipsAuto : LinearOpMode() {
         val drop3Pose = Pose(18.0, 13.0, 0.0)
 
         val dropControl = Point(30.0, 24.0)
-        val humanPickup = Pose(14.0, 20.0, 0.0)
+        val humanPickup = Pose(12.0, 20.0, 0.0)
 
         val scorePreloadPath = Path(BezierLine(Point(beginPose), Point(firstScorePose)))
         scorePreloadPath.setConstantHeadingInterpolation(Math.toRadians(180.0))
@@ -71,14 +71,14 @@ class ClipsAuto : LinearOpMode() {
                 val newScorePose = scorePose.copy()
                 newScorePose.y += (1.5) * it
 
-                val scoreControl = Point(humanPickup.x, newScorePose.y)
+                val scoreControl = Point(20.0, newScorePose.y)
                 val scoreControl2 = Point(25.0, newScorePose.y)
 
                 val goPath =
                     follower
                         .pathBuilder()
                         .addPath(
-                            BezierCurve(Point(humanPickup), scoreControl, scoreControl2)
+                            BezierLine(Point(humanPickup), scoreControl2)
                         ).setLinearHeadingInterpolation(humanPickup.heading, newScorePose.heading)
                         .addPath(
                             BezierLine(scoreControl2, Point(newScorePose))
@@ -190,17 +190,17 @@ class ClipsAuto : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.half
                     }
                     if (pathTimer.elapsedTimeSeconds > 0.15) {
-                        follower.headingOffset = Math.toRadians(-10.0)
+//                        follower.headingOffset = Math.toRadians(-10.0)
                         follower.followPath(scorePaths[0].first)
-                        follower.xOffset = -3.3
+//                        follower.xOffset = -3.3
                         state = 5
                     }
                 }
 
                 5 -> {
                     if (!follower.isBusy || pathTimer.elapsedTimeSeconds > 3.8) {
-                        follower.resetOffset()
-                        follower.pose = scorePose
+//                        follower.resetOffset()
+//                        follower.pose = scorePose
 //                        follower.xOffset = 0.6
                         robot.claw.isClosed = false
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
@@ -225,7 +225,7 @@ class ClipsAuto : LinearOpMode() {
                 7 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
-                        follower.headingOffset = Math.toRadians(-10.0)
+//                        follower.headingOffset = Math.toRadians(-10.0)
                     }
 
                     if (!follower.isBusy) {
