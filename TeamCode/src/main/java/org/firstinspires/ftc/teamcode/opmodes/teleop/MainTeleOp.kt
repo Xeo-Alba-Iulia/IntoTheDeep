@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.PositionStore
-import org.firstinspires.ftc.teamcode.util.SinglePress
 import org.firstinspires.ftc.teamcode.util.TogglePress
 
 @TeleOp(name = "TeleOp", group = "A")
@@ -49,8 +48,7 @@ class MainTeleOp : LinearOpMode() {
         follower.setStartingPose(PositionStore.pose)
 
         val clawControlToggle by TogglePress(controlGamepad::right_bumper)
-
-        val resetLiftButton by SinglePress(controlGamepad::left_stick_button)
+        var resettingLift = false
 
         waitForStart()
 
@@ -97,16 +95,14 @@ class MainTeleOp : LinearOpMode() {
             robot.intake.clawRotate.targetPosition +=
                 (gamepad1.right_trigger - gamepad1.left_trigger) * robot.intake.clawRotate.adjustMultiplier
 
-            if (resetLiftButton) {
-                robot.lift.targetPosition -= Positions.Lift.half
-                resetTimer.resetTimer()
-                resetLift = true
+            if (controlGamepad.left_trigger > 0.8) {
+                robot.lift.targetPosition -= 10.0
+                resettingLift = true
             }
 
-            if (resetLift && resetTimer.elapsedTimeSeconds > 0.8) {
+            if (resettingLift && controlGamepad.left_trigger < 0.1)
                 robot.lift.resetLifts()
-                resetLift = false
-            }
+
             // if (!inTransfer()) {
         }
     }
