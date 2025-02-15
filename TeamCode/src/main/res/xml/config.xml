@@ -5,10 +5,10 @@
             <goBILDA5202SeriesMotor name="MotorFrontRight" port="0" /> <!-- Right Encoder -->
             <goBILDA5202SeriesMotor name="MotorBackRight" port="1" />
             <goBILDA5202SeriesMotor name="LiftRight" port="2" />
-            <Servo name="PendulRight" port="0" />
-            <Servo name="ClawRotate" port="1" />
+            <Servo name="PendulRight" port="1" />
+            <Servo name="ClawRotate" port="2" />
             <Servo name="IntakeClawRotate" port="5" />
-            <Servo name="Extend1" port="2" />
+            <Servo name="Extend1" port="3" />
             <Servo name="IntakeRotate" port="4" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
