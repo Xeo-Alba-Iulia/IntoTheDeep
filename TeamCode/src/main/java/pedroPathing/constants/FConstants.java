@@ -41,8 +41,8 @@ public class FConstants {
         FollowerConstants.driveKalmanFilterParameters.dataCovariance = 1.5;
         FollowerConstants.driveKalmanFilterParameters.modelCovariance = 9;
 
-        FollowerConstants.zeroPowerAccelerationMultiplier = 3.6;
-        FollowerConstants.centripetalScaling = 0.0003;
+        FollowerConstants.zeroPowerAccelerationMultiplier = 3.3;
+        FollowerConstants.centripetalScaling = 0.0005;
 
         FollowerConstants.pathEndTimeoutConstraint = 300;
         FollowerConstants.pathEndTValueConstraint = 0.995;
