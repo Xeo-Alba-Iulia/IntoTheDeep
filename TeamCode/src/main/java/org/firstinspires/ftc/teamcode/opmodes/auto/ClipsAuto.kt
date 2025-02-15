@@ -55,7 +55,7 @@ class ClipsAuto : LinearOpMode() {
 
         val scorePreloadPath = Path(BezierLine(Point(beginPose), Point(firstScorePose)))
         scorePreloadPath.setConstantHeadingInterpolation(Math.toRadians(180.0))
-        scorePreloadPath.zeroPowerAccelerationMultiplier = 3.7
+        scorePreloadPath.zeroPowerAccelerationMultiplier = 8.0
 
         scorePose.y += 2.5
         scorePose.x += 1.5
