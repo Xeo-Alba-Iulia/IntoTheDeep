@@ -39,7 +39,7 @@ class ClipsAuto : LinearOpMode() {
         val firstScorePose = Pose(40.0, 68.7, Math.toRadians(180.001))
 
         val beginPose = Pose(10.0, 60.0, Math.toRadians(180.0))
-        val scorePose = Pose(42.0, 73.0, Math.toRadians(180.001))
+        val scorePose = Pose(42.0, 78.0, Math.toRadians(180.001))
         val pickup1Intermediary = Pose(36.0, 36.0, 0.0)
         val pickup1Pose = Pose(60.3, 29.06, 0.0)
         val drop1Pose = Pose(32.0, 28.0, 0.0)
@@ -57,8 +57,8 @@ class ClipsAuto : LinearOpMode() {
         scorePreloadPath.setConstantHeadingInterpolation(Math.toRadians(180.0))
         scorePreloadPath.zeroPowerAccelerationMultiplier = 8.0
 
-        scorePose.y += 2.5
-        scorePose.x += 1.5
+        scorePose.y += 1.0
+        scorePose.x += 3.0
 
         val humanPickupPath = Path(BezierCurve(Point(drop3Pose), dropControl, Point(humanPickup)))
         humanPickupPath.setConstantHeadingInterpolation(0.0)
@@ -69,7 +69,7 @@ class ClipsAuto : LinearOpMode() {
         val scorePaths =
             Array(4) {
                 val newScorePose = scorePose.copy()
-                newScorePose.y += (1.5) * it
+                newScorePose.y -= (2.0) * it
 
                 val scoreControl = Point(20.0, newScorePose.y)
                 val scoreControl2 = Point(25.0, newScorePose.y)
@@ -102,7 +102,7 @@ class ClipsAuto : LinearOpMode() {
                 Pair(goPath, returnPath)
             }
 
-        scorePose.x -= 1.5
+        scorePose.x -= 3.0
 
         val drop1Path =
             follower
@@ -136,7 +136,8 @@ class ClipsAuto : LinearOpMode() {
         val endPath = BezierCurve(Point(scorePose), Point(25.0, scorePose.y), Point(humanPickup))
 
         waitForStart()
-
+        val opModeTimer = Timer()
+        var isEmergencyState = false
         state = 0
 
         while (!isStopRequested) {
@@ -144,6 +145,11 @@ class ClipsAuto : LinearOpMode() {
             robot.run(p)
             dashboard.sendTelemetryPacket(p)
             dashboard.telemetry.update()
+
+            if (opModeTimer.elapsedTimeSeconds >= 29.0) {
+                state = 7
+                isEmergencyState = true
+            }
 
             when (state) {
                 0 -> {
@@ -201,7 +207,8 @@ class ClipsAuto : LinearOpMode() {
                     if (!follower.isBusy || pathTimer.elapsedTimeSeconds > 3.8) {
 //                        follower.resetOffset()
 //                        follower.pose = scorePose
-//                        follower.xOffset = 0.6
+                        follower.xOffset = -1.5
+                        follower.headingOffset = Math.toRadians(-10.0)
                         robot.claw.isClosed = false
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         follower.followPath(scorePaths[0].second)
@@ -218,6 +225,9 @@ class ClipsAuto : LinearOpMode() {
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(scorePaths[1].first)
+                        follower.xOffset = -2.0
+                        follower.headingOffset = 0.0
+//                        follower.xOffset = 0.0
                         state = 7
                     }
                 }
@@ -228,7 +238,7 @@ class ClipsAuto : LinearOpMode() {
 //                        follower.headingOffset = Math.toRadians(-10.0)
                     }
 
-                    if (!follower.isBusy) {
+                    if (!follower.isBusy || isEmergencyState) {
                         robot.claw.isClosed = false
                         follower.followPath(Path(endPath))
                         robot.lift.targetPosition = Positions.Lift.down
