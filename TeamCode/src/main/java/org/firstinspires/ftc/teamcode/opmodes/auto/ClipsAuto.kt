@@ -11,6 +11,7 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.RobotHardware
+import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.PositionStore
@@ -148,6 +149,7 @@ class ClipsAuto : LinearOpMode() {
 
             if (opModeTimer.elapsedTimeSeconds >= 29.0) {
                 robot.lift.targetPosition = Positions.Lift.down
+                robot.claw.isClosed = false
 //                isEmergencyState = true
             }
 
@@ -242,6 +244,7 @@ class ClipsAuto : LinearOpMode() {
                         robot.claw.isClosed = false
                         follower.followPath(Path(endPath))
                         robot.lift.targetPosition = Positions.Lift.down
+                        robot.intake.targetPosition = IntakePositions.PICKUP
                         state = 8
                     }
                 }
