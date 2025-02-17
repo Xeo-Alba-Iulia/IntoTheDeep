@@ -11,4 +11,6 @@ class IntakeRotate(
     hardwareMap: HardwareMap,
 ) : ServoPositionMechanism(Positions.IntakeRotate.transfer) {
     override val servos = arrayOf(hardwareMap.servo["IntakeRotate"])
+
+    override val adjustMultiplier = 0.005
 }
