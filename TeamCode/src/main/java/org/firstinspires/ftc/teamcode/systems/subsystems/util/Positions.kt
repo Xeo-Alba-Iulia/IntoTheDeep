@@ -125,6 +125,10 @@ object Positions {
         companion object {
             @JvmField @Volatile
             var middle = 0.525
+
+            var right = 0.705
+
+            var left = 0.345
         }
     }
 
