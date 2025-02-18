@@ -35,7 +35,7 @@ class FullClips : LinearOpMode() {
             PathBuilder()
                 .dropFirstSpecimen()
                 .addTemporalCallback(0.5) {
-                    robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                    robot.outtake.outtakePosition = OuttakePosition.PICKUP
                 }.dropSecondSpecimen()
                 .dropThirdSpecimen()
                 .build()
@@ -128,17 +128,17 @@ class FullClips : LinearOpMode() {
     val pickupSpecimen = Pose(36.0, 12.0, 0.0)
 
     val frontFirstSample = Pose(57.7, 27.0, Math.toRadians(180.0))
-    val backFirstSample = Pose(14.0, 27.0, Math.toRadians(180.0))
+    val backFirstSample = Pose(26.0, 27.0, Math.toRadians(180.0)) // FIXME: X mai mare aici
 
     val frontSecondSample = Pose(57.7, 17.0, 0.0)
-    val backSecondSample = Pose(14.0, 17.0, 0.0)
+    val backSecondSample = Pose(26.0, 17.0, 0.0)
 
     val frontThirdSample = Pose(57.7, 8.9, 0.0)
     val backThirdSample = Pose(12.0, 8.9, 0.0)
 
     @Suppress("ClassName")
     object scorePose {
-        private val initialScorePose = Pose(41.5, 67.5, 180.0)
+        private val initialScorePose = Pose(41.5, 69.69, Math.toRadians(180.0))
 
         operator fun get(index: Int): Pose {
             val newPose = initialScorePose.copy()
@@ -161,6 +161,7 @@ class FullClips : LinearOpMode() {
         setLinearHeadingInterpolation(beginPose.heading, frontFirstSample.heading)
         addBezierLine(Point(frontFirstSample), Point(backFirstSample))
         setLinearHeadingInterpolation(frontFirstSample.heading, backFirstSample.heading)
+        setZeroPowerAccelerationMultiplier(0.5)
     }
 
     val dropSecondSpecimen: (PathBuilder.() -> PathBuilder) = {
