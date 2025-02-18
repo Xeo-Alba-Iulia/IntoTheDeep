@@ -126,9 +126,9 @@ object Positions {
             @JvmField @Volatile
             var middle = 0.525
 
-            var right = 0.705
+            var right = 0.785
 
-            var left = 0.345
+            var left = 0.265
         }
     }
 

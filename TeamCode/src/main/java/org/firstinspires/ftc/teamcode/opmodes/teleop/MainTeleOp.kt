@@ -113,10 +113,12 @@ class MainTeleOp : LinearOpMode() {
 
             if (moveGamepad.right_trigger > 0.7) {
                 robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.right
+                robot.intake.claw.isClosed = false
             }
 
             if (moveGamepad.left_trigger > 0.7) {
                 robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.left
+                robot.intake.claw.isClosed = false
             }
 
             if (intakePositionSet) {
