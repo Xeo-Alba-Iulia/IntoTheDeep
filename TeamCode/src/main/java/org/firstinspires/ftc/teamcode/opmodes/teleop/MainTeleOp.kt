@@ -48,12 +48,7 @@ class MainTeleOp : LinearOpMode() {
         follower.setStartingPose(PositionStore.pose)
 
         val clawControlToggle by TogglePress {
-            if (openOuttakeClaw) {
-                openOuttakeClaw = false
-                robot.outtake.claw.isClosed
-            } else {
-                controlGamepad.right_bumper
-            }
+            controlGamepad.right_bumper
         }
 
         val intakePositionSet by SinglePress(controlGamepad::cross)
