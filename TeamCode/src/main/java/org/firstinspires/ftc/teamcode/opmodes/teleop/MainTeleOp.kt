@@ -69,6 +69,7 @@ class MainTeleOp : LinearOpMode() {
                 false
             )
             follower.update()
+            follower.drawOnDashBoard()
 
             robot.applyPositions(controlGamepad)
 
