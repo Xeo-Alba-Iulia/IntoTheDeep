@@ -59,11 +59,11 @@ class MainTeleOp : LinearOpMode() {
         follower.startTeleopDrive()
 
         while (opModeIsActive()) {
-            val powerMultiply = if (robot.intake.targetPosition == IntakePositions.PICKUP) 0.35 else 1.0
+            val powerMultiply = if (robot.intake.targetPosition == IntakePositions.PICKUP) 0.37 else 1.0
 
             // Movement
             follower.setTeleOpMovementVectors(
-                -moveGamepad.left_stick_y.toDouble() * powerMultiply,
+                -moveGamepad.left_stick_y.toDouble(),
                 -moveGamepad.left_stick_x.toDouble() * powerMultiply,
                 -moveGamepad.right_stick_x.toDouble() * powerMultiply,
                 false
