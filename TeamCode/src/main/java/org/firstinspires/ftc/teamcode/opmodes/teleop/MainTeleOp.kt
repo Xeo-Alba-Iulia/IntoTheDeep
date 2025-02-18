@@ -75,6 +75,7 @@ class MainTeleOp : LinearOpMode() {
 
             // Actions for other hardware (intake, lift, etc.)
             val telemetryPacket = TelemetryPacket()
+            telemetryPacket.put("Robot Pose", follower.pose.asPedroCoordinates)
             runActions(actionList, telemetryPacket)
             dashboard.sendTelemetryPacket(telemetryPacket)
 
