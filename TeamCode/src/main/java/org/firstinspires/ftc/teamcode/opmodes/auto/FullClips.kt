@@ -124,17 +124,17 @@ class FullClips : LinearOpMode() {
 
     val beginPose = Pose(9.0, 60.0, Math.toRadians(180.0))
 
-    val scoreControl = Point(21.0, 68.5)
+    val scoreControl = Point(21.0, 69.5)
     val pickupSpecimen = Pose(36.0, 12.0, 0.0)
 
-    val frontFirstSample = Pose(57.7, 27.0, Math.toRadians(180.0))
-    val backFirstSample = Pose(26.0, 27.0, Math.toRadians(180.0)) // FIXME: X mai mare aici
+    val frontFirstSample = Pose(58.2, 27.0, 0.0)
+    val backFirstSample = Pose(28.0, 27.0, 0.0)
 
     val frontSecondSample = Pose(57.7, 17.0, 0.0)
-    val backSecondSample = Pose(26.0, 17.0, 0.0)
+    val backSecondSample = Pose(28.0, 17.0, 0.0)
 
-    val frontThirdSample = Pose(57.7, 8.9, 0.0)
-    val backThirdSample = Pose(12.0, 8.9, 0.0)
+    val frontThirdSample = Pose(57.7, 11.5, 0.0)
+    val backThirdSample = Pose(12.0, 11.5, 0.0)
 
     @Suppress("ClassName")
     object scorePose {
