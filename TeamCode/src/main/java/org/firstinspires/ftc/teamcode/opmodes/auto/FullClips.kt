@@ -4,7 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
-import com.pedropathing.pathgen.*
+import com.pedropathing.pathgen.BezierLine
+import com.pedropathing.pathgen.PathBuilder
+import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -17,6 +19,8 @@ import pedroPathing.constants.LConstants
 
 @Autonomous
 class FullClips : LinearOpMode() {
+    fun PathBuilder.addCallback(runnable: Runnable): PathBuilder = addTemporalCallback(0.0, runnable)
+
     override fun runOpMode() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         val follower = Follower(hardwareMap)
@@ -34,7 +38,7 @@ class FullClips : LinearOpMode() {
         val dropAllSpecimens =
             PathBuilder()
                 .dropFirstSpecimen()
-                .addTemporalCallback(0.5) {
+                .addCallback {
                     robot.outtake.outtakePosition = OuttakePosition.PICKUP
                 }.dropSecondSpecimen()
                 .dropThirdSpecimen()
