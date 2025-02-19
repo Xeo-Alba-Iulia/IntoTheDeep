@@ -50,7 +50,7 @@ class FullClips : LinearOpMode() {
                     Point(backThirdSample),
                     scoreControl,
                     Point(scorePose[1])
-                ).setLinearHeadingInterpolation(backThirdSample.heading, scorePose[1].heading, 0.9)
+                ).setLinearHeadingInterpolation(backThirdSample.heading, scorePose[1].heading, 0.8)
                 .addParametricCallback(0.3) {
                     robot.outtake.outtakePosition = OuttakePosition.BAR
                 }.build()
@@ -129,7 +129,7 @@ class FullClips : LinearOpMode() {
     val beginPose = Pose(9.0, 60.0, Math.toRadians(180.0))
 
     val scoreControl = Point(21.0, 69.5)
-    val pickupSpecimen = Pose(36.0, 12.0, 0.0)
+    val pickupSpecimen = Pose(12.0, 36.0, 0.0)
 
     val frontFirstSample = Pose(58.2, 27.0, 0.0)
     val backFirstSample = Pose(28.0, 27.0, 0.0)
