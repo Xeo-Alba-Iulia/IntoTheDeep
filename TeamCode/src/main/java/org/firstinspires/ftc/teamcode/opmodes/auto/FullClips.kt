@@ -163,7 +163,6 @@ class FullClips : LinearOpMode() {
         setLinearHeadingInterpolation(beginPose.heading, frontFirstSample.heading)
         addBezierLine(Point(frontFirstSample), Point(backFirstSample))
         setLinearHeadingInterpolation(frontFirstSample.heading, backFirstSample.heading)
-        setZeroPowerAccelerationMultiplier(0.5)
     }
 
     val dropSecondSpecimen: (PathBuilder.() -> PathBuilder) = {
