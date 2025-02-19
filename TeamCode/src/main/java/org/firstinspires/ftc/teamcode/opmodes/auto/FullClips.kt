@@ -148,15 +148,13 @@ class FullClips : LinearOpMode() {
     }
 
     val dropFirstSpecimen: (PathBuilder.() -> PathBuilder) = {
-        addPath(
-            BezierCurve(
-                Point(scorePose[0]),
-                Point(19.5, 59.0),
-                Point(35.0, 1.0),
-                Point(65.0, 59.4),
-                Point(frontFirstSample),
-                Point(frontFirstSample)
-            )
+        addBezierCurve(
+            Point(scorePose[0]),
+            Point(19.5, 59.0),
+            Point(35.0, 1.0),
+            Point(65.0, 59.4),
+            Point(frontFirstSample),
+            Point(frontFirstSample)
         )
         setLinearHeadingInterpolation(beginPose.heading, frontFirstSample.heading)
         addBezierLine(Point(frontFirstSample), Point(backFirstSample))
@@ -167,12 +165,10 @@ class FullClips : LinearOpMode() {
     val dropSecondSpecimen: (PathBuilder.() -> PathBuilder) = {
         val controlPoint = Point(67.5, 28.5)
 
-        addPath(
-            BezierCurve(
-                Point(backFirstSample),
-                controlPoint,
-                Point(frontSecondSample)
-            )
+        addBezierCurve(
+            Point(backFirstSample),
+            controlPoint,
+            Point(frontSecondSample)
         )
         setLinearHeadingInterpolation(backFirstSample.heading, frontSecondSample.heading)
         addBezierLine(Point(frontSecondSample), Point(backSecondSample))
