@@ -155,7 +155,7 @@ class MainTeleOp : LinearOpMode() {
             lift.targetPosition =
                 when {
                     gamepad.square -> Positions.Lift.down
-                    gamepad.triangle || gamepad.dpad_right -> Positions.Lift.half
+                    gamepad.triangle -> Positions.Lift.half
                     gamepad.circle -> Positions.Lift.up
                     else -> lift.targetPosition
                 }
@@ -179,7 +179,6 @@ class MainTeleOp : LinearOpMode() {
                 when {
                     gamepad.dpad_right -> {
                         openOuttakeClaw = true
-
                         Pair(
                             OuttakePosition.TRANSFER,
                             IntakePositions.TRANSFER
