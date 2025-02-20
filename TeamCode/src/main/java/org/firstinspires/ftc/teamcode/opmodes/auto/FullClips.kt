@@ -57,7 +57,7 @@ class FullClips : LinearOpMode() {
 
         val getSecondSpecimen =
             PathBuilder()
-                .addBezierLine(Point(scorePose[1]), Point(pickupSpecimen))
+                .addBezierCurve(Point(scorePose[1]), pickupControl, Point(pickupSpecimen))
                 .setLinearHeadingInterpolation(scorePose[1].heading, pickupSpecimen.heading, 0.9)
                 .addParametricCallback(0.5) {
                     robot.outtake.outtakePosition = OuttakePosition.PICKUP
@@ -128,8 +128,9 @@ class FullClips : LinearOpMode() {
 
     val beginPose = Pose(9.0, 60.0, Math.toRadians(180.0))
 
-    val scoreControl = Point(21.0, 69.5)
-    val pickupSpecimen = Pose(12.0, 36.0, 0.0)
+    val scoreControl = Point(20.0, 70.5)
+    val pickupSpecimen = Pose(15.0, 36.0, 0.0)
+    val pickupControl = Point(29.0, 40.0)
 
     val frontFirstSample = Pose(58.2, 27.0, 0.0)
     val backFirstSample = Pose(28.0, 27.0, 0.0)
@@ -138,7 +139,7 @@ class FullClips : LinearOpMode() {
     val backSecondSample = Pose(28.0, 17.0, 0.0)
 
     val frontThirdSample = Pose(57.7, 11.5, 0.0)
-    val backThirdSample = Pose(12.0, 11.5, 0.0)
+    val backThirdSample = Pose(15.0, 11.5, 0.0)
 
     @Suppress("ClassName")
     object scorePose {
