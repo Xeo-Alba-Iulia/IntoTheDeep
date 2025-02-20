@@ -12,7 +12,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var bar = 0.7
+            var bar = 0.635
 
             @JvmField
             @Volatile
@@ -20,7 +20,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.87
+            var pickup = 0.834
         }
     }
 
@@ -33,7 +33,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var half = 481.0
+            var half = 180.0
 
             @JvmField
             @Volatile
@@ -59,7 +59,7 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var pickupWait = 0.24
+            var pickupWait = 0.33
 
             @JvmField @Volatile
             var pickup = 0.1
@@ -97,7 +97,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var bar: Double = 0.8
+            var bar: Double = 0.67
 
             @JvmField
             @Volatile
@@ -105,7 +105,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.68
+            var pickup = 0.57
         }
     }
 
@@ -139,7 +139,7 @@ object Positions {
             var pickup = 0.017
 
             @JvmField @Volatile
-            var transfer = 0.753
+            var transfer = 0.68
         }
     }
 }
