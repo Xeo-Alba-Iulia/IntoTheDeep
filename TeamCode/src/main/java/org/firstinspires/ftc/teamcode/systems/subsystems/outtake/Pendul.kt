@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.systems.DeviceNames
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
 
 class Pendul(
     hardwareMap: HardwareMap,
-) : ServoPositionMechanism(0.0) {
+) : ServoPositionMechanism(Positions.Pendul.transfer) {
     override val servos: Array<Servo> =
         arrayOf(hardwareMap.servo[DeviceNames.PLServo], hardwareMap.servo[DeviceNames.PRServo])
 }
