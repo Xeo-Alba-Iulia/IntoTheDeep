@@ -7,7 +7,7 @@ public class LConstants {
     static {
         ThreeWheelConstants.forwardTicksToInches = 0.0029961808552337846;
         ThreeWheelConstants.strafeTicksToInches = 0.002999044221628336;
-        ThreeWheelConstants.turnTicksToInches = 0.002928990471730247;
+        ThreeWheelConstants.turnTicksToInches = 0.002938990471730247;
         ThreeWheelConstants.leftY = 5.314961;
         ThreeWheelConstants.rightY = -5.314961;
         ThreeWheelConstants.strafeX = 3.74016;
