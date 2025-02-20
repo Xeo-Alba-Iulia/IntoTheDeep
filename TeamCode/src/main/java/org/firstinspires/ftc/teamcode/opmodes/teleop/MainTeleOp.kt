@@ -60,6 +60,7 @@ class MainTeleOp : LinearOpMode() {
 
         while (opModeIsActive()) {
             val powerMultiply = if (robot.intake.targetPosition == IntakePositions.PICKUP) 0.37 else 1.0
+            val clawControlCache = clawControlToggle
 
             // Movement
             follower.setTeleOpMovementVectors(
@@ -73,7 +74,10 @@ class MainTeleOp : LinearOpMode() {
 
             robot.applyPositions(controlGamepad)
 
-            // Actions for other hardware (intake, lift, etc.)
+            if (!clawControlCache && robot.outtake.outtakePosition == OuttakePosition.BAR) {
+                robot.outtake.pendul.targetPosition = 0.7
+            }
+
             val telemetryPacket = TelemetryPacket()
             telemetryPacket.put("Robot Pose", follower.pose.asPedroCoordinates)
             runActions(actionList, telemetryPacket)
@@ -82,8 +86,6 @@ class MainTeleOp : LinearOpMode() {
             if (moveGamepad.left_stick_button) {
                 follower.pose = Pose(0.0, 0.0, 0.0)
             }
-
-            val clawControlCache = clawControlToggle
 
             robot.outtake.claw.isClosed = clawControlCache
 
@@ -188,33 +190,37 @@ class MainTeleOp : LinearOpMode() {
                     gamepad.dpad_up -> {
                         Pair(
                             OuttakePosition.BASKET,
-                            intake.targetPosition
+                            null
                         )
                     }
 
                     gamepad.dpad_left -> {
                         Pair(
                             OuttakePosition.BAR,
-                            intake.targetPosition
+                            null
                         )
                     }
 
                     gamepad.dpad_down -> {
                         Pair(
                             OuttakePosition.PICKUP,
-                            intake.targetPosition
+                            null
                         )
                     }
 
                     else -> {
                         Pair(
-                            outtake.outtakePosition,
-                            intake.targetPosition
+                            null,
+                            null
                         )
                     }
                 }
-            outtake.outtakePosition = outtakePosition
-            intake.targetPosition = intakePosition
+            if (outtakePosition != null) {
+                outtake.outtakePosition = outtakePosition
+            }
+            if (intakePosition != null) {
+                intake.targetPosition = intakePosition
+            }
 //            intakePendul.targetPosition = intakePendulPosition as Double
         } catch (e: NotImplementedError) {
             // Driver station nu arata NotImplementedError, doar oprește OpMode
