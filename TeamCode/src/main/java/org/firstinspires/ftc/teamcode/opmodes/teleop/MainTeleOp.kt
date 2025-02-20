@@ -37,12 +37,12 @@ class MainTeleOp : LinearOpMode() {
                 robot.claw
             )
 
-        while (!isStarted) {
-            val telemetryPacket = TelemetryPacket()
-            telemetryPacket.addLine("Initializing")
-            runActions(actionList, telemetryPacket)
-            dashboard.sendTelemetryPacket(telemetryPacket)
-        }
+//        while (!isStarted) {
+//            val telemetryPacket = TelemetryPacket()
+//            telemetryPacket.addLine("Initializing")
+//            runActions(actionList, telemetryPacket)
+//            dashboard.sendTelemetryPacket(telemetryPacket)
+//        }
 
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(PositionStore.pose)
