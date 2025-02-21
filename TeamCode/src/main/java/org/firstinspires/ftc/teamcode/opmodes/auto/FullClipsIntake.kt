@@ -30,11 +30,11 @@ class FullClipsIntake : LinearOpMode() {
 
     val scorePose =
         arrayOf(
-            Point(41.75, 68.0),
-            Point(41.75, 68.5),
-            Point(41.75, 69.0),
-            Point(41.75, 69.5),
-            Point(41.75, 70.0)
+            Point(41.0, 68.0),
+            Point(41.0, 68.5),
+            Point(41.0, 69.0),
+            Point(41.0, 69.5),
+            Point(41.0, 70.0)
         )
 
     val scoreAngle = Math.toRadians(180.0)
@@ -76,7 +76,7 @@ class FullClipsIntake : LinearOpMode() {
                     .build(),
                 PathBuilder()
                     .addBezierLine(samplePoints[0], samplePoints[1])
-                    .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.6)
+                    .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.4)
                     .build(),
                 PathBuilder()
                     .addBezierLine(samplePoints[1], samplePoints[2])
@@ -215,7 +215,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 11 -> {
                     if (!follower.isBusy) { // Score first specimen
-                        robot.intake.claw.isClosed = true
+                        robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore)
                         firstPickup.resetCallbacks()
@@ -236,7 +236,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 13 -> {
                     if (!follower.isBusy) { // Score second specimen
-                        robot.intake.claw.isClosed = true
+                        robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore)
                         firstPickup.resetCallbacks()
@@ -257,7 +257,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 15 -> {
                     if (!follower.isBusy) { // Score third specimen
-                        robot.intake.claw.isClosed = true
+                        robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore)
                         firstPickup.resetCallbacks()
@@ -278,7 +278,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 17 -> {
                     if (!follower.isBusy) { // Score fourth specimen
-                        robot.intake.claw.isClosed = true
+                        robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore)
                         state = 18
