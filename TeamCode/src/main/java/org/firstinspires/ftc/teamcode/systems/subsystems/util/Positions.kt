@@ -66,11 +66,6 @@ object Positions {
 
             @JvmField
             @Volatile
-            @Deprecated("Nu mai e pozitie de init")
-            var init = 0.5
-
-            @JvmField
-            @Volatile
             var transfer = 0.88
         }
     }
@@ -139,7 +134,7 @@ object Positions {
             var pickup = 0.017
 
             @JvmField @Volatile
-            var transfer = 0.68
+            var transfer = 0.75
         }
     }
 }
