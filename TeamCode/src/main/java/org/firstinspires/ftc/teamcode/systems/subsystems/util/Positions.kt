@@ -37,7 +37,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var up = 2210.0
+            var up = 3200.0
         }
     }
 
