@@ -2,25 +2,25 @@
 <Robot type="FirstInspires-FTC">
     <LynxUsbDevice name="Control Hub Portal" parentModuleAddress="173" serialNumber="(embedded)">
         <LynxModule name="Expansion Hub 2" port="2">
-            <goBILDA5202SeriesMotor name="MotorFrontRight" port="0" /> <!-- Right Encoder -->
+            <goBILDA5202SeriesMotor name="MotorFrontRight" port="0" />
             <goBILDA5202SeriesMotor name="MotorBackRight" port="1" />
             <goBILDA5202SeriesMotor name="LiftRight" port="2" />
-            <Servo name="PendulRight" port="1" />
-            <Servo name="ClawRotate" port="2" />
-            <Servo name="IntakeClawRotate" port="5" />
-            <Servo name="Extend1" port="3" />
-            <Servo name="IntakeRotate" port="4" />
+            <Servo name="ClawRotate" port="0" />
+            <Servo name="Claw" port="1" />
+            <Servo name="Pendul1" port="2" />
+            <Servo name="Pendul2" port="3" />
+            <Servo name="Extend1" port="4" />
+            <Servo name="Extend2" port="5" />
+            <RevColorSensorV3 name="sensor_color" bus="1" port="0" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
-            <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0" /> <!-- Strafe Encoder -->
+            <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0" />
             <goBILDA5202SeriesMotor name="LiftLeft" port="2" />
-            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" />  <!--  Left Encoder  -->
-            <ContinuousRotationServo name="IntakeLeft" port="0" />
+            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" />
             <Servo name="IntakeClaw" port="0" />
             <Servo name="IntakePendul" port="1" />
-            <Servo name="PendulLeft" port="4" />
-            <Servo name="Claw" port="5" />
-            <Servo name="Extend2" port="3" />
+            <Servo name="IntakeRotate" port="2" />
+            <Servo name="IntakeClawRotate" port="3" />
             <ControlHubImuBHI260AP name="imu" bus="0" port="0" />
         </LynxModule>
     </LynxUsbDevice>
