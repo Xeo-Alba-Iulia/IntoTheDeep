@@ -5,9 +5,12 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.pedropathing.follower.Follower
 import com.pedropathing.localization.Pose
+import com.pedropathing.util.CustomPIDFCoefficients
+import com.pedropathing.util.PIDFController
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
+import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
@@ -22,6 +25,10 @@ class MainTeleOp : LinearOpMode() {
 
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
+
+        val headingPIDFCoefficients = CustomPIDFCoefficients(2.0, 0.0, 0.04, 0.0)
+        val headingPIDF = PIDFController(headingPIDFCoefficients)
+        headingPIDF.targetPosition = 0.0
 
         val moveGamepad: Gamepad = gamepad1
         val controlGamepad: Gamepad = gamepad2
@@ -52,6 +59,7 @@ class MainTeleOp : LinearOpMode() {
         }
 
         val intakePositionSet by SinglePress(controlGamepad::cross)
+        val holdHeading by TogglePress(moveGamepad::cross)
 
         waitForStart()
 
@@ -66,7 +74,21 @@ class MainTeleOp : LinearOpMode() {
             follower.setTeleOpMovementVectors(
                 -moveGamepad.left_stick_y.toDouble(),
                 -moveGamepad.left_stick_x.toDouble() * powerMultiply,
-                -moveGamepad.right_stick_x.toDouble() * powerMultiply,
+                if (holdHeading) {
+                    val modifiedHeading =
+                        if (follower.pose.heading <= Math.PI) {
+                            follower.pose.heading
+                        } else {
+                            -2 * Math.PI + follower.pose.heading
+                        }
+
+                    RobotLog.d("Modified PID heading: $modifiedHeading")
+
+                    headingPIDF.updatePosition(modifiedHeading)
+                    headingPIDF.runPIDF()
+                } else {
+                    -moveGamepad.right_stick_x.toDouble() * powerMultiply
+                },
                 false
             )
             follower.update()
