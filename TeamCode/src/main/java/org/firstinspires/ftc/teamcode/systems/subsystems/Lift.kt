@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualPositionMechanism
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
 /**
  * Lift subsystem
@@ -80,12 +81,12 @@ class Lift(
 class LiftTest : ManualMechanismTeleOp(::Lift) {
     override fun loop() {
         super.loop()
-        if (gamepad1.a) {
-            manualPositionMechanism.targetPosition = 1000.0
-        } else if (gamepad1.x) {
-            manualPositionMechanism.targetPosition = 2100.0
-        } else if (gamepad1.b) {
-            manualPositionMechanism.targetPosition = 0.0
+        if (gamepad1.b) {
+            manualPositionMechanism.targetPosition = Positions.Lift.down
+        } else if (gamepad1.triangle) {
+            manualPositionMechanism.targetPosition = Positions.Lift.half
+        } else if (gamepad1.circle) {
+            manualPositionMechanism.targetPosition = Positions.Lift.up
         }
     }
 }
