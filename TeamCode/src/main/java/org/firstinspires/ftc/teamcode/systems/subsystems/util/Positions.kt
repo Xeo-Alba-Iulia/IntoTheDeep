@@ -8,7 +8,7 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var transfer = 0.208
+            var transfer = 0.2
 
             @JvmField
             @Volatile
@@ -33,7 +33,14 @@ object Positions {
 
             @JvmField
             @Volatile
-            var half = 480.0
+            var transfer = 100.0
+
+            @JvmField
+            @Volatile
+            var half = 650.0
+
+            @JvmField
+            @Volatile var hang = 2000.0
 
             @JvmField
             @Volatile
@@ -66,7 +73,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var transfer = 0.88
+            var transfer = 0.8
         }
     }
 
@@ -134,7 +141,7 @@ object Positions {
             var pickup = 0.017
 
             @JvmField @Volatile
-            var transfer = 0.75
+            var transfer = 0.69
         }
     }
 }
