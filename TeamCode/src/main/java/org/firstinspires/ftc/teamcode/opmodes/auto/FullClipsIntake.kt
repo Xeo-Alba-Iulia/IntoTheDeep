@@ -30,18 +30,18 @@ class FullClipsIntake : LinearOpMode() {
 
     val scorePose =
         arrayOf(
-            Point(41.0, 68.0),
-            Point(41.0, 68.5),
-            Point(41.0, 69.0),
-            Point(41.0, 69.5),
-            Point(41.0, 70.0)
+            Point(40.0, 68.0),
+            Point(38.0, 68.5),
+            Point(38.0, 69.0),
+            Point(38.0, 69.5),
+            Point(38.0, 70.0)
         )
 
     val scoreAngle = Math.toRadians(180.0)
 
     val scoreControl = Point(16.0, 70.0)
 
-    val pickupSpecimen = Pose(17.0, 28.0, 0.0)
+    val pickupSpecimen = Pose(16.8, 28.0, 0.0)
     val pickupControl =
         arrayOf(
             Point(24.0, 70.0),
@@ -118,12 +118,32 @@ class FullClipsIntake : LinearOpMode() {
                 .build()
 
         val secondScore =
-            PathBuilder()
-                .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[1])
-                .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
-                .addParametricCallback(0.4) {
-                    robot.outtake.outtakePosition = OuttakePosition.BAR
-                }.build()
+            arrayOf(
+                PathBuilder()
+                    .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[1])
+                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .addParametricCallback(0.4) {
+                        robot.outtake.outtakePosition = OuttakePosition.BAR
+                    }.build(),
+                PathBuilder()
+                    .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[2])
+                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .addParametricCallback(0.4) {
+                        robot.outtake.outtakePosition = OuttakePosition.BAR
+                    }.build(),
+                PathBuilder()
+                    .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[3])
+                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .addParametricCallback(0.4) {
+                        robot.outtake.outtakePosition = OuttakePosition.BAR
+                    }.build(),
+                PathBuilder()
+                    .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[4])
+                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .addParametricCallback(0.4) {
+                        robot.outtake.outtakePosition = OuttakePosition.BAR
+                    }.build()
+            )
 
         intake.targetPosition = IntakePositions.TRANSFER
 
@@ -215,7 +235,7 @@ class FullClipsIntake : LinearOpMode() {
                     }
                 }
 
-                9 -> { // Score preload
+                9 -> {
                     if (!follower.isBusy) {
                         robot.intake.claw.isClosed = false
                         robot.intake.targetPosition = IntakePositions.TRANSFER
@@ -228,7 +248,7 @@ class FullClipsIntake : LinearOpMode() {
                     if (!follower.isBusy) {
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
-                        follower.followPath(secondScore)
+                        follower.followPath(secondScore[0])
                         state = 10
                     }
                 }
@@ -238,7 +258,6 @@ class FullClipsIntake : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.down
                         robot.outtake.pendul.targetPosition = 0.7
                         robot.claw.isClosed = false
-                        secondScore.resetCallbacks()
                         follower.followPath(firstPickup)
                         state = 11
                     }
@@ -248,7 +267,7 @@ class FullClipsIntake : LinearOpMode() {
                     if (!follower.isBusy) { // Score first specimen
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
-                        follower.followPath(secondScore)
+                        follower.followPath(secondScore[1])
                         firstPickup.resetCallbacks()
                         state = 12
                     }
@@ -260,7 +279,6 @@ class FullClipsIntake : LinearOpMode() {
                         robot.outtake.pendul.targetPosition = 0.7
                         robot.claw.isClosed = false
                         follower.followPath(firstPickup)
-                        secondScore.resetCallbacks()
                         state = 13
                     }
                 }
@@ -269,7 +287,7 @@ class FullClipsIntake : LinearOpMode() {
                     if (!follower.isBusy) { // Score second specimen
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
-                        follower.followPath(secondScore)
+                        follower.followPath(secondScore[2])
                         firstPickup.resetCallbacks()
                         state = 14
                     }
@@ -281,7 +299,6 @@ class FullClipsIntake : LinearOpMode() {
                         robot.outtake.pendul.targetPosition = 0.7
                         robot.claw.isClosed = false
                         follower.followPath(firstPickup)
-                        secondScore.resetCallbacks()
                         state = 15
                     }
                 }
@@ -290,29 +307,9 @@ class FullClipsIntake : LinearOpMode() {
                     if (!follower.isBusy) { // Score third specimen
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
-                        follower.followPath(secondScore)
+                        follower.followPath(secondScore[3])
                         firstPickup.resetCallbacks()
                         state = 16
-                    }
-                }
-
-                16 -> {
-                    if (!follower.isBusy) {
-                        robot.lift.targetPosition = Positions.Lift.down
-                        robot.outtake.pendul.targetPosition = 0.7
-                        robot.claw.isClosed = false
-                        follower.followPath(firstPickup)
-                        secondScore.resetCallbacks()
-                        state = 17
-                    }
-                }
-
-                17 -> {
-                    if (!follower.isBusy) { // Score fourth specimen
-                        robot.claw.isClosed = true
-                        robot.lift.targetPosition = Positions.Lift.half
-                        follower.followPath(secondScore)
-                        state = 18
                     }
                 }
             }
