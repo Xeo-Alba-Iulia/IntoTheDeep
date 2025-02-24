@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.PositionStore
 import org.firstinspires.ftc.teamcode.util.PressAction
-import org.firstinspires.ftc.teamcode.util.TogglePress
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
@@ -49,7 +48,9 @@ class MainTeleOp : LinearOpMode() {
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
-        fun inTransfer() = robot.lift.targetPosition == Positions.Lift.transfer
+        fun inTransfer() =
+            robot.lift.targetPosition == Positions.Lift.transfer &&
+                robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
         val headingPIDFCoefficients = CustomPIDFCoefficients(2.0, 0.0, 0.04, 0.0)
         val headingPIDF = PIDFController(headingPIDFCoefficients)
@@ -93,7 +94,6 @@ class MainTeleOp : LinearOpMode() {
         val delayedActions = mutableListOf<Pair<Long, Runnable>>()
 
         var holdHeading = false
-        val playingSamples by TogglePress(controlGamepad::options)
 
         fun finishTransfer() {
             robot.claw.isClosed = true
@@ -120,9 +120,9 @@ class MainTeleOp : LinearOpMode() {
                 },
                 PressAction(controlGamepad::cross, robot.intake::switch),
                 PressAction(moveGamepad::cross) {
-                    if (!robot.claw.isClosed) {
-                        holdHeading = !holdHeading
-                    }
+//                    if (!robot.claw.isClosed) {
+                    holdHeading = !holdHeading
+//                    }
                 },
                 PressAction(controlGamepad::right_stick_button) {
                     robot.lift.targetPosition = Positions.Lift.up
@@ -146,14 +146,6 @@ class MainTeleOp : LinearOpMode() {
                     } else {
                         robot.lift.targetPosition = Positions.Lift.up
                     }
-                },
-                PressAction(controlGamepad::triangle) {
-                    robot.lift.targetPosition = Positions.Lift.half
-                    val playingSamplesCopy = playingSamples
-                    RobotLog.d("Is playing samples: $playingSamplesCopy")
-                    if (playingSamplesCopy) {
-                        robot.outtake.outtakePosition = OuttakePosition.TRANSFER
-                    }
                 }
             )
 
@@ -170,6 +162,8 @@ class MainTeleOp : LinearOpMode() {
                 -moveGamepad.left_stick_y.toDouble(),
                 -moveGamepad.left_stick_x.toDouble() * powerMultiply,
                 if (holdHeading) {
+                    follower.headingOffset += moveGamepad.right_stick_x.toDouble() * 0.01
+
                     val modifiedHeading =
                         if (follower.pose.heading <= Math.PI) {
                             follower.pose.heading
