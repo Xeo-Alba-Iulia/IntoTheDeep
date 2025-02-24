@@ -128,6 +128,16 @@ class MainTeleOp : LinearOpMode() {
                 },
                 PressAction(controlGamepad::left_stick_button) {
                     robot.lift.targetPosition = Positions.Lift.hang
+                },
+                PressAction(controlGamepad::circle) {
+                    if (inTransfer()) {
+                        if (!robot.claw.isClosed) {
+                            finishTransfer()
+                            delayedActions.addDelayed(0.3) { robot.lift.targetPosition = Positions.Lift.up }
+                        } else {
+                            robot.lift.targetPosition = Positions.Lift.up
+                        }
+                    }
                 }
             )
 
@@ -236,7 +246,6 @@ class MainTeleOp : LinearOpMode() {
                 when {
                     gamepad.square -> Positions.Lift.down
                     gamepad.triangle -> Positions.Lift.half
-                    gamepad.circle -> Positions.Lift.up
                     gamepad.dpad_right -> Positions.Lift.transfer
                     else -> lift.targetPosition
                 }
