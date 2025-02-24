@@ -20,7 +20,7 @@ import pedroPathing.constants.LConstants
 
 @Autonomous
 class FullClipsIntake : LinearOpMode() {
-    val beginPose = Pose(9.0, 48.0, Math.toRadians(-90.0))
+    val beginPose = Pose(9.0, 60.0, Math.toRadians(180.0))
     val samplePoints =
         arrayOf(
             Point(29.0, 41.2),
@@ -68,12 +68,23 @@ class FullClipsIntake : LinearOpMode() {
 
         val intake = Intake(hardwareMap)
 
+        val scorePreload =
+            PathBuilder()
+                .addBezierLine(Point(beginPose), scorePose[0])
+                .setConstantHeadingInterpolation(Math.toRadians(180.0))
+                .build()
+
         val pickupSamples =
             arrayOf(
                 PathBuilder()
-                    .addBezierLine(Point(beginPose), samplePoints[0])
+                    .addBezierCurve(scorePose[0], Point(20.0, 60.0), samplePoints[0])
                     .setLinearHeadingInterpolation(beginPose.heading, sampleAngle)
-                    .build(),
+                    .addParametricCallback(0.3) {
+                        robot.outtake.outtakePosition = OuttakePosition.PICKUP
+                    }.addParametricCallback(0.7) {
+                        robot.intake.targetPosition = IntakePositions.PICKUP
+                        robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.left
+                    }.build(),
                 PathBuilder()
                     .addBezierLine(samplePoints[0], samplePoints[1])
                     .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.4)
@@ -92,10 +103,10 @@ class FullClipsIntake : LinearOpMode() {
                 .setLinearHeadingInterpolation(sampleAngle, dropAngle)
                 .build()
 
-        val firstScore =
+        val pickupFromDrop =
             PathBuilder()
-                .addBezierCurve(lastDropPoint, scoreControl, scorePose[0])
-                .setLinearHeadingInterpolation(dropAngle, scoreAngle, 0.8)
+                .addBezierLine(lastDropPoint, Point(pickupSpecimen))
+                .setLinearHeadingInterpolation(dropAngle, 0.0, 0.5)
                 .build()
 
         val firstPickup =
@@ -126,15 +137,27 @@ class FullClipsIntake : LinearOpMode() {
         while (!isStopRequested) {
             when (state) {
                 0 -> {
-                    follower.followPath(pickupSamples[0])
-                    state = 1
+                    robot.outtake.outtakePosition = OuttakePosition.BAR
+                    robot.lift.targetPosition = Positions.Lift.half
+                    robot.claw.isClosed = true
+                    state = 50
+                }
+
+                50 -> {
+                    follower.followPath(scorePreload)
+                    state = 51
+                }
+
+                51 -> {
+                    if (!follower.isBusy) {
+                        robot.claw.isClosed = false
+                        robot.lift.targetPosition = Positions.Lift.down
+                        follower.followPath(pickupSamples[0])
+                        state = 1
+                    }
                 }
 
                 1 -> {
-                    robot.claw.isClosed = true
-                    robot.intake.targetPosition = IntakePositions.PICKUP
-                    robot.outtake.outtakePosition = OuttakePosition.PICKUP
-                    robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.left
                     if (!follower.isBusy) {
                         robot.intake.pickUp()
                         state = 2
@@ -195,10 +218,17 @@ class FullClipsIntake : LinearOpMode() {
                 9 -> { // Score preload
                     if (!follower.isBusy) {
                         robot.intake.claw.isClosed = false
-                        robot.outtake.outtakePosition = OuttakePosition.BAR
-                        robot.lift.targetPosition = Positions.Lift.half
                         robot.intake.targetPosition = IntakePositions.TRANSFER
-                        follower.followPath(firstScore)
+                        follower.followPath(pickupFromDrop)
+                        state = 91
+                    }
+                }
+
+                91 -> {
+                    if (!follower.isBusy) {
+                        robot.claw.isClosed = true
+                        robot.lift.targetPosition = Positions.Lift.half
+                        follower.followPath(secondScore)
                         state = 10
                     }
                 }
@@ -208,6 +238,7 @@ class FullClipsIntake : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.down
                         robot.outtake.pendul.targetPosition = 0.7
                         robot.claw.isClosed = false
+                        secondScore.resetCallbacks()
                         follower.followPath(firstPickup)
                         state = 11
                     }
