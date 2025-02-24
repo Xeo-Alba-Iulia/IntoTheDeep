@@ -10,13 +10,16 @@ import com.pedropathing.util.Constants
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.Intake
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
+import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
+import kotlin.math.abs
 
 @Autonomous
 class FullClipsIntake : LinearOpMode() {
@@ -24,32 +27,32 @@ class FullClipsIntake : LinearOpMode() {
     val samplePoints =
         arrayOf(
             Point(29.0, 41.2),
-            Point(29.0, 31.0),
-            Point(29.0, 21.0)
+            Point(29.7, 31.0),
+            Point(30.4, 21.0)
         )
 
     val scorePose =
         arrayOf(
             Point(40.0, 68.0),
-            Point(38.0, 68.5),
-            Point(38.0, 69.0),
-            Point(38.0, 69.5),
-            Point(38.0, 70.0)
+            Point(38.5, 71.0),
+            Point(38.0, 74.0),
+            Point(38.0, 77.0),
+            Point(38.0, 81.0)
         )
 
     val scoreAngle = Math.toRadians(180.0)
 
     val scoreControl = Point(16.0, 70.0)
 
-    val pickupSpecimen = Pose(16.8, 28.0, 0.0)
+    val pickupSpecimen = Pose(16.0, 28.0, 0.0)
     val pickupControl =
         arrayOf(
             Point(24.0, 70.0),
             Point(36.0, 36.0)
         )
 
-    val sampleAngle = -Math.toRadians(47.0)
-    val dropAngle = -Math.toRadians(130.0)
+    val sampleAngle = Math.toRadians(313.0)
+    val dropAngle = Math.toRadians(230.0)
 
     private val pathTimer = Timer()
     private var state = 0
@@ -67,6 +70,7 @@ class FullClipsIntake : LinearOpMode() {
         val robot = RobotHardware(hardwareMap)
 
         val intake = Intake(hardwareMap)
+        val pendul = Pendul(hardwareMap)
 
         val scorePreload =
             PathBuilder()
@@ -110,12 +114,26 @@ class FullClipsIntake : LinearOpMode() {
                 .build()
 
         val firstPickup =
-            PathBuilder()
-                .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(pickupSpecimen))
-                .addParametricCallback(0.5) {
-                    robot.outtake.outtakePosition = OuttakePosition.PICKUP
-                }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.8)
-                .build()
+            arrayOf(
+                PathBuilder()
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.9, 28.0))
+                    .addParametricCallback(0.5) {
+                        robot.outtake.outtakePosition = OuttakePosition.PICKUP
+                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.8)
+                    .build(),
+                PathBuilder()
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(17.8, 28.0))
+                    .addParametricCallback(0.5) {
+                        robot.outtake.outtakePosition = OuttakePosition.PICKUP
+                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.8)
+                    .build(),
+                PathBuilder()
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(18.5, 28.0))
+                    .addParametricCallback(0.5) {
+                        robot.outtake.outtakePosition = OuttakePosition.PICKUP
+                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.8)
+                    .build()
+            )
 
         val secondScore =
             arrayOf(
@@ -145,11 +163,20 @@ class FullClipsIntake : LinearOpMode() {
                     }.build()
             )
 
+        val park =
+            PathBuilder()
+                .addBezierLine(scorePose[4], Point(pickupSpecimen))
+                .setLinearHeadingInterpolation(scoreAngle, Math.toRadians(230.0), 0.2)
+                .build()
+
         intake.targetPosition = IntakePositions.TRANSFER
+        pendul.targetPosition = 0.98
 
         while (opModeInInit()) {
             val packet = TelemetryPacket()
             intake.run(packet)
+            pendul.run(packet)
+            dashboard.sendTelemetryPacket(packet)
         }
 
         val opModeTimer = Timer()
@@ -192,7 +219,11 @@ class FullClipsIntake : LinearOpMode() {
                 }
 
                 3 -> {
-                    if (pathTimer.elapsedTimeSeconds > 1.0) {
+                    val angleDifference = abs(follower.pose.heading - dropAngle)
+                    RobotLog.d("Angle difference: $angleDifference")
+                    dashboard.telemetry.addData("Angle difference", angleDifference)
+                    dashboard.telemetry.addData("Heading", follower.pose.heading)
+                    if (angleDifference < 0.1 || pathTimer.elapsedTimeSeconds > 1.5) {
                         robot.intake.claw.isClosed = false
                         follower.followPath(pickupSamples[1])
                         state = 4
@@ -214,7 +245,7 @@ class FullClipsIntake : LinearOpMode() {
                 }
 
                 6 -> {
-                    if (pathTimer.elapsedTimeSeconds > 1.0) {
+                    if (abs(follower.pose.heading - dropAngle) < 0.1 || pathTimer.elapsedTimeSeconds > 1.5) {
                         robot.intake.claw.isClosed = false
                         follower.followPath(pickupSamples[2])
                         state = 7
@@ -258,7 +289,7 @@ class FullClipsIntake : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.down
                         robot.outtake.pendul.targetPosition = 0.7
                         robot.claw.isClosed = false
-                        follower.followPath(firstPickup)
+                        follower.followPath(firstPickup[0])
                         state = 11
                     }
                 }
@@ -268,7 +299,6 @@ class FullClipsIntake : LinearOpMode() {
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore[1])
-                        firstPickup.resetCallbacks()
                         state = 12
                     }
                 }
@@ -278,7 +308,7 @@ class FullClipsIntake : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.down
                         robot.outtake.pendul.targetPosition = 0.7
                         robot.claw.isClosed = false
-                        follower.followPath(firstPickup)
+                        follower.followPath(firstPickup[1])
                         state = 13
                     }
                 }
@@ -288,7 +318,6 @@ class FullClipsIntake : LinearOpMode() {
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore[2])
-                        firstPickup.resetCallbacks()
                         state = 14
                     }
                 }
@@ -298,7 +327,7 @@ class FullClipsIntake : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.down
                         robot.outtake.pendul.targetPosition = 0.7
                         robot.claw.isClosed = false
-                        follower.followPath(firstPickup)
+                        follower.followPath(firstPickup[2])
                         state = 15
                     }
                 }
@@ -308,14 +337,23 @@ class FullClipsIntake : LinearOpMode() {
                         robot.claw.isClosed = true
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore[3])
-                        firstPickup.resetCallbacks()
                         state = 16
+                    }
+                }
+
+                16 -> {
+                    if (!follower.isBusy) {
+                        robot.claw.isClosed = false
+                        robot.lift.targetPosition = Positions.Lift.down
+                        follower.followPath(park)
+                        state = 17
                     }
                 }
             }
 
             robot.run(TelemetryPacket())
             follower.update()
+            dashboard.telemetry.update()
         }
     }
 }
