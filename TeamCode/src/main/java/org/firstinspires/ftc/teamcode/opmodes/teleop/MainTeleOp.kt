@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.PositionStore
 import org.firstinspires.ftc.teamcode.util.PressAction
+import org.firstinspires.ftc.teamcode.util.TogglePress
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
@@ -48,7 +49,7 @@ class MainTeleOp : LinearOpMode() {
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
 
-        fun inTransfer() = robot.outtake.outtakePosition == OuttakePosition.TRANSFER
+        fun inTransfer() = robot.lift.targetPosition == Positions.Lift.transfer
 
         val headingPIDFCoefficients = CustomPIDFCoefficients(2.0, 0.0, 0.04, 0.0)
         val headingPIDF = PIDFController(headingPIDFCoefficients)
@@ -92,6 +93,7 @@ class MainTeleOp : LinearOpMode() {
         val delayedActions = mutableListOf<Pair<Long, Runnable>>()
 
         var holdHeading = false
+        val playingSamples by TogglePress(controlGamepad::options)
 
         fun finishTransfer() {
             robot.claw.isClosed = true
@@ -133,10 +135,24 @@ class MainTeleOp : LinearOpMode() {
                     if (inTransfer()) {
                         if (!robot.claw.isClosed) {
                             finishTransfer()
-                            delayedActions.addDelayed(0.3) { robot.lift.targetPosition = Positions.Lift.up }
+                            delayedActions.addDelayed(0.3) {
+                                robot.lift.targetPosition = Positions.Lift.up
+                                robot.outtake.outtakePosition = OuttakePosition.BASKET
+                            }
                         } else {
                             robot.lift.targetPosition = Positions.Lift.up
+                            robot.outtake.outtakePosition = OuttakePosition.BASKET
                         }
+                    } else {
+                        robot.lift.targetPosition = Positions.Lift.up
+                    }
+                },
+                PressAction(controlGamepad::triangle) {
+                    robot.lift.targetPosition = Positions.Lift.half
+                    val playingSamplesCopy = playingSamples
+                    RobotLog.d("Is playing samples: $playingSamplesCopy")
+                    if (playingSamplesCopy) {
+                        robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                     }
                 }
             )
