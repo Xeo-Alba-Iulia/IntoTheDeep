@@ -16,15 +16,39 @@ import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.PositionStore
-import org.firstinspires.ftc.teamcode.util.SinglePress
-import org.firstinspires.ftc.teamcode.util.TogglePress
+import org.firstinspires.ftc.teamcode.util.PressAction
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
     var openOuttakeClaw = false
 
+    private fun MutableList<Pair<Long, Runnable>>.addDelayed(
+        delay: Double,
+        runnable: Runnable,
+    ) = add(
+        Pair(
+            System.currentTimeMillis() + (delay * 1000).toLong(),
+            runnable
+        )
+    )
+
+    private fun MutableList<Pair<Long, Runnable>>.run() {
+        val iterator = iterator()
+
+        while (iterator.hasNext()) {
+            val action = iterator.next()
+
+            if (System.currentTimeMillis() >= action.first) {
+                action.second.run()
+                iterator.remove()
+            }
+        }
+    }
+
     override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
+
+        fun inTransfer() = robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
         val headingPIDFCoefficients = CustomPIDFCoefficients(2.0, 0.0, 0.04, 0.0)
         val headingPIDF = PIDFController(headingPIDFCoefficients)
@@ -54,12 +78,58 @@ class MainTeleOp : LinearOpMode() {
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(PositionStore.pose)
 
-        val clawControlToggle by TogglePress {
-            controlGamepad.right_bumper
+//        val clawControlToggle by TogglePress {
+//            if (controlGamepad.circle && !robot.claw.isClosed) {
+//                true
+//            } else {
+//                controlGamepad.right_bumper
+//            }
+//        }
+//
+//        val intakePositionSet by SinglePress(controlGamepad::cross)
+//        val holdHeadingButton by SinglePress(moveGamepad::cross)
+
+        val delayedActions = mutableListOf<Pair<Long, Runnable>>()
+
+        var holdHeading = false
+
+        fun finishTransfer() {
+            robot.claw.isClosed = true
+            delayedActions.addDelayed(0.25) { robot.intake.isClosed = false }
         }
 
-        val intakePositionSet by SinglePress(controlGamepad::cross)
-        val holdHeading by TogglePress(moveGamepad::cross)
+        val pressActionList =
+            listOf(
+                PressAction(controlGamepad::right_bumper) {
+                    if (inTransfer()) {
+                        if (robot.claw.isClosed) {
+                            robot.intake.claw.isClosed = true
+                            delayedActions.addDelayed(0.25) { robot.claw.isClosed = false }
+                        } else {
+                            finishTransfer()
+                        }
+                    } else {
+                        robot.claw.isClosed = !robot.claw.isClosed
+                    }
+
+                    if (robot.claw.isClosed) {
+                        holdHeading = false
+                    }
+                },
+                PressAction(controlGamepad::cross, robot.intake::switch),
+                PressAction(moveGamepad::cross) {
+                    if (!robot.claw.isClosed) {
+                        holdHeading = !holdHeading
+                    }
+                },
+                PressAction(controlGamepad::right_stick_button) {
+                    robot.lift.targetPosition = Positions.Lift.up
+                    robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                },
+                PressAction(controlGamepad::left_stick_button) {
+                    robot.lift.targetPosition = Positions.Lift.hang
+                }
+            )
 
         waitForStart()
 
@@ -68,7 +138,6 @@ class MainTeleOp : LinearOpMode() {
 
         while (opModeIsActive()) {
             val powerMultiply = if (robot.intake.targetPosition == IntakePositions.PICKUP) 0.37 else 1.0
-            val clawControlCache = clawControlToggle
 
             // Movement
             follower.setTeleOpMovementVectors(
@@ -94,11 +163,13 @@ class MainTeleOp : LinearOpMode() {
             follower.update()
             follower.drawOnDashBoard()
 
-            robot.applyPositions(controlGamepad)
-
-            if (!clawControlCache && robot.outtake.outtakePosition == OuttakePosition.BAR) {
-                robot.outtake.pendul.targetPosition = 0.7
+            for (action in pressActionList) {
+                action.run()
             }
+
+            delayedActions.run()
+
+            robot.applyPositions(controlGamepad)
 
             val telemetryPacket = TelemetryPacket()
             telemetryPacket.put("Robot Pose", follower.pose.asPedroCoordinates)
@@ -109,13 +180,8 @@ class MainTeleOp : LinearOpMode() {
                 follower.pose = Pose(0.0, 0.0, 0.0)
             }
 
-            robot.outtake.claw.isClosed = clawControlCache
-
-            if (robot.intake.targetPosition == IntakePositions.TRANSFER &&
-                robot.outtake.outtakePosition == OuttakePosition.TRANSFER &&
-                robot.lift.targetPosition == Positions.Lift.down
-            ) {
-                robot.intake.isClosed = !clawControlCache
+            if (moveGamepad.right_stick_button) {
+                follower.pose = Pose(0.0, 0.0, Math.PI)
             }
 
             when {
@@ -140,16 +206,6 @@ class MainTeleOp : LinearOpMode() {
             if (moveGamepad.left_trigger > 0.7) {
                 robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.left
                 robot.intake.claw.isClosed = false
-            }
-
-            if (intakePositionSet) {
-                val intake = robot.intake
-                intake.targetPosition =
-                    if (intake.targetPosition == IntakePositions.PICKUP) {
-                        IntakePositions.TRANSFER
-                    } else {
-                        IntakePositions.PICKUP
-                    }
             }
         }
     }
@@ -181,6 +237,7 @@ class MainTeleOp : LinearOpMode() {
                     gamepad.square -> Positions.Lift.down
                     gamepad.triangle -> Positions.Lift.half
                     gamepad.circle -> Positions.Lift.up
+                    gamepad.dpad_right -> Positions.Lift.transfer
                     else -> lift.targetPosition
                 }
 

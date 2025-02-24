@@ -72,4 +72,12 @@ class Intake(
         needsPickup = true
         pickupTimer.resetTimer()
     }
+
+    fun switch() {
+        targetPosition =
+            when (targetPosition) {
+                PICKUP -> TRANSFER
+                TRANSFER -> PICKUP
+            }
+    }
 }
