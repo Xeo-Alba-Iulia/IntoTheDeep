@@ -4,8 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.pedropathing.follower.Follower
+import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.localization.Pose
-import com.pedropathing.util.CustomPIDFCoefficients
 import com.pedropathing.util.PIDFController
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -52,7 +52,7 @@ class MainTeleOp : LinearOpMode() {
             robot.lift.targetPosition == Positions.Lift.transfer &&
                 robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
-        val headingPIDFCoefficients = CustomPIDFCoefficients(2.0, 0.0, 0.04, 0.0)
+        val headingPIDFCoefficients = FollowerConstants.headingPIDFCoefficients
         val headingPIDF = PIDFController(headingPIDFCoefficients)
         headingPIDF.targetPosition = 0.0
 
@@ -146,6 +146,19 @@ class MainTeleOp : LinearOpMode() {
                     } else {
                         robot.lift.targetPosition = Positions.Lift.up
                     }
+                },
+                PressAction({ -controlGamepad.left_stick_y < -0.7 }) {
+                    // Joystick-urile sunt inversate
+                    robot.lift.targetPosition = Positions.Lift.half
+                    robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                    robot.claw.isClosed = false
+                },
+                PressAction(controlGamepad::dpad_right) {
+                    robot.intake.targetPosition = IntakePositions.TRANSFER
+                    delayedActions.addDelayed(1.1) {
+                        robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                        robot.lift.targetPosition = Positions.Lift.transfer
+                    }
                 }
             )
 
@@ -162,7 +175,7 @@ class MainTeleOp : LinearOpMode() {
                 -moveGamepad.left_stick_y.toDouble(),
                 -moveGamepad.left_stick_x.toDouble() * powerMultiply,
                 if (holdHeading) {
-                    follower.headingOffset += moveGamepad.right_stick_x.toDouble() * 0.01
+                    follower.headingOffset += moveGamepad.right_stick_x.toDouble() * 0.025
 
                     val modifiedHeading =
                         if (follower.pose.heading <= Math.PI) {
@@ -275,49 +288,15 @@ class MainTeleOp : LinearOpMode() {
 //                extend.targetPosition = Positions.Extend.out
 //            }
 
-            val (outtakePosition, intakePosition) =
+            val outtakePosition =
                 when {
-                    gamepad.dpad_right -> {
-                        openOuttakeClaw = true
-                        Pair(
-                            OuttakePosition.TRANSFER,
-                            IntakePositions.TRANSFER
-                        )
-                    }
-
-                    gamepad.dpad_up -> {
-                        Pair(
-                            OuttakePosition.BASKET,
-                            null
-                        )
-                    }
-
-                    gamepad.dpad_left -> {
-                        Pair(
-                            OuttakePosition.BAR,
-                            null
-                        )
-                    }
-
-                    gamepad.dpad_down -> {
-                        Pair(
-                            OuttakePosition.PICKUP,
-                            null
-                        )
-                    }
-
-                    else -> {
-                        Pair(
-                            null,
-                            null
-                        )
-                    }
+                    gamepad.dpad_up -> OuttakePosition.BASKET
+                    gamepad.dpad_left -> OuttakePosition.BAR
+                    gamepad.dpad_down -> OuttakePosition.PICKUP
+                    else -> null
                 }
             if (outtakePosition != null) {
                 outtake.outtakePosition = outtakePosition
-            }
-            if (intakePosition != null) {
-                intake.targetPosition = intakePosition
             }
 //            intakePendul.targetPosition = intakePendulPosition as Double
         } catch (e: NotImplementedError) {
