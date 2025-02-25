@@ -9,43 +9,46 @@ import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
 import com.pedropathing.util.Drawing
 import com.pedropathing.util.Timer
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.RobotLog
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.Intake
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.util.PositionStore
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
 import kotlin.math.abs
 
 @Autonomous
 class FullClipsIntake : LinearOpMode() {
-    val beginPose = Pose(9.0, 60.0, Math.toRadians(180.0))
+    val beginPose = Pose(8.5, 60.0, Math.toRadians(180.0))
     val samplePoints =
         arrayOf(
-            Point(29.0, 41.2),
-            Point(29.7, 31.0),
-            Point(30.4, 21.0)
+            Point(29.3, 41.2),
+            Point(30.0, 31.0),
+            Point(30.7, 21.0)
         )
 
     val scorePose =
         arrayOf(
-            Point(40.0, 65.0),
-            Point(38.5, 68.0),
-            Point(38.0, 71.0),
-            Point(38.0, 73.0),
-            Point(38.0, 76.0)
+            Point(39.5, 65.0),
+            Point(39.0, 68.0),
+            Point(39.0, 70.0),
+            Point(39.0, 71.0),
+            Point(39.0, 73.0)
         )
 
     val scoreAngle = Math.toRadians(180.001)
 
     val scoreControl = Point(16.0, 70.0)
 
-    val pickupSpecimen = Pose(16.0, 28.0, 0.0)
+    val pickupSpecimen = Pose(15.5, 28.0, 0.0)
     val pickupControl =
         arrayOf(
             Point(24.0, 70.0),
@@ -53,7 +56,7 @@ class FullClipsIntake : LinearOpMode() {
         )
 
     val sampleAngle = Math.toRadians(313.0)
-    val dropAngle = Math.toRadians(230.0)
+    val dropAngle = Math.toRadians(240.0)
 
     private val pathTimer = Timer()
     private var state = 0
@@ -66,6 +69,12 @@ class FullClipsIntake : LinearOpMode() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         val follower = Follower(hardwareMap)
         follower.setStartingPose(beginPose)
+
+        val hubs = hardwareMap.getAll(LynxModule::class.java)
+
+        follower.setMaxPower(
+            12.5 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average()
+        )
 
         val dashboard = FtcDashboard.getInstance()
         val robot = RobotHardware(hardwareMap)
@@ -92,7 +101,7 @@ class FullClipsIntake : LinearOpMode() {
                     }.build(),
                 PathBuilder()
                     .addBezierLine(samplePoints[0], samplePoints[1])
-                    .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.4)
+                    .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.7)
                     .build(),
                 PathBuilder()
                     .addBezierLine(samplePoints[1], samplePoints[2])
@@ -117,22 +126,22 @@ class FullClipsIntake : LinearOpMode() {
         val firstPickup =
             arrayOf(
                 PathBuilder()
-                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.9, 28.0))
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.0, 30.0))
                     .addParametricCallback(0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
-                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.8)
+                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.75)
                     .build(),
                 PathBuilder()
-                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(17.8, 28.0))
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.0, 29.0))
                     .addParametricCallback(0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
-                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.8)
+                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.75)
                     .build(),
                 PathBuilder()
-                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(18.5, 28.0))
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.5, 28.0))
                     .addParametricCallback(0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
-                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.8)
+                    }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.75)
                     .build()
             )
 
@@ -171,7 +180,7 @@ class FullClipsIntake : LinearOpMode() {
                 .build()
 
         intake.targetPosition = IntakePositions.TRANSFER
-        pendul.targetPosition = 0.98
+        pendul.targetPosition = 1.0
 
         while (opModeInInit()) {
             val packet = TelemetryPacket()
@@ -179,6 +188,7 @@ class FullClipsIntake : LinearOpMode() {
             pendul.run(packet)
             dashboard.sendTelemetryPacket(packet)
         }
+        val pickupDelay = 0.12
 
         val opModeTimer = Timer()
 
@@ -262,6 +272,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 8 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
+                        follower.setMaxPower(1.0)
                         follower.followPath(lastDrop)
                         state = 9
                     }
@@ -279,6 +290,13 @@ class FullClipsIntake : LinearOpMode() {
                 91 -> {
                     if (!follower.isBusy) {
                         robot.claw.isClosed = true
+                        follower.followPath(secondScore[0])
+                        state = 92
+                    }
+                }
+
+                92 -> {
+                    if (pathTimer.elapsedTimeSeconds > pickupDelay) {
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore[0])
                         state = 10
@@ -298,6 +316,12 @@ class FullClipsIntake : LinearOpMode() {
                 11 -> {
                     if (!follower.isBusy) { // Score first specimen
                         robot.claw.isClosed = true
+                        state = 111
+                    }
+                }
+
+                111 -> {
+                    if (pathTimer.elapsedTimeSeconds > pickupDelay) {
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore[1])
                         state = 12
@@ -317,6 +341,12 @@ class FullClipsIntake : LinearOpMode() {
                 13 -> {
                     if (!follower.isBusy) { // Score second specimen
                         robot.claw.isClosed = true
+                        state = 131
+                    }
+                }
+
+                131 -> {
+                    if (pathTimer.elapsedTimeSeconds > pickupDelay) {
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore[2])
                         state = 14
@@ -336,6 +366,12 @@ class FullClipsIntake : LinearOpMode() {
                 15 -> {
                     if (!follower.isBusy) { // Score third specimen
                         robot.claw.isClosed = true
+                        state = 151
+                    }
+                }
+
+                151 -> {
+                    if (pathTimer.elapsedTimeSeconds > pickupDelay) {
                         robot.lift.targetPosition = Positions.Lift.half
                         follower.followPath(secondScore[3])
                         state = 16
@@ -349,6 +385,10 @@ class FullClipsIntake : LinearOpMode() {
                         follower.followPath(park)
                         state = 17
                     }
+                }
+
+                17 -> {
+                    PositionStore.pose = follower.pose
                 }
             }
 
