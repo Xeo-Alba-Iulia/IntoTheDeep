@@ -3,6 +3,7 @@ package pedroPathing.tuners_tests.localization;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.util.Constants;
@@ -14,6 +15,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.RobotHardware;
+import org.firstinspires.ftc.teamcode.systems.IntakePositions;
+import org.firstinspires.ftc.teamcode.systems.OuttakePosition;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -43,6 +47,8 @@ public class LocalizationTest extends OpMode {
     private DcMotorEx rightRear;
     private List<DcMotorEx> motors;
 
+    private RobotHardware robot;
+
     /**
      * This initializes the PoseUpdater, the mecanum drive motors, and the FTC Dashboard telemetry.
      */
@@ -51,6 +57,8 @@ public class LocalizationTest extends OpMode {
         Constants.setConstants(FConstants.class, LConstants.class);
         poseUpdater = new PoseUpdater(hardwareMap);
         poseUpdater.setStartingPose(new Pose(0, 48, Math.PI * 3 / 2));
+
+        robot = new RobotHardware(hardwareMap);
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
@@ -82,6 +90,9 @@ public class LocalizationTest extends OpMode {
 
         Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
         Drawing.sendPacket();
+
+        robot.getOuttake().setOuttakePosition(OuttakePosition.TRANSFER);
+        robot.getIntake().setTargetPosition(IntakePositions.TRANSFER);
     }
 
     /**
@@ -92,6 +103,8 @@ public class LocalizationTest extends OpMode {
     public void loop() {
         poseUpdater.update();
         dashboardPoseTracker.update();
+
+        robot.run(new TelemetryPacket());
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x; // this is strafing
