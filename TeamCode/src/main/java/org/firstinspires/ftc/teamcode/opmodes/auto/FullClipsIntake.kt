@@ -7,6 +7,7 @@ import com.pedropathing.localization.Pose
 import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
+import com.pedropathing.util.Drawing
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -33,14 +34,14 @@ class FullClipsIntake : LinearOpMode() {
 
     val scorePose =
         arrayOf(
-            Point(40.0, 68.0),
-            Point(38.5, 71.0),
-            Point(38.0, 74.0),
-            Point(38.0, 77.0),
-            Point(38.0, 81.0)
+            Point(40.0, 65.0),
+            Point(38.5, 68.0),
+            Point(38.0, 71.0),
+            Point(38.0, 73.0),
+            Point(38.0, 76.0)
         )
 
-    val scoreAngle = Math.toRadians(180.0)
+    val scoreAngle = Math.toRadians(180.001)
 
     val scoreControl = Point(16.0, 70.0)
 
@@ -213,7 +214,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 2 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
-                        follower.turnDegrees(85.0, false)
+                        follower.turnDegrees(95.0, false)
                         state = 3
                     }
                 }
@@ -239,7 +240,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 5 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
-                        follower.turnDegrees(85.0, false)
+                        follower.turnDegrees(95.0, false)
                         state = 6
                     }
                 }
@@ -352,7 +353,9 @@ class FullClipsIntake : LinearOpMode() {
             }
 
             robot.run(TelemetryPacket())
+            Drawing.drawRobot(follower.pose, "#142780")
             follower.update()
+            follower.drawOnDashBoard()
             dashboard.telemetry.update()
         }
     }
