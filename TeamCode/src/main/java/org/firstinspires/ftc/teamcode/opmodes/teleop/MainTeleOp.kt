@@ -154,10 +154,15 @@ class MainTeleOp : LinearOpMode() {
                     robot.claw.isClosed = false
                 },
                 PressAction(controlGamepad::dpad_right) {
-                    robot.intake.targetPosition = IntakePositions.TRANSFER
-                    delayedActions.addDelayed(1.1) {
+                    val setOuttakeLiftPosition = {
                         robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                         robot.lift.targetPosition = Positions.Lift.transfer
+                    }
+                    if (robot.intake.targetPosition != IntakePositions.TRANSFER) {
+                        robot.intake.targetPosition = IntakePositions.TRANSFER
+                        delayedActions.addDelayed(1.0, setOuttakeLiftPosition)
+                    } else {
+                        setOuttakeLiftPosition()
                     }
                 },
             )
@@ -268,8 +273,10 @@ class MainTeleOp : LinearOpMode() {
             lift.targetPosition =
                 when {
                     gamepad.square -> Positions.Lift.down
+
                     gamepad.triangle -> Positions.Lift.half
-                    gamepad.dpad_right -> Positions.Lift.transfer
+
+                    //                    gamepad.dpad_right -> Positions.Lift.transfer
                     else -> lift.targetPosition
                 }
 
