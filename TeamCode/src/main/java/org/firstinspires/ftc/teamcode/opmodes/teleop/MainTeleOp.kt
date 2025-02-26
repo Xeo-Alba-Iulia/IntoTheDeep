@@ -20,8 +20,6 @@ import org.firstinspires.ftc.teamcode.util.PressAction
 
 @TeleOp(name = "TeleOp", group = "A")
 class MainTeleOp : LinearOpMode() {
-    var openOuttakeClaw = false
-
     private fun MutableList<Pair<Long, Runnable>>.addDelayed(
         delay: Double,
         runnable: Runnable,
