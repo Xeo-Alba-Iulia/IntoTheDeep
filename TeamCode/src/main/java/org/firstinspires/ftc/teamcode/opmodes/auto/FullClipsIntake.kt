@@ -30,9 +30,9 @@ class FullClipsIntake : LinearOpMode() {
     val beginPose = Pose(8.5, 60.0, Math.toRadians(180.0))
     val samplePoints =
         arrayOf(
-            Point(29.5, 41.2),
-            Point(30.2, 31.0),
-            Point(30.9, 21.0),
+            Point(30.0, 41.2),
+            Point(30.7, 31.0),
+            Point(31.5, 21.0),
         )
 
     val scorePose =
