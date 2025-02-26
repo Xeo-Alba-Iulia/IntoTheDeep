@@ -30,9 +30,9 @@ class FullClipsIntake : LinearOpMode() {
     val beginPose = Pose(8.5, 60.0, Math.toRadians(180.0))
     val samplePoints =
         arrayOf(
-            Point(29.3, 41.2),
-            Point(30.0, 31.0),
-            Point(30.7, 21.0),
+            Point(29.5, 41.2),
+            Point(30.2, 31.0),
+            Point(30.9, 21.0),
         )
 
     val scorePose =
@@ -193,6 +193,10 @@ class FullClipsIntake : LinearOpMode() {
         val opModeTimer = Timer()
 
         while (!isStopRequested) {
+            if (opModeTimer.elapsedTimeSeconds > 29.7) {
+                state = -1
+            }
+
             when (state) {
                 0 -> {
                     robot.outtake.outtakePosition = OuttakePosition.BAR
@@ -389,6 +393,12 @@ class FullClipsIntake : LinearOpMode() {
 
                 17 -> {
                     PositionStore.pose = follower.pose
+                }
+
+                -1 -> {
+                    PositionStore.pose = follower.pose
+                    robot.claw.isClosed = false
+                    robot.lift.targetPosition = Positions.Lift.down
                 }
             }
 
