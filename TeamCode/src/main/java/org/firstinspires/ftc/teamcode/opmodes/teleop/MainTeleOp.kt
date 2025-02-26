@@ -158,7 +158,7 @@ class MainTeleOp : LinearOpMode() {
                     }
                     if (robot.intake.targetPosition != IntakePositions.TRANSFER) {
                         robot.intake.targetPosition = IntakePositions.TRANSFER
-                        delayedActions.addDelayed(1.0, setOuttakeLiftPosition)
+                        delayedActions.addDelayed(0.2, setOuttakeLiftPosition)
                     } else {
                         setOuttakeLiftPosition()
                     }
