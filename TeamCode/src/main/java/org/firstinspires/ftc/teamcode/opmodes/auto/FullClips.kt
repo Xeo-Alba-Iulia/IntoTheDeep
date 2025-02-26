@@ -49,7 +49,7 @@ class FullClips : LinearOpMode() {
                 .addBezierCurve(
                     Point(backThirdSample),
                     scoreControl,
-                    Point(scorePose[1])
+                    Point(scorePose[1]),
                 ).setLinearHeadingInterpolation(backThirdSample.heading, scorePose[1].heading, 0.8)
                 .addParametricCallback(0.3) {
                     robot.outtake.outtakePosition = OuttakePosition.BAR
@@ -159,7 +159,7 @@ class FullClips : LinearOpMode() {
             Point(35.0, 1.0),
             Point(65.0, 59.4),
             Point(frontFirstSample),
-            Point(frontFirstSample)
+            Point(frontFirstSample),
         )
         setLinearHeadingInterpolation(beginPose.heading, frontFirstSample.heading)
         addBezierLine(Point(frontFirstSample), Point(backFirstSample))
@@ -172,7 +172,7 @@ class FullClips : LinearOpMode() {
         addBezierCurve(
             Point(backFirstSample),
             controlPoint,
-            Point(frontSecondSample)
+            Point(frontSecondSample),
         )
         setLinearHeadingInterpolation(backFirstSample.heading, frontSecondSample.heading)
         addBezierLine(Point(frontSecondSample), Point(backSecondSample))
@@ -185,7 +185,7 @@ class FullClips : LinearOpMode() {
         addBezierCurve(
             Point(backSecondSample),
             controlPoint,
-            Point(frontThirdSample)
+            Point(frontThirdSample),
         )
         setLinearHeadingInterpolation(backSecondSample.heading, frontThirdSample.heading)
         addBezierLine(Point(frontThirdSample), Point(backThirdSample))

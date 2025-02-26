@@ -79,10 +79,10 @@ class ClipsAuto : LinearOpMode() {
                     follower
                         .pathBuilder()
                         .addPath(
-                            BezierLine(Point(humanPickup), scoreControl2)
+                            BezierLine(Point(humanPickup), scoreControl2),
                         ).setLinearHeadingInterpolation(humanPickup.heading, newScorePose.heading)
                         .addPath(
-                            BezierLine(scoreControl2, Point(newScorePose))
+                            BezierLine(scoreControl2, Point(newScorePose)),
                         ).setConstantHeadingInterpolation(newScorePose.heading)
                         .build()
 
@@ -94,8 +94,8 @@ class ClipsAuto : LinearOpMode() {
                                 Point(newScorePose),
                                 Point(20.0, 70.0),
                                 Point(48.0, 24.0),
-                                Point(humanPickup)
-                            )
+                                Point(humanPickup),
+                            ),
                         ).setLinearHeadingInterpolation(newScorePose.heading, humanPickup.heading)
                         .setZeroPowerAccelerationMultiplier(2.0)
                         .build()
@@ -109,7 +109,7 @@ class ClipsAuto : LinearOpMode() {
             follower
                 .pathBuilder()
                 .addPath(
-                    BezierCurve(Point(firstScorePose), Point(14.0, 44.5), Point(pickup1Intermediary))
+                    BezierCurve(Point(firstScorePose), Point(14.0, 44.5), Point(pickup1Intermediary)),
                 ).setLinearHeadingInterpolation(Math.toRadians(180.001), 0.0)
                 .addPath(BezierCurve(Point(pickup1Intermediary), Point(62.6, 38.8), Point(pickup1Pose)))
                 .setConstantHeadingInterpolation(0.0)

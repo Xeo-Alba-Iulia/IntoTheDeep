@@ -32,7 +32,7 @@ class FullClipsIntake : LinearOpMode() {
         arrayOf(
             Point(29.3, 41.2),
             Point(30.0, 31.0),
-            Point(30.7, 21.0)
+            Point(30.7, 21.0),
         )
 
     val scorePose =
@@ -41,7 +41,7 @@ class FullClipsIntake : LinearOpMode() {
             Point(39.0, 68.0),
             Point(39.0, 70.0),
             Point(39.0, 71.0),
-            Point(39.0, 73.0)
+            Point(39.0, 73.0),
         )
 
     val scoreAngle = Math.toRadians(180.001)
@@ -52,7 +52,7 @@ class FullClipsIntake : LinearOpMode() {
     val pickupControl =
         arrayOf(
             Point(24.0, 70.0),
-            Point(36.0, 36.0)
+            Point(36.0, 36.0),
         )
 
     val sampleAngle = Math.toRadians(313.0)
@@ -73,7 +73,7 @@ class FullClipsIntake : LinearOpMode() {
         val hubs = hardwareMap.getAll(LynxModule::class.java)
 
         follower.setMaxPower(
-            12.5 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average()
+            12.5 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average(),
         )
 
         val dashboard = FtcDashboard.getInstance()
@@ -106,7 +106,7 @@ class FullClipsIntake : LinearOpMode() {
                 PathBuilder()
                     .addBezierLine(samplePoints[1], samplePoints[2])
                     .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.4)
-                    .build()
+                    .build(),
             )
 
         val lastDropPoint = Point(24.0, 28.0)
@@ -142,7 +142,7 @@ class FullClipsIntake : LinearOpMode() {
                     .addParametricCallback(0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                     }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.75)
-                    .build()
+                    .build(),
             )
 
         val secondScore =
@@ -170,7 +170,7 @@ class FullClipsIntake : LinearOpMode() {
                     .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
-                    }.build()
+                    }.build(),
             )
 
         val park =

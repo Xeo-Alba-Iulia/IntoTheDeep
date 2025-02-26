@@ -28,8 +28,8 @@ class MainTeleOp : LinearOpMode() {
     ) = add(
         Pair(
             System.currentTimeMillis() + (delay * 1000).toLong(),
-            runnable
-        )
+            runnable,
+        ),
     )
 
     private fun MutableList<Pair<Long, Runnable>>.run() {
@@ -67,7 +67,7 @@ class MainTeleOp : LinearOpMode() {
                 robot.outtake,
                 robot.extend,
                 robot.lift,
-                robot.claw
+                robot.claw,
             )
 
 //        while (!isStarted) {
@@ -159,7 +159,7 @@ class MainTeleOp : LinearOpMode() {
                         robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                         robot.lift.targetPosition = Positions.Lift.transfer
                     }
-                }
+                },
             )
 
         waitForStart()
@@ -191,7 +191,7 @@ class MainTeleOp : LinearOpMode() {
                 } else {
                     -moveGamepad.right_stick_x.toDouble() * powerMultiply
                 },
-                false
+                false,
             )
             follower.update()
             follower.drawOnDashBoard()
