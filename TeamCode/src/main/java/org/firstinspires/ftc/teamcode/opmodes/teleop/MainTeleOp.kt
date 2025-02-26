@@ -98,6 +98,8 @@ class MainTeleOp : LinearOpMode() {
             delayedActions.addDelayed(0.25) { robot.intake.isClosed = false }
         }
 
+        val averagePendulPosition = listOf(Positions.Pendul.bar, Positions.Pendul.pickup).average()
+
         val pressActionList =
             listOf(
                 PressAction(controlGamepad::right_bumper) {
@@ -108,6 +110,12 @@ class MainTeleOp : LinearOpMode() {
                         } else {
                             finishTransfer()
                         }
+                    } else if (robot.claw.isClosed &&
+                        robot.lift.targetPosition == Positions.Lift.half &&
+                        robot.outtake.outtakePosition == OuttakePosition.BAR
+                    ) {
+                        robot.claw.isClosed = false
+                        robot.outtake.pendul.targetPosition = averagePendulPosition
                     } else {
                         robot.claw.isClosed = !robot.claw.isClosed
                     }
@@ -152,6 +160,8 @@ class MainTeleOp : LinearOpMode() {
                     robot.claw.isClosed = false
                 },
                 PressAction(controlGamepad::dpad_right) {
+                    robot.claw.isClosed = false
+                    holdHeading = false
                     val setOuttakeLiftPosition = {
                         robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                         robot.lift.targetPosition = Positions.Lift.transfer
