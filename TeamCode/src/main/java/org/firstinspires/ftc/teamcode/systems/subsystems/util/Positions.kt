@@ -107,7 +107,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.57
+            var pickup = 0.61
         }
     }
 
@@ -138,7 +138,10 @@ object Positions {
     class IntakeRotate {
         companion object {
             @JvmField @Volatile
-            var pickup = 0.017
+            var pickupWait = 0.14
+
+            @JvmField @Volatile
+            var pickup = 0.04
 
             @JvmField @Volatile
             var transfer = 0.69

@@ -24,6 +24,7 @@ class Intake(
     override fun run(p: TelemetryPacket): Boolean {
         if (needsPickup) {
             pendul.targetPosition = Positions.IntakePendul.pickup
+            rotate.targetPosition = Positions.IntakeRotate.pickup
         }
 
         if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.1) {
@@ -31,7 +32,7 @@ class Intake(
         }
 
         if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.2) {
-            pendul.targetPosition = Positions.IntakePendul.pickupWait
+            targetPosition = PICKUP
             needsPickup = false
         }
 
@@ -44,7 +45,7 @@ class Intake(
             when (value) {
                 PICKUP -> {
                     pendul.targetPosition = Positions.IntakePendul.pickupWait
-                    rotate.targetPosition = Positions.IntakeRotate.pickup
+                    rotate.targetPosition = Positions.IntakeRotate.pickupWait
                     extend.targetPosition = Positions.Extend.`out`
                 }
 
@@ -65,12 +66,10 @@ class Intake(
         }
 
     fun pickUp() {
-        if (targetPosition != PICKUP) {
-            return
+        if (targetPosition == PICKUP) {
+            pickupTimer.resetTimer()
+            needsPickup = true
         }
-
-        needsPickup = true
-        pickupTimer.resetTimer()
     }
 
     fun switch() {
