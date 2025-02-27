@@ -31,7 +31,7 @@ class Intake(
             isClosed = true
         }
 
-        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.2) {
+        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.2 && targetPosition == PICKUP) {
             targetPosition = PICKUP
             needsPickup = false
         }
