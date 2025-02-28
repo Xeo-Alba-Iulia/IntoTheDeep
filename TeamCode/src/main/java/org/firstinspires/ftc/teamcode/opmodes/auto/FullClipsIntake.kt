@@ -9,11 +9,9 @@ import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
 import com.pedropathing.util.Drawing
 import com.pedropathing.util.Timer
-import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.RobotLog
-import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.Intake
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
@@ -56,7 +54,8 @@ class FullClipsIntake : LinearOpMode() {
         )
 
     val sampleAngle = Math.toRadians(313.0)
-    val dropAngle = Math.toRadians(234.0)
+    val dropAngle = Math.toRadians(220.0)
+    val lastDropAngle = Math.toRadians(235.0)
 
     private val pathTimer = Timer()
     private var state = 0
@@ -69,12 +68,6 @@ class FullClipsIntake : LinearOpMode() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
         val follower = Follower(hardwareMap)
         follower.setStartingPose(beginPose)
-
-        val hubs = hardwareMap.getAll(LynxModule::class.java)
-
-        follower.setMaxPower(
-            13.0 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average(),
-        )
 
         val dashboard = FtcDashboard.getInstance()
         val robot = RobotHardware(hardwareMap)
@@ -114,13 +107,13 @@ class FullClipsIntake : LinearOpMode() {
         val lastDrop =
             PathBuilder()
                 .addBezierLine(samplePoints[2], lastDropPoint)
-                .setLinearHeadingInterpolation(sampleAngle, dropAngle)
+                .setLinearHeadingInterpolation(sampleAngle, lastDropAngle)
                 .build()
 
         val pickupFromDrop =
             PathBuilder()
                 .addBezierLine(lastDropPoint, Point(pickupSpecimen))
-                .setLinearHeadingInterpolation(dropAngle, 0.0, 0.5)
+                .setLinearHeadingInterpolation(lastDropAngle, 0.0, 0.5)
                 .build()
 
         val firstPickup =
@@ -193,7 +186,7 @@ class FullClipsIntake : LinearOpMode() {
         val opModeTimer = Timer()
 
         while (!isStopRequested) {
-            if (opModeTimer.elapsedTimeSeconds > 29.7) {
+            if (opModeTimer.elapsedTimeSeconds > 29.9) {
                 state = -1
             }
 
@@ -276,7 +269,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 8 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
-                        follower.setMaxPower(1.0)
+//                        follower.setMaxPower(1.0)
                         follower.followPath(lastDrop)
                         state = 9
                     }
@@ -302,7 +295,7 @@ class FullClipsIntake : LinearOpMode() {
                 92 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
                         robot.lift.targetPosition = Positions.Lift.half
-                        follower.followPath(secondScore[0])
+//                        follower.followPath(secondScore[0])
                         state = 10
                     }
                 }
@@ -387,18 +380,13 @@ class FullClipsIntake : LinearOpMode() {
                         robot.claw.isClosed = false
                         robot.lift.targetPosition = Positions.Lift.down
                         follower.followPath(park)
-                        state = 17
+                        state = -1
                     }
-                }
-
-                17 -> {
-                    PositionStore.pose = follower.pose
                 }
 
                 -1 -> {
                     PositionStore.pose = follower.pose
                     robot.claw.isClosed = false
-                    robot.lift.targetPosition = Positions.Lift.down
                 }
             }
 

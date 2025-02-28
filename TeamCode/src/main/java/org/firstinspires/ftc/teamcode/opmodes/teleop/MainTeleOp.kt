@@ -99,6 +99,7 @@ class MainTeleOp : LinearOpMode() {
         }
 
         val averagePendulPosition = listOf(Positions.Pendul.bar, Positions.Pendul.pickup).average()
+        var resetLiftComplete = false
 
         val pressActionList =
             listOf(
@@ -172,6 +173,12 @@ class MainTeleOp : LinearOpMode() {
                     } else {
                         setOuttakeLiftPosition()
                     }
+                },
+                PressAction({ -controlGamepad.right_stick_y < -0.9 && !robot.lift.isResetting }) {
+                    robot.lift.isResetting = !robot.lift.isResetting
+                },
+                PressAction({ -controlGamepad.right_stick_y >= -0.9 && robot.lift.isResetting }) {
+                    robot.lift.isResetting = !robot.lift.isResetting
                 },
             )
 

@@ -21,18 +21,27 @@ class Lift(
     private val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
 
     private var isCanceled = false
+    var isResetting = false
+        set(value) {
+            field = value
+            if (value) {
+                liftMotors.forEach {
+                    it.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+                }
+            } else {
+                liftMotors.forEach {
+                    it.targetPosition = 0
+                    targetPosition = 0.0
+                    it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                    it.mode = DcMotor.RunMode.RUN_TO_POSITION
+                }
+            }
+        }
 
     private val liftMotors = listOf(liftLeft, liftRight)
 
-    fun resetLifts() =
-        liftMotors.forEach {
-            it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-            it.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-            it.targetPosition = 0
-
-            it.mode = DcMotor.RunMode.RUN_TO_POSITION
-        }
+    val measuredPosition: Double
+        get() = liftMotors.map { it.currentPosition }.average()
 
     init {
         liftMotors.forEach {
@@ -64,6 +73,14 @@ class Lift(
             isCanceled = false
 
             return false
+        }
+
+        if (isResetting) {
+            liftMotors.forEach {
+                it.power = -0.2
+            }
+
+            return true
         }
 
         for ((ind, motor) in liftMotors.withIndex()) {
