@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.systems.subsystems.util
+package org.firstinspires.ftc.teamcode.util
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
 abstract class DelayedOpMode : LinearOpMode() {
     abstract val delayedActions : MutableList<Pair<Long, Runnable>>;
