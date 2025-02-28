@@ -68,26 +68,8 @@ class MainTeleOp : LinearOpMode() {
                 robot.claw,
             )
 
-//        while (!isStarted) {
-//            val telemetryPacket = TelemetryPacket()
-//            telemetryPacket.addLine("Initializing")
-//            runActions(actionList, telemetryPacket)
-//            dashboard.sendTelemetryPacket(telemetryPacket)
-//        }
-
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(PositionStore.pose)
-
-//        val clawControlToggle by TogglePress {
-//            if (controlGamepad.circle && !robot.claw.isClosed) {
-//                true
-//            } else {
-//                controlGamepad.right_bumper
-//            }
-//        }
-//
-//        val intakePositionSet by SinglePress(controlGamepad::cross)
-//        val holdHeadingButton by SinglePress(moveGamepad::cross)
 
         val delayedActions = mutableListOf<Pair<Long, Runnable>>()
 
@@ -126,9 +108,7 @@ class MainTeleOp : LinearOpMode() {
                 },
                 PressAction(controlGamepad::cross, robot.intake::switch),
                 PressAction(moveGamepad::cross) {
-//                    if (!robot.claw.isClosed) {
                     holdHeading = !holdHeading
-//                    }
                 },
                 PressAction(controlGamepad::right_stick_button) {
                     robot.lift.targetPosition = Positions.Lift.up
@@ -250,9 +230,6 @@ class MainTeleOp : LinearOpMode() {
                 }
             }
 
-//            robot.intake.clawRotate.targetPosition +=
-//                (gamepad1.right_trigger - gamepad1.left_trigger) * robot.intake.clawRotate.adjustMultiplier
-
             if (moveGamepad.right_trigger > 0.7) {
                 robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.right
                 robot.intake.claw.isClosed = false
@@ -290,27 +267,9 @@ class MainTeleOp : LinearOpMode() {
             lift.targetPosition =
                 when {
                     gamepad.square -> Positions.Lift.down
-
                     gamepad.triangle -> Positions.Lift.half
-
-                    //                    gamepad.dpad_right -> Positions.Lift.transfer
                     else -> lift.targetPosition
                 }
-
-//            if (gamepad.circle) {
-//                outtake.outtakePosition = OuttakePosition.TRANSFER
-//            }
-
-//            when {
-//                gamepad.dpad_right -> intakePendul.targetPosition = Positions.IntakePendul.transfer
-//                gamepad.cross -> intakePendul.targetPosition = Positions.IntakePendul.pickup
-//                gamepad.triangle -> intakePendul.targetPosition = Positions.IntakePendul.init
-//            }
-
-            // Stick positions are inverted
-//            if (gamepad.right_stick_y + gamepad.left_stick_y <= -0.4) {
-//                extend.targetPosition = Positions.Extend.out
-//            }
 
             val outtakePosition =
                 when {
@@ -322,7 +281,6 @@ class MainTeleOp : LinearOpMode() {
             if (outtakePosition != null) {
                 outtake.outtakePosition = outtakePosition
             }
-//            intakePendul.targetPosition = intakePendulPosition as Double
         } catch (e: NotImplementedError) {
             // Driver station nu arata NotImplementedError, doar oprește OpMode
             throw RuntimeException(e)
