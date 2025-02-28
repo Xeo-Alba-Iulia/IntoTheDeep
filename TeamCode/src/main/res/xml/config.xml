@@ -7,12 +7,13 @@
             <goBILDA5202SeriesMotor name="LiftRight" port="2" />
             <Servo name="ClawRotate" port="0" />
             <Servo name="Claw" port="1" />
+            <I2cDevice name="ColorSensor" bus="1" port="1" type="REV_COLOR_RANGE_SENSOR" />
         </LynxModule>
         <ServoHub name="Servo Hub 3" port="3">
-            <Servo name="Pendul1" port="0" />
-            <Servo name="Extend1" port="1" />
-            <Servo name="Extend2" port="4" />
-            <Servo name="Pendul2" port="5" />
+            <Servo name="Pendul1" port="0"/>
+            <Servo name="Extend1" port="1"/>
+            <Servo name="Extend2" port="4"/>
+            <Servo name="Pendul2" port="5"/>
         </ServoHub>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0" />
@@ -20,8 +21,8 @@
             <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" />
             <Servo name="IntakeClaw" port="0" />
             <Servo name="IntakePendul" port="1" />
-            <Servo name="IntakeRotate" port="2" />
             <Servo name="IntakeClawRotate" port="3" />
+            <Servo name="IntakeRotate" port="5" />
             <ControlHubImuBHI260AP name="imu" bus="0" port="0" />
         </LynxModule>
     </LynxUsbDevice>
