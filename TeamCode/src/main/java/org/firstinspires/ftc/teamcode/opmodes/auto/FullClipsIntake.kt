@@ -30,14 +30,14 @@ class FullClipsIntake : LinearOpMode() {
     val beginPose = Pose(8.5, 60.0, Math.toRadians(180.0))
     val samplePoints =
         arrayOf(
-            Point(30.0, 41.2),
+            Point(30.0, 41.0),
             Point(30.7, 31.0),
-            Point(31.5, 21.0),
+            Point(31.5, 20.8),
         )
 
     val scorePose =
         arrayOf(
-            Point(39.5, 65.0),
+            Point(39.0, 65.0),
             Point(39.0, 68.0),
             Point(39.0, 70.0),
             Point(39.0, 71.0),
@@ -56,7 +56,7 @@ class FullClipsIntake : LinearOpMode() {
         )
 
     val sampleAngle = Math.toRadians(313.0)
-    val dropAngle = Math.toRadians(240.0)
+    val dropAngle = Math.toRadians(234.0)
 
     private val pathTimer = Timer()
     private var state = 0
@@ -73,7 +73,7 @@ class FullClipsIntake : LinearOpMode() {
         val hubs = hardwareMap.getAll(LynxModule::class.java)
 
         follower.setMaxPower(
-            12.5 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average(),
+            13.0 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average(),
         )
 
         val dashboard = FtcDashboard.getInstance()
