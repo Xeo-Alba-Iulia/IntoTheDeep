@@ -99,7 +99,6 @@ class MainTeleOp : LinearOpMode() {
         }
 
         val averagePendulPosition = listOf(Positions.Pendul.bar, Positions.Pendul.pickup).average()
-        var resetLiftComplete = false
 
         val pressActionList =
             listOf(
@@ -187,8 +186,11 @@ class MainTeleOp : LinearOpMode() {
         dashboard.clearTelemetry()
         follower.startTeleopDrive()
 
+        robot.intake.targetPosition = IntakePositions.TRANSFER
+        robot.intake.isClosed = false
+
         while (opModeIsActive()) {
-            val powerMultiply = if (robot.intake.targetPosition == IntakePositions.PICKUP) 0.37 else 1.0
+            val powerMultiply = if (robot.intake.targetPosition == IntakePositions.PICKUP) 0.4 else 1.0
 
             // Movement
             follower.setTeleOpMovementVectors(
