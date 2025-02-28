@@ -221,7 +221,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 2 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
-                        follower.turnDegrees(95.0, false)
+                        follower.turnDegrees(110.0, false)
                         state = 3
                     }
                 }
@@ -247,7 +247,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 5 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
-                        follower.turnDegrees(95.0, false)
+                        follower.turnDegrees(110.0, false)
                         state = 6
                     }
                 }
