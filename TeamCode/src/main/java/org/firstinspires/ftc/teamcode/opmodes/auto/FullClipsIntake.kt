@@ -9,9 +9,11 @@ import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
 import com.pedropathing.util.Drawing
 import com.pedropathing.util.Timer
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.util.RobotLog
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.Intake
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
@@ -25,28 +27,28 @@ import kotlin.math.abs
 
 @Autonomous
 class FullClipsIntake : LinearOpMode() {
-    val beginPose = Pose(8.5, 60.0, Math.toRadians(180.0))
+    val beginPose = Pose(8.7, 60.0, Math.toRadians(180.0))
     val samplePoints =
         arrayOf(
-            Point(30.0, 41.0),
-            Point(30.7, 31.0),
-            Point(31.5, 20.8),
+            Point(30.6, 41.6),
+            Point(31.2, 31.0),
+            Point(31.8, 20.8),
         )
 
     val scorePose =
         arrayOf(
-            Point(39.0, 65.0),
-            Point(39.0, 68.0),
-            Point(39.0, 70.0),
-            Point(39.0, 71.0),
-            Point(39.0, 73.0),
+            Point(38.0, 65.0),
+            Point(39.5, 68.0),
+            Point(40.0, 70.0),
+            Point(40.0, 71.0),
+            Point(40.0, 73.0),
         )
 
     val scoreAngle = Math.toRadians(180.001)
 
     val scoreControl = Point(16.0, 70.0)
 
-    val pickupSpecimen = Pose(15.5, 28.0, 0.0)
+    val pickupSpecimen = Pose(15.0, 28.0, 0.0)
     val pickupControl =
         arrayOf(
             Point(24.0, 70.0),
@@ -94,7 +96,7 @@ class FullClipsIntake : LinearOpMode() {
                     }.build(),
                 PathBuilder()
                     .addBezierLine(samplePoints[0], samplePoints[1])
-                    .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.7)
+                    .setLinearHeadingInterpolation(dropAngle, sampleAngle, 0.4)
                     .build(),
                 PathBuilder()
                     .addBezierLine(samplePoints[1], samplePoints[2])
@@ -142,25 +144,25 @@ class FullClipsIntake : LinearOpMode() {
             arrayOf(
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[1])
-                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[2])
-                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[3])
-                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[4])
-                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
@@ -171,6 +173,8 @@ class FullClipsIntake : LinearOpMode() {
                 .addBezierLine(scorePose[4], Point(pickupSpecimen))
                 .setLinearHeadingInterpolation(scoreAngle, Math.toRadians(230.0), 0.2)
                 .build()
+
+        val hubs = hardwareMap.getAll(LynxModule::class.java)
 
         intake.targetPosition = IntakePositions.TRANSFER
         pendul.targetPosition = 1.0
@@ -205,6 +209,10 @@ class FullClipsIntake : LinearOpMode() {
 
                 51 -> {
                     if (!follower.isBusy) {
+                        follower.setMaxPower(
+                            11.0 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average(),
+//                            0.2,
+                        )
                         robot.claw.isClosed = false
                         robot.lift.targetPosition = Positions.Lift.down
                         follower.followPath(pickupSamples[0])
@@ -215,6 +223,7 @@ class FullClipsIntake : LinearOpMode() {
                 1 -> {
                     if (!follower.isBusy) {
                         robot.intake.pickUp()
+                        follower.setMaxPower(1.0)
                         state = 2
                     }
                 }
@@ -386,7 +395,6 @@ class FullClipsIntake : LinearOpMode() {
 
                 -1 -> {
                     PositionStore.pose = follower.pose
-                    robot.claw.isClosed = false
                 }
             }
 
