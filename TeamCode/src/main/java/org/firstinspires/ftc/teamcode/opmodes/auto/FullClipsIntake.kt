@@ -27,12 +27,12 @@ import kotlin.math.abs
 
 @Autonomous
 class FullClipsIntake : LinearOpMode() {
-    val beginPose = Pose(8.7, 60.0, Math.toRadians(180.0))
+    val beginPose = Pose(8.8, 60.0, Math.toRadians(180.0))
     val samplePoints =
         arrayOf(
-            Point(30.6, 41.6),
-            Point(31.2, 31.0),
-            Point(31.8, 20.8),
+            Point(30.6, 40.5),
+            Point(31.2, 30.5),
+            Point(31.8, 20.5),
         )
 
     val scorePose =
@@ -48,7 +48,7 @@ class FullClipsIntake : LinearOpMode() {
 
     val scoreControl = Point(16.0, 70.0)
 
-    val pickupSpecimen = Pose(15.0, 28.0, 0.0)
+    val pickupSpecimen = Pose(16.8, 32.0, 0.0)
     val pickupControl =
         arrayOf(
             Point(24.0, 70.0),
@@ -121,19 +121,19 @@ class FullClipsIntake : LinearOpMode() {
         val firstPickup =
             arrayOf(
                 PathBuilder()
-                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.0, 30.0))
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.8, 30.0))
                     .addParametricCallback(0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                     }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.75)
                     .build(),
                 PathBuilder()
-                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.0, 29.0))
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.8, 29.0))
                     .addParametricCallback(0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                     }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.75)
                     .build(),
                 PathBuilder()
-                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.5, 28.0))
+                    .addBezierCurve(scorePose[0], pickupControl[0], pickupControl[1], Point(16.8, 28.0))
                     .addParametricCallback(0.5) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                     }.setLinearHeadingInterpolation(scoreAngle, 0.0, 0.75)
@@ -144,25 +144,25 @@ class FullClipsIntake : LinearOpMode() {
             arrayOf(
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[1])
-                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[2])
-                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(0.0, scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[3])
-                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(0.0), scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
                 PathBuilder()
                     .addBezierCurve(Point(pickupSpecimen), scoreControl, scorePose[4])
-                    .setLinearHeadingInterpolation(Math.toRadians(10.0), scoreAngle, 0.8)
+                    .setLinearHeadingInterpolation(Math.toRadians(0.0), scoreAngle, 0.8)
                     .addParametricCallback(0.4) {
                         robot.outtake.outtakePosition = OuttakePosition.BAR
                     }.build(),
@@ -210,7 +210,7 @@ class FullClipsIntake : LinearOpMode() {
                 51 -> {
                     if (!follower.isBusy) {
                         follower.setMaxPower(
-                            11.0 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average(),
+                            10.5 / hubs.map { it.getInputVoltage(VoltageUnit.VOLTS) }.average(),
 //                            0.2,
                         )
                         robot.claw.isClosed = false
@@ -395,6 +395,7 @@ class FullClipsIntake : LinearOpMode() {
 
                 -1 -> {
                     PositionStore.pose = follower.pose
+                    robot.claw.isClosed = false
                 }
             }
 
