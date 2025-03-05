@@ -187,9 +187,9 @@ class FullClipsIntake : LinearOpMode() {
         }
         val pickupDelay = 0.12
 
+        follower.poseUpdater.resetIMU()
+        follower.pose = beginPose
         val opModeTimer = Timer()
-
-        follower.setStartingPose(beginPose)
 
         while (!isStopRequested) {
             if (opModeTimer.elapsedTimeSeconds > 29.9) {
