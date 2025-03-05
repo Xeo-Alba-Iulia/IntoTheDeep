@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
-import org.firstinspires.ftc.teamcode.util.PositionStore
+import org.firstinspires.ftc.teamcode.util.PoseStore
 import org.firstinspires.ftc.teamcode.util.PressAction
 
 @TeleOp(name = "TeleOp", group = "A")
@@ -69,7 +69,7 @@ class MainTeleOp : LinearOpMode() {
             )
 
         val follower = Follower(this.hardwareMap)
-        follower.setStartingPose(PositionStore.pose)
+        follower.setStartingPose(PoseStore.pose)
 
         val delayedActions = mutableListOf<Pair<Long, Runnable>>()
 

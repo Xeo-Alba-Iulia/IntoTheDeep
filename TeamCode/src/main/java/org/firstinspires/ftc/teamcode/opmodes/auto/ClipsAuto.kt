@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
-import org.firstinspires.ftc.teamcode.util.PositionStore
+import org.firstinspires.ftc.teamcode.util.PoseStore
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
 
@@ -312,6 +312,6 @@ class ClipsAuto : LinearOpMode() {
             follower.drawOnDashBoard()
         }
 
-        PositionStore.pose = follower.pose
+        PoseStore.pose = follower.pose
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems.util
 
 import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 
 object Positions {
     @Config
@@ -49,6 +50,7 @@ object Positions {
     }
 
     @Config
+    @Disabled
     class Extend {
         companion object {
             @JvmField

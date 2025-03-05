@@ -41,15 +41,10 @@ android {
 }
 
 repositories {
-    maven {
-        url = 'https://maven.brott.dev/'
-    }
-    maven {
-        url = 'https://www.matthewo.tech/maven/'
-    }
-    maven {
-        url = 'https://maven.pedropathing.com/'
-    }
+    maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://www.matthewo.tech/maven/' }
+    maven { url = 'https://maven.pedropathing.com/' }
+    maven { url = "https://maven.rowanmcalpin.com/" }
 }
 
 dependencies {
@@ -59,5 +54,8 @@ dependencies {
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
     implementation "com.pedropathing:pedro:1.0.8"
     implementation "org.team11260:fast-load:0.1.2"
+    implementation("com.rowanmcalpin.nextftc:core:0.6.0")
+    implementation("com.rowanmcalpin.nextftc:ftc:0.6.0")
+    implementation("com.rowanmcalpin.nextftc:pedro:0.6.0")
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }

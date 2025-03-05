@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.opmodes.auto
 import com.pedropathing.localization.Pose
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.util.PositionStore
+import org.firstinspires.ftc.teamcode.util.PoseStore
 
 @Autonomous
 class ResetStoredPose : LinearOpMode() {
     override fun runOpMode() {
         waitForStart()
 
-        PositionStore.pose = Pose(0.0, 0.0, 0.0)
+        PoseStore.pose = Pose(0.0, 0.0, 0.0)
         this.requestOpModeStop()
     }
 }
