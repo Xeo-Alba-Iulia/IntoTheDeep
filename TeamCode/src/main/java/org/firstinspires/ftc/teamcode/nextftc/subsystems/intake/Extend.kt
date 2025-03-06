@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.nextftc.subsystems.intake
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import com.rowanmcalpin.nextftc.core.Subsystem
+import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
+import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
+import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay
+import com.rowanmcalpin.nextftc.core.units.ms
 import com.rowanmcalpin.nextftc.ftc.OpModeData.hardwareMap
 import com.rowanmcalpin.nextftc.ftc.hardware.MultipleServosToPosition
 
@@ -27,6 +31,21 @@ object Extend : Subsystem() {
             )
     }
 
-    val extend get() = MultipleServosToPosition(servos, ExtendPositions.extendPosition, this)
-    val retract get() = MultipleServosToPosition(servos, ExtendPositions.retractPosition, this)
+    var isExtended = false
+        private set
+
+    val extend
+        get() =
+            SequentialGroup(
+                MultipleServosToPosition(servos, ExtendPositions.extendPosition, this),
+                Delay(500.ms),
+                InstantCommand { isExtended = true },
+            )
+    val retract
+        get() =
+            SequentialGroup(
+                MultipleServosToPosition(servos, ExtendPositions.retractPosition, this),
+                InstantCommand { isExtended = false },
+                Delay(500.ms),
+            )
 }

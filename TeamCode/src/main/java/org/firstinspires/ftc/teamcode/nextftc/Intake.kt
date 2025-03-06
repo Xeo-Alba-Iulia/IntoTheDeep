@@ -2,46 +2,31 @@ package org.firstinspires.ftc.teamcode.nextftc
 
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
-import com.rowanmcalpin.nextftc.core.command.utility.NullCommand
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.*
 
 object Intake {
-    var inTransfer = true
-        private set
+    val toTransfer get() =
+        ParallelGroup(
+            Extend.retract,
+            IntakeClawRotate.goMiddle,
+            IntakePendul.goTransfer,
+        )
 
-    val goTransfer get() =
-        {
-            inTransfer = true
-            ParallelGroup(
-                Extend.retract,
-                IntakeClawRotate.goMiddle,
-                IntakePendul.goTransfer,
-                IntakeRotate.goTransfer,
-            )
-        }()
+    val toPickupWait get() =
+        ParallelGroup(
+            Extend.extend,
+            IntakePendul.goPickupWait,
+        )
 
-    val goPickupWait get() =
-        {
-            inTransfer = false
-            ParallelGroup(
-                Extend.extend,
-                IntakePendul.goPickupWait,
-                IntakeRotate.goPickupWait,
-            )
-        }()
+    val pickup get() =
+        SequentialGroup(
+            IntakePendul.goPickup,
+            IntakeClaw.close,
+            toPickupWait,
+        )
 
-    val pickup
-        get() =
-            if (inTransfer) {
-                NullCommand()
-            } else {
-                SequentialGroup(
-                    IntakeRotate.goPickup,
-                    IntakePendul.goPickup,
-                    IntakeClaw.close,
-                    goPickupWait,
-                )
-            }
+    val isExtended
+        get() = Extend.isExtended
 
-    val switch get() = if (inTransfer) goPickupWait else goTransfer
+    val switch get() = if (isExtended) toTransfer else toPickupWait
 }

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
+import com.rowanmcalpin.nextftc.core.command.utility.NullCommand
 import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay
 import com.rowanmcalpin.nextftc.core.units.ms
 import com.rowanmcalpin.nextftc.ftc.OpModeData
@@ -29,15 +30,23 @@ object Claw : Subsystem() {
     val isClosed get() = servo.position == Positions.Claw.close
 
     val open get() =
-        SequentialGroup(
-            ServoToPosition(servo, ClawPositions.open, this),
-            Delay(80.ms),
-        )
+        if (isClosed) {
+            SequentialGroup(
+                ServoToPosition(servo, ClawPositions.open, this),
+                Delay(80.ms),
+            )
+        } else {
+            NullCommand()
+        }
     val close get() =
-        SequentialGroup(
-            ServoToPosition(servo, ClawPositions.close, this),
-            Delay(80.ms),
-        )
+        if (!isClosed) {
+            SequentialGroup(
+                ServoToPosition(servo, ClawPositions.close, this),
+                Delay(80.ms),
+            )
+        } else {
+            NullCommand()
+        }
 
     val toggle get() = if (isClosed) open else close
 }

@@ -34,7 +34,16 @@ object IntakeClaw : Subsystem() {
         )
     val close get() =
         SequentialGroup(
-            ServoToPosition(servo, IntakeClawPositions.close, setOf(this, IntakeClawRotate)),
+            ServoToPosition(
+                servo,
+                IntakeClawPositions.close,
+                setOf(
+                    this,
+                    IntakeClawRotate,
+                    Extend,
+                    IntakePendul,
+                ),
+            ),
             Delay(80.ms),
         )
 

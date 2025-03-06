@@ -71,12 +71,14 @@ object Lift : Subsystem() {
     private lateinit var motorGroup: MotorGroup
     private lateinit var controller: Controller
 
+    private const val TOLERANCE = 20.0
+
     override fun initialize() {
         liftLeft = MotorEx("LiftLeft")
         liftRight = MotorEx("LiftRight")
 
         motorGroup = MotorGroup(liftLeft, liftRight)
-        controller = SqrtController(kP = 10.0, kF = StaticFeedforward(1.0), setPointTolerance = 20.0)
+        controller = SqrtController(kP = 10.0, kF = StaticFeedforward(1.0), setPointTolerance = TOLERANCE)
     }
 
     var isHoldingPosition = true
@@ -95,7 +97,7 @@ object Lift : Subsystem() {
     val resetLiftCommand get() = ResetLiftCommand(motorGroup) as Command
 
     val inTransfer
-        get() = isHoldingPosition && abs(motorGroup.currentPosition - LiftPositions.transfer) <= 20.0
+        get() = isHoldingPosition && abs(motorGroup.currentPosition - LiftPositions.transfer) <= TOLERANCE
 
     val toLow get() = RunToPosition(motorGroup, LiftPositions.down, controller, this)
     val toHighBar get() = RunToPosition(motorGroup, LiftPositions.highBar, controller, this)
