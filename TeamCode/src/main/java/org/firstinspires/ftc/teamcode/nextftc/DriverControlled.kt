@@ -28,13 +28,13 @@ class DriverControlled
             PedroData.follower!!.startTeleopDrive()
         }
 
-        private fun Boolean.invSign() = if (this) -1 else 1
+        private val Boolean.invSign get() = if (this) -1 else 1
 
         override fun update() {
             PedroData.follower!!.setTeleOpMovementVectors(
-                driveSupplier.asDouble * if (invertDrive) -1 else 1,
-                strafeSupplier.asDouble * if (invertStrafe) -1 else 1,
-                turnSupplier.asDouble * if (invertTurn) -1 else 1,
+                driveSupplier.asDouble * invertDrive.invSign,
+                strafeSupplier.asDouble * invertStrafe.invSign,
+                turnSupplier.asDouble * invertTurn.invSign,
                 robotCentric,
             )
         }

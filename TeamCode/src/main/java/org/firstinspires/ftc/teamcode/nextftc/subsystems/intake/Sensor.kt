@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.nextftc.subsystems.intake
 
 import com.qualcomm.hardware.rev.RevColorSensorV3
+import com.qualcomm.robotcore.hardware.AnalogInput
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 object Sensor : Subsystem() {
     lateinit var sensor: RevColorSensorV3
+    lateinit var servoSensor: AnalogInput
 
     override fun initialize() {
         sensor = OpModeData.hardwareMap.get(RevColorSensorV3::class.java, "sensor_color")
+        servoSensor = OpModeData.hardwareMap.analogInput["servo_sensor"]
     }
 
     val isHoldingSample

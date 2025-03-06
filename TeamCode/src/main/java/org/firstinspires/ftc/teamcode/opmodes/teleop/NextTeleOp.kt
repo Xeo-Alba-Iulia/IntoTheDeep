@@ -5,6 +5,7 @@ import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.localization.Pose
 import com.pedropathing.util.Constants
 import com.pedropathing.util.PIDFController
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
 import com.rowanmcalpin.nextftc.core.command.CommandManager
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup
@@ -27,6 +28,7 @@ import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
 import kotlin.math.abs
 
+@TeleOp
 class NextTeleOp :
     PedroOpMode(
         Extend,
