@@ -123,7 +123,7 @@ open class NextTeleOp :
         gamepadManager.gamepad2.rightStick.profileCurve = stickEnableProfileCurve
         gamepadManager.gamepad2.rightStick.displacedCommand = {
             if (it.second < 0) {
-                Lift.resetLift
+                Lift.resetLiftCommand
             } else {
                 NullCommand()
             }

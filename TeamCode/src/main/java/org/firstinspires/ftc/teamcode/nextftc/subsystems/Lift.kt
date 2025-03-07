@@ -1,28 +1,30 @@
 package org.firstinspires.ftc.teamcode.nextftc.subsystems
 
-import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.hardware.*
+import com.qualcomm.robotcore.hardware.HardwareMap
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
-import com.rowanmcalpin.nextftc.core.command.CommandManager
+import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup
 import com.rowanmcalpin.nextftc.core.command.utility.LambdaCommand
+import com.rowanmcalpin.nextftc.core.control.controllers.Controller
+import com.rowanmcalpin.nextftc.core.control.controllers.SqrtController
+import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.StaticFeedforward
 import com.rowanmcalpin.nextftc.ftc.OpModeData.hardwareMap
+import com.rowanmcalpin.nextftc.ftc.hardware.controllables.*
 import kotlin.math.abs
 
 private class ResetLiftCommand(
-    private val liftMotor: DcMotorEx,
+    private val liftMotor: Controllable,
 ) : Command() {
     override val interruptible = false
-
-//    override val subsystems = setOf(Lift)
-    override val isDone get() = ticksRan > 40 && abs(liftMotor.velocity) < 5.0
-
+    override val subsystems = setOf(Lift)
     private var ticksRan = 0
 
+    override val isDone
+        get() = ticksRan >= 40 && liftMotor.velocity < 5.0
+
     override fun start() {
-        liftMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        liftMotor.power = -0.3
+        liftMotor.power = -0.25
     }
 
     override fun update() {
@@ -30,43 +32,29 @@ private class ResetLiftCommand(
     }
 
     override fun stop(interrupted: Boolean) {
-        liftMotor.targetPosition = 0
-        liftMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        liftMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+        if (interrupted) {
+            throw IllegalStateException("Lift reset was interrupted")
+        }
+        liftMotor.currentPosition = 0.0
     }
 }
-
-private class GoToPositionCommand(
-    private val position: Int,
-) : Command() {
-    override val isDone
-        get() = abs(Lift.measuredPosition - targetPosition) < 20
-
-    override val subsystems = setOf(Lift)
-
-    override fun start() {
-        targetPosition = position
-    }
-}
-
-private var targetPosition = 0
 
 private class LiftPositions private constructor() {
     companion object {
         @JvmField @Volatile
-        var down = 0
+        var down = 0.0
 
         @JvmField @Volatile
-        var transfer = 100
+        var transfer = 100.0
 
         @JvmField @Volatile
-        var highBar = 650
+        var highBar = 650.0
 
         @JvmField @Volatile
-        var hang = 1700
+        var hang = 1700.0
 
         @JvmField @Volatile
-        var highBasket = 3200
+        var highBasket = 3200.0
     }
 }
 
@@ -77,68 +65,44 @@ private class LiftPositions private constructor() {
  */
 @Config
 object Lift : Subsystem() {
-    private lateinit var liftLeft: DcMotorEx
-    private lateinit var liftRight: DcMotorEx
+    private lateinit var liftLeft: MotorEx
+    private lateinit var liftRight: MotorEx
 
-    private lateinit var liftMotors: List<Pair<DcMotorEx, String>>
+    private lateinit var motorGroup: MotorGroup
+    private lateinit var controller: Controller
 
-    var measuredPosition = 0
+    private const val TOLERANCE = 20.0
 
     override fun initialize() {
-        liftLeft = hardwareMap["LiftLeft"] as DcMotorEx
-        liftRight = hardwareMap["LiftRight"] as DcMotorEx
+        liftLeft = MotorEx("LiftLeft")
+        liftRight = MotorEx("LiftRight")
 
-        liftMotors = listOf(liftLeft to "LiftLeft", liftRight to "LiftRight")
-
-        for ((motor, _) in liftMotors) {
-            motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-            motor.targetPosition = 0
-
-            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-        }
-
-        liftRight.direction = DcMotorSimple.Direction.REVERSE
+        motorGroup = MotorGroup(liftLeft, liftRight)
+        controller = SqrtController(kP = 10.0, kF = StaticFeedforward(1.0), setPointTolerance = TOLERANCE)
     }
 
-    override fun periodic() {
-        measuredPosition = liftMotors.map { it.first.currentPosition }.average().toInt()
-        for ((motor, name) in liftMotors) {
-            FtcDashboard.getInstance().telemetry.addData("Position for $name", motor.currentPosition)
-        }
-        FtcDashboard.getInstance().telemetry.addData("Lift target position", targetPosition)
-    }
+    var isHoldingPosition = true
+        private set
 
-    val resetLift
+    override val defaultCommand
         get() =
-            LambdaCommand()
-                .setStart {
-                    ResetLiftCommand(liftLeft)()
-                    ResetLiftCommand(liftRight)()
-                }.setInterruptible(false)
-                .setIsDone { CommandManager.runningCommands.all { it !is ResetLiftCommand } }
-                .setStop {
-                    ResetLiftCommand(liftLeft).stop(false)
-                    ResetLiftCommand(liftRight).stop(false)
-                    targetPosition = 0
-                }.setSubsystem(Lift)
+            ParallelGroup(
+                HoldPosition(motorGroup, controller, this),
+                LambdaCommand()
+                    .setIsDone { false }
+                    .setStart { isHoldingPosition = true }
+                    .setStop { isHoldingPosition = false },
+            )
 
-    val toLow: Command
-        get() = GoToPositionCommand(LiftPositions.down)
-
-    val toTransfer: Command
-        get() = GoToPositionCommand(LiftPositions.transfer)
-
-    val toHighBar: Command
-        get() = GoToPositionCommand(LiftPositions.highBar)
-
-    val toHang: Command
-        get() = GoToPositionCommand(LiftPositions.hang)
-
-    val toHighBasket: Command
-        get() = GoToPositionCommand(LiftPositions.highBasket)
+    val resetLiftCommand get() = ResetLiftCommand(motorGroup) as Command
 
     val inTransfer
-        get() = targetPosition == LiftPositions.transfer
+        get() = isHoldingPosition && abs(motorGroup.currentPosition - LiftPositions.transfer) <= TOLERANCE
+
+    val toLow get() = RunToPosition(motorGroup, LiftPositions.down, controller, this)
+    val toHighBar get() = RunToPosition(motorGroup, LiftPositions.highBar, controller, this)
+    val toHighBasket get() = RunToPosition(motorGroup, LiftPositions.highBasket, controller, this)
+    val toTransfer get() = RunToPosition(motorGroup, LiftPositions.transfer, controller, this)
+
+    val toHang get() = RunToPosition(motorGroup, LiftPositions.hang, controller, this)
 }
