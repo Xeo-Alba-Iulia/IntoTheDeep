@@ -5,23 +5,26 @@
             <goBILDA5202SeriesMotor name="MotorBackRight" port="0" />
             <goBILDA5202SeriesMotor name="LiftRight" port="1" />
             <goBILDA5202SeriesMotor name="MotorFrontRight" port="2" />
-            <Motor name="EncoderRight" port="3" />
+            <Motor name="EncoderRight" port="3" /> <!-- Right Encoder -->
             <Servo name="ClawRotate" port="0" />
-            <Servo name="Claw" port="1" />
-            <Servo name="Pendul1" port="2" />
-            <Servo name="Extend1" port="3" />
-            <Servo name="Extend2" port="4" />
-            <Servo name="Pendul2" port="5" />
+            <Servo name="Claw" port="2" />
         </LynxModule>
+        <ServoHub name="Servo Hub 3" port="3">
+            <Servo name="Pendul1" port="0" />
+            <Servo name="Extend1" port="2" />
+            <Servo name="Extend2" port="3" />
+            <Servo name="Pendul2" port="5" />
+        </ServoHub>
         <LynxModule name="Control Hub" port="173">
-            <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0" />
+            <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0" /> <!-- Strafe Encoder -->
             <goBILDA5202SeriesMotor name="LiftLeft" port="2" />
-            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" />
-            <Servo name="IntakeClaw" port="0" />
-            <Servo name="IntakePendul" port="1" />
-            <Servo name="IntakeClawRotate" port="3" />
-            <Servo name="IntakeRotate" port="5" />
-            <ControlHubImuBHI260AP name="imu" bus="0" port="0" />
+            <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" /> <!-- Left Encoder -->
+            <Servo name="IntakePendul" port="2" />
+            <Servo name="IntakeRotate" port="3" />
+            <Servo name="IntakeClawRotate" port="4" />
+            <Servo name="IntakeClaw" port="5" />
+            <RevColorSensorV3 name="sensor_color" bus="0" port="0" />
+            <ControlHubImuBHI260AP name="imu" bus="0" port="1" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
