@@ -5,9 +5,9 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.*
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
+import com.rowanmcalpin.nextftc.core.command.CommandManager
 import com.rowanmcalpin.nextftc.core.command.utility.LambdaCommand
 import com.rowanmcalpin.nextftc.ftc.OpModeData.hardwareMap
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import kotlin.math.abs
 
 private class ResetLiftCommand(
@@ -16,29 +16,16 @@ private class ResetLiftCommand(
     override val interruptible = false
 
 //    override val subsystems = setOf(Lift)
-    override var isDone = false
+    override val isDone get() = ticksRan > 40 && abs(liftMotor.velocity) < 5.0
 
     private var ticksRan = 0
-    private var current = 0.0
 
     override fun start() {
-        liftMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        liftMotor.power = -0.25
+        liftMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        liftMotor.power = -0.3
     }
 
     override fun update() {
-        if (isDone) {
-            return
-        }
-        if (ticksRan > 40) {
-            if (abs(current - liftMotor.getCurrent(CurrentUnit.MILLIAMPS)) > 150) {
-                stop(false)
-                isDone = true
-            }
-        } else {
-            current = liftMotor.getCurrent(CurrentUnit.MILLIAMPS)
-        }
-
         ticksRan++
     }
 
@@ -118,37 +105,33 @@ object Lift : Subsystem() {
         FtcDashboard.getInstance().telemetry.addData("Lift target position", targetPosition)
     }
 
-    private var resetCommands = mutableListOf<ResetLiftCommand>()
-
     val resetLift
         get() =
             LambdaCommand()
                 .setStart {
-                    resetCommands = mutableListOf(ResetLiftCommand(liftLeft), ResetLiftCommand(liftRight))
-                    resetCommands.forEach { it.start() }
-                }.setUpdate {
-                    resetCommands.forEach { it.update() }
+                    ResetLiftCommand(liftLeft)()
+                    ResetLiftCommand(liftRight)()
                 }.setInterruptible(false)
-                .setIsDone { resetCommands.all { it.isDone } }
+                .setIsDone { CommandManager.runningCommands.all { it !is ResetLiftCommand } }
                 .setStop {
-                    resetCommands.forEach { command -> command.stop(it) }
-                    resetCommands.clear()
+                    ResetLiftCommand(liftLeft).stop(false)
+                    ResetLiftCommand(liftRight).stop(false)
                     targetPosition = 0
                 }.setSubsystem(Lift)
 
-    val goDown: Command
+    val toLow: Command
         get() = GoToPositionCommand(LiftPositions.down)
 
-    val goTransfer: Command
+    val toTransfer: Command
         get() = GoToPositionCommand(LiftPositions.transfer)
 
-    val goHighBar: Command
+    val toHighBar: Command
         get() = GoToPositionCommand(LiftPositions.highBar)
 
-    val goHang: Command
+    val toHang: Command
         get() = GoToPositionCommand(LiftPositions.hang)
 
-    val goHighBasket: Command
+    val toHighBasket: Command
         get() = GoToPositionCommand(LiftPositions.highBasket)
 
     val inTransfer

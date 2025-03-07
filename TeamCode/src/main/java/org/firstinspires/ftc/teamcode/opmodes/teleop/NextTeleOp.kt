@@ -18,7 +18,10 @@ import org.firstinspires.ftc.teamcode.nextftc.DriverControlled
 import org.firstinspires.ftc.teamcode.nextftc.Intake
 import org.firstinspires.ftc.teamcode.nextftc.Outtake
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.Lift
-import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.*
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.Extend
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakeClaw
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakeClawRotate
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakePendul
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.Claw
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.ClawRotate
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.Pendul
@@ -127,7 +130,7 @@ class NextTeleOp :
         gamepadManager.gamepad2.rightStick.profileCurve = stickEnableProfileCurve
         gamepadManager.gamepad2.rightStick.displacedCommand = {
             if (it.second < 0) {
-                Lift.resetLiftCommand
+                Lift.resetLift
             } else {
                 NullCommand()
             }
@@ -172,6 +175,16 @@ class NextTeleOp :
             } else {
                 NullCommand()
             }
+        }
+        gamepadManager.gamepad2.dpadRight.pressedCommand = {
+            ParallelGroup(
+                Outtake.goTransfer.afterTime(1),
+                SequentialGroup(
+                    Intake.toTransfer,
+                    Lift.toTransfer,
+                    Outtake.goTransfer,
+                ),
+            )
         }
     }
 }
