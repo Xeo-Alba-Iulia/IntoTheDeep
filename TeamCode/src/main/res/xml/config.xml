@@ -8,7 +8,6 @@
             <Motor name="EncoderRight" port="3" /> <!-- Right Encoder -->
             <Servo name="ClawRotate" port="0" />
             <Servo name="Claw" port="2" />
-            <RevColorSensorV3 name="sensor_color" bus="0" port="0" />
         </LynxModule>
         <ServoHub name="Servo Hub 3" port="3">
             <Servo name="Pendul1" port="0" />
@@ -20,11 +19,12 @@
             <goBILDA5202SeriesMotor name="MotorFrontLeft" port="0" /> <!-- Strafe Encoder -->
             <goBILDA5202SeriesMotor name="LiftLeft" port="2" />
             <goBILDA5202SeriesMotor name="MotorBackLeft" port="3" /> <!-- Left Encoder -->
-            <Servo name="IntakeClaw" port="0" />
-            <Servo name="IntakePendul" port="1" />
-            <Servo name="IntakeClawRotate" port="3" />
-            <Servo name="IntakeRotate" port="5" />
-            <ControlHubImuBHI260AP name="imu" bus="0" port="0" />
+            <Servo name="IntakePendul" port="2" />
+            <Servo name="IntakeRotate" port="3" />
+            <Servo name="IntakeClawRotate" port="4" />
+            <Servo name="IntakeClaw" port="5" />
+            <RevColorSensorV3 name="sensor_color" bus="0" port="0" />
+            <ControlHubImuBHI260AP name="imu" bus="0" port="1" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
