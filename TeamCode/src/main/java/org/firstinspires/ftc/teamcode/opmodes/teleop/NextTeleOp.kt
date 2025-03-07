@@ -41,6 +41,7 @@ class NextTeleOp :
         Claw,
         ClawRotate,
         Pendul,
+        Lift,
     ) {
     val inTransfer
         get() =
