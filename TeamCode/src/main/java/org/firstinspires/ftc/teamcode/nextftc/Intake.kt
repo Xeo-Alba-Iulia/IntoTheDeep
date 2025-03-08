@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.nextftc
 
+import com.rowanmcalpin.nextftc.core.SubsystemGroup
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.*
 
-object Intake {
+object Intake : SubsystemGroup(Extend, IntakeClaw, IntakeClawRotate, IntakePendul) {
     val toTransfer get() =
         ParallelGroup(
             Extend.retract,
