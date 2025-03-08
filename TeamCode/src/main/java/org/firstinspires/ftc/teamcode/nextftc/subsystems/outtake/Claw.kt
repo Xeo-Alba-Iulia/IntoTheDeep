@@ -24,7 +24,7 @@ object Claw : Subsystem() {
     private lateinit var servo: Servo
 
     override fun initialize() {
-        servo = OpModeData.hardwareMap.servo["IntakeClaw"]
+        servo = OpModeData.hardwareMap.servo["Claw"]
     }
 
     val isClosed get() = servo.position == Positions.Claw.close
