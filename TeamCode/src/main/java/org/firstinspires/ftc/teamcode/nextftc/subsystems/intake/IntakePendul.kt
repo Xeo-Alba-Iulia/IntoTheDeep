@@ -3,35 +3,29 @@ package org.firstinspires.ftc.teamcode.nextftc.subsystems.intake
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import com.rowanmcalpin.nextftc.core.Subsystem
-import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
-import com.rowanmcalpin.nextftc.core.command.utility.NullCommand
-import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay
+import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.units.ms
 import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.hardware.MultipleServosToSeperatePositions
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakePendulPositions.Companion.pickup
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakePendulPositions.Companion.pickupWait
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakePendulPositions.Companion.search
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakePendulPositions.Companion.transfer
 
 @Config
 private class IntakePendulPositions private constructor() {
     companion object {
-        @JvmField var pickupWait = 0.4
-
-        @JvmField var pickup = 0.2
-
-        @JvmField var transfer = 0.8
-    }
-}
-
-@Config
-private class IntakeRotatePositions private constructor() {
-    companion object {
         @JvmField @Volatile
-        var pickupWait = 0.1
+        var pickupWait = Pair(0.4, 0.1)
 
         @JvmField @Volatile
-        var pickup = 0.05
+        var pickup = Pair(0.2, 0.05)
 
         @JvmField @Volatile
-        var transfer = 0.75
+        var transfer = Pair(0.8, 0.75)
+
+        @JvmField @Volatile
+        var search = Pair(0.32, 0.08)
     }
 }
 
@@ -44,43 +38,25 @@ object IntakePendul : Subsystem() {
         rotateServo = OpModeData.hardwareMap.servo["IntakeRotate"]
     }
 
-    val goPickupWait
-        get() =
-            MultipleServosToSeperatePositions(
-                mapOf(
-                    servo to IntakePendulPositions.pickupWait,
-                    rotateServo to IntakeRotatePositions.pickupWait,
-                ),
-                this,
-            )
-    val goTransfer
-        get() =
-            MultipleServosToSeperatePositions(
-                mapOf(
-                    servo to IntakePendulPositions.transfer,
-                    rotateServo to IntakeRotatePositions.transfer,
-                ),
-                this,
-            )
-    val goPickup
-        get() =
-            if (servo.position == IntakePendulPositions.pickupWait) {
-                SequentialGroup(
-                    MultipleServosToSeperatePositions(
-                        mapOf(
-                            servo to IntakePendulPositions.pickup,
-                            rotateServo to IntakeRotatePositions.pickup,
-                        ),
-                        setOf(
-                            this,
-                            IntakeClaw,
-                            IntakeClawRotate,
-                            Extend,
-                        ),
-                    ),
-                    Delay(100.ms),
-                )
-            } else {
-                NullCommand()
-            }
+    private fun goToPosition(
+        position: Pair<Double, Double>,
+        otherSystems: Set<Subsystem> = setOf(),
+    ): Command =
+        MultipleServosToSeperatePositions(
+            mapOf(
+                servo to position.first,
+                rotateServo to position.second,
+            ),
+            otherSystems + this,
+        )
+
+    val goPickupWait get() = goToPosition(pickupWait)
+    val goTransfer get() = goToPosition(transfer)
+    val toSearch get() = goToPosition(search)
+
+    val goPickup: Command get() =
+        goToPosition(
+            pickup,
+            setOf(IntakeClawRotate, IntakeClaw, Extend),
+        ).thenWait(200.ms)
 }
