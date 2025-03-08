@@ -33,6 +33,7 @@ open class NextTeleOp :
     PedroOpMode(
         Intake,
         Outtake,
+        Lift,
     ) {
     val inTransfer
         get() =
@@ -178,5 +179,6 @@ open class NextTeleOp :
                 ),
             )
         }
+        gamepadManager.gamepad2.cross.pressedCommand = { Intake.switch }
     }
 }

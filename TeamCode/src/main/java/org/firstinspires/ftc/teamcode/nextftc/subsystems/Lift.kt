@@ -77,14 +77,19 @@ private class LiftPositions private constructor() {
  */
 @Config
 object Lift : Subsystem() {
-    val liftLeft: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftLeft")
-    val liftRight: DcMotorEx = hardwareMap.get(DcMotorEx::class.java, "LiftRight")
+    private lateinit var liftLeft: DcMotorEx
+    private lateinit var liftRight: DcMotorEx
 
-    private val liftMotors = listOf(liftLeft to "LiftLeft", liftRight to "LiftRight")
+    private lateinit var liftMotors: List<Pair<DcMotorEx, String>>
 
     var measuredPosition = 0
 
-    init {
+    override fun initialize() {
+        liftLeft = hardwareMap["LiftLeft"] as DcMotorEx
+        liftRight = hardwareMap["LiftRight"] as DcMotorEx
+
+        liftMotors = listOf(liftLeft to "LiftLeft", liftRight to "LiftRight")
+
         for ((motor, _) in liftMotors) {
             motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
