@@ -20,7 +20,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.834
+            var pickup = 0.055
         }
     }
 
@@ -74,6 +74,9 @@ object Positions {
             @JvmField
             @Volatile
             var transfer = 0.8
+
+            @JvmField @Volatile
+            var wallPickup = 1.0
         }
     }
 
@@ -107,7 +110,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.61
+            var pickup = 0.27
         }
     }
 
@@ -145,6 +148,20 @@ object Positions {
 
             @JvmField @Volatile
             var transfer = 0.75
+
+            @JvmField @Volatile
+            var wallPickup = 1.0
+        }
+    }
+
+    @Config
+    class OuttakeRotate {
+        companion object {
+            @JvmField @Volatile
+            var down = 0.0
+
+            @JvmField @Volatile
+            var up = 1.0
         }
     }
 }

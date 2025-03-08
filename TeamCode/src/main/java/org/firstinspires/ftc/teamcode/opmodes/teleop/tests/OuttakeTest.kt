@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop.tests
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Claw
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.ClawRotate
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import kotlin.properties.Delegates
 
+@Disabled
 @TeleOp(name = "Outtake Test", group = "B")
 class OuttakeTest : LinearOpMode() {
     companion object {

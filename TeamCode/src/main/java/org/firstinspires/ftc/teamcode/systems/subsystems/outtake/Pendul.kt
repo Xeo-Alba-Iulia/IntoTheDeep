@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMecha
 
 class Pendul(
     hardwareMap: HardwareMap,
-) : ServoPositionMechanism(Positions.Pendul.transfer) {
+) : ServoPositionMechanism(Positions.Pendul.pickup) {
     override val servos: Array<Servo> =
         arrayOf(hardwareMap.servo["Pendul1"], hardwareMap.servo["Pendul2"])
 }
