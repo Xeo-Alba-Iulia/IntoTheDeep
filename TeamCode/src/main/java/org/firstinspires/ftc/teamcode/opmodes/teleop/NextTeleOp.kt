@@ -7,7 +7,6 @@ import com.pedropathing.util.Constants
 import com.pedropathing.util.PIDFController
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
-import com.rowanmcalpin.nextftc.core.SubsystemGroup
 import com.rowanmcalpin.nextftc.core.command.CommandManager
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
@@ -19,9 +18,9 @@ import org.firstinspires.ftc.teamcode.nextftc.DriverControlled
 import org.firstinspires.ftc.teamcode.nextftc.Intake
 import org.firstinspires.ftc.teamcode.nextftc.Outtake
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.Lift
-import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.*
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakeClaw
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.intake.IntakeClawRotate
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.Claw
-import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.ClawRotate
 import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.util.autoPose
@@ -30,18 +29,10 @@ import pedroPathing.constants.LConstants
 import kotlin.math.abs
 
 @TeleOp
-class NextTeleOp :
+open class NextTeleOp :
     PedroOpMode(
-        SubsystemGroup(
-            Extend,
-            IntakeClaw,
-            IntakeClawRotate,
-            IntakePendul,
-            Claw,
-            ClawRotate,
-            Pendul,
-            Lift,
-        ),
+        Intake,
+        Outtake,
     ) {
     val inTransfer
         get() =

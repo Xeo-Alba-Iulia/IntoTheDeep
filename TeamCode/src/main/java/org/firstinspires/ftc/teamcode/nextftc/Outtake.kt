@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.nextftc
 
+import com.rowanmcalpin.nextftc.core.SubsystemGroup
 import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
-import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.ClawRotate
-import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.Pendul
+import org.firstinspires.ftc.teamcode.nextftc.subsystems.outtake.*
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 
-object Outtake {
+object Outtake : SubsystemGroup(Claw, ClawRotate, Pendul, OuttakeRotate) {
     var targetPosition = OuttakePosition.PICKUP
         private set
 
@@ -16,6 +16,7 @@ object Outtake {
             ParallelGroup(
                 ClawRotate.goTransfer,
                 Pendul.goTransfer,
+                OuttakeRotate.toDown,
             ),
             InstantCommand { targetPosition = OuttakePosition.TRANSFER },
         )
@@ -25,6 +26,7 @@ object Outtake {
             ParallelGroup(
                 ClawRotate.goBar,
                 Pendul.goBar,
+                OuttakeRotate.toUp,
             ),
             InstantCommand { targetPosition = OuttakePosition.BAR },
         )
@@ -34,6 +36,7 @@ object Outtake {
             ParallelGroup(
                 ClawRotate.goBasket,
                 Pendul.goBasket,
+                OuttakeRotate.toUp,
             ),
             InstantCommand { targetPosition = OuttakePosition.BASKET },
         )
@@ -43,7 +46,14 @@ object Outtake {
             ParallelGroup(
                 ClawRotate.goPickup,
                 Pendul.goPickup,
+                OuttakeRotate.toDown,
             ),
             InstantCommand { targetPosition = OuttakePosition.PICKUP },
         )
+
+    val close get() = Claw.close
+    val open get() = Claw.open
+    val toggle get() = Claw.toggle
+
+    val isClosed get() = Claw.isClosed
 }
