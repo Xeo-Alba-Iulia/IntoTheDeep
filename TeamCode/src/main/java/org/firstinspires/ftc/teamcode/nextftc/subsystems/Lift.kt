@@ -2,15 +2,12 @@ package org.firstinspires.ftc.teamcode.nextftc.subsystems
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.*
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
 import com.rowanmcalpin.nextftc.core.command.CommandManager
 import com.rowanmcalpin.nextftc.core.command.utility.LambdaCommand
-import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
 import com.rowanmcalpin.nextftc.ftc.OpModeData.hardwareMap
-import com.rowanmcalpin.nextftc.ftc.tuning.LinearSlideFeedforwardTuner
 import kotlin.math.abs
 
 private class ResetLiftCommand(
@@ -139,18 +136,4 @@ object Lift : Subsystem() {
 
     val inTransfer
         get() = targetPosition == LiftPositions.transfer
-}
-
-@TeleOp(name = "Lift Feedforward Tuner")
-private class LiftTest : NextFTCOpMode(Lift) {
-    override fun onStartButtonPressed() {
-        LinearSlideFeedforwardTuner(
-            listOf(
-                hardwareMap["LiftLeft"] as DcMotorEx,
-                hardwareMap["LiftRight"] as DcMotorEx,
-            ),
-            0,
-            FtcDashboard.getInstance().telemetry,
-        )()
-    }
 }
