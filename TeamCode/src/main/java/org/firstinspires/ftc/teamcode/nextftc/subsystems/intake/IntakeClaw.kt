@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
+import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.core.command.utility.delays.Delay
 import com.rowanmcalpin.nextftc.core.units.ms
 import com.rowanmcalpin.nextftc.ftc.OpModeData
@@ -14,7 +15,7 @@ private class IntakeClawPositions private constructor() {
     companion object {
         @JvmField var open = 0.46
 
-        @JvmField var close = 0.79
+        @JvmField var close = 0.783
     }
 }
 
@@ -25,12 +26,14 @@ object IntakeClaw : Subsystem() {
         servo = OpModeData.hardwareMap.servo["IntakeClaw"]
     }
 
-    val isClosed get() = servo.position == IntakeClawPositions.close
+    var isClosed = false
+        private set
 
     val open get() =
         SequentialGroup(
+            InstantCommand { isClosed = false },
             ServoToPosition(servo, IntakeClawPositions.open, this),
-            Delay(80.ms),
+            Delay(165.ms),
         )
     val close get() =
         SequentialGroup(
@@ -44,7 +47,8 @@ object IntakeClaw : Subsystem() {
                     IntakePendul,
                 ),
             ),
-            Delay(80.ms),
+            Delay(120.ms),
+            InstantCommand { isClosed = true },
         )
 
     val toggle get() = if (isClosed) open else close
