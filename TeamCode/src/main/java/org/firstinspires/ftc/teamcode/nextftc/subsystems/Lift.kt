@@ -4,11 +4,8 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.rowanmcalpin.nextftc.core.Subsystem
 import com.rowanmcalpin.nextftc.core.command.Command
-import com.rowanmcalpin.nextftc.core.command.groups.ParallelGroup
-import com.rowanmcalpin.nextftc.core.command.utility.LambdaCommand
 import com.rowanmcalpin.nextftc.core.control.controllers.Controller
-import com.rowanmcalpin.nextftc.core.control.controllers.SqrtController
-import com.rowanmcalpin.nextftc.core.control.controllers.feedforward.StaticFeedforward
+import com.rowanmcalpin.nextftc.ftc.OpModeData
 import com.rowanmcalpin.nextftc.ftc.OpModeData.hardwareMap
 import com.rowanmcalpin.nextftc.ftc.hardware.controllables.*
 import kotlin.math.abs
@@ -75,24 +72,24 @@ object Lift : Subsystem() {
 
     override fun initialize() {
         liftLeft = MotorEx("LiftLeft")
-        liftRight = MotorEx("LiftRight")
+        liftRight = MotorEx("LiftRight").reverse()
 
         motorGroup = MotorGroup(liftLeft, liftRight)
-        controller = SqrtController(kP = 10.0, kF = StaticFeedforward(1.0), setPointTolerance = TOLERANCE)
+        controller = SqrtController(kP = 0.1, setPointTolerance = TOLERANCE)
     }
 
     var isHoldingPosition = true
         private set
 
-    override val defaultCommand
-        get() =
-            ParallelGroup(
-                HoldPosition(motorGroup, controller, this),
-                LambdaCommand()
-                    .setIsDone { false }
-                    .setStart { isHoldingPosition = true }
-                    .setStop { isHoldingPosition = false },
-            )
+//    override val defaultCommand
+//        get() =
+//            ParallelGroup(
+//                HoldPosition(motorGroup, controller, this),
+//                LambdaCommand()
+//                    .setIsDone { false }
+//                    .setStart { isHoldingPosition = true }
+//                    .setStop { isHoldingPosition = false },
+//            )
 
     val resetLiftCommand get() = ResetLiftCommand(motorGroup) as Command
 
@@ -105,4 +102,8 @@ object Lift : Subsystem() {
     val toTransfer get() = RunToPosition(motorGroup, LiftPositions.transfer, controller, this)
 
     val toHang get() = RunToPosition(motorGroup, LiftPositions.hang, controller, this)
+
+    override fun periodic() {
+        OpModeData.telemetry.addData("Lift position", motorGroup.currentPosition)
+    }
 }
