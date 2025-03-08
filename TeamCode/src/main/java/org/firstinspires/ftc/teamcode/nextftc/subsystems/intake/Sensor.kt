@@ -7,8 +7,8 @@ import com.rowanmcalpin.nextftc.ftc.OpModeData
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 object Sensor : Subsystem() {
-    lateinit var sensor: RevColorSensorV3
-    lateinit var servoSensor: AnalogInput
+    private lateinit var sensor: RevColorSensorV3
+    private lateinit var servoSensor: AnalogInput
 
     override fun initialize() {
         sensor = OpModeData.hardwareMap.get(RevColorSensorV3::class.java, "sensor_color")
@@ -16,10 +16,10 @@ object Sensor : Subsystem() {
     }
 
     val isHoldingSample
-        get() = sensor.getDistance(DistanceUnit.CM) < 1.1
+        get() = IntakeClaw.isClosed && servoSensor.voltage >= 1.273
 
     val isHoveringSample
-        get() = sensor.getDistance(DistanceUnit.CM) < 3.0
+        get() = sensor.getDistance(DistanceUnit.CM) < 5.0
 
     val isRed
         get() = sensor.red() > 0.1 && sensor.green() + sensor.blue() < 0.1
@@ -29,4 +29,12 @@ object Sensor : Subsystem() {
 
     val isYellow
         get() = sensor.red() > 0.1 && sensor.green() > 0.1 && sensor.blue() < 0.1
+
+    val voltage get() = servoSensor.voltage
+
+    fun red() = sensor.red()
+
+    fun green() = sensor.green()
+
+    fun blue() = sensor.blue()
 }
