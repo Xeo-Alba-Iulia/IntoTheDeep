@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Action
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.systems.IntakePositions.PICKUP
+import org.firstinspires.ftc.teamcode.systems.IntakePositions.SEARCH
 import org.firstinspires.ftc.teamcode.systems.IntakePositions.TRANSFER
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.*
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
@@ -21,8 +22,11 @@ class Intake(
     private var needsPickup = false
     private var pickupTimer = Timer()
 
+    private lateinit var oldPosition: IntakePositions
+
     override fun run(p: TelemetryPacket): Boolean {
         if (needsPickup) {
+            oldPosition = targetPosition
             pendul.targetPosition = Positions.IntakePendul.pickup
             rotate.targetPosition = Positions.IntakeRotate.pickup
         }
@@ -31,8 +35,10 @@ class Intake(
             isClosed = true
         }
 
-        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.2 && targetPosition == PICKUP) {
-            targetPosition = PICKUP
+        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.19) {
+            if (targetPosition == oldPosition) {
+                targetPosition = oldPosition
+            }
             needsPickup = false
         }
 
@@ -56,6 +62,14 @@ class Intake(
 
                     clawRotate.targetPosition = Positions.IntakeClawRotate.middle
                 }
+
+                SEARCH -> {
+                    pendul.targetPosition = Positions.IntakePendul.search
+                    rotate.targetPosition = Positions.IntakeRotate.search
+                    extend.targetPosition = Positions.Extend.`out`
+
+                    clawRotate.targetPosition = Positions.IntakeClawRotate.middle
+                }
             }
         }
 
@@ -66,7 +80,7 @@ class Intake(
         }
 
     fun pickUp() {
-        if (targetPosition == PICKUP) {
+        if (targetPosition != TRANSFER) {
             pickupTimer.resetTimer()
             needsPickup = true
         }
@@ -75,7 +89,7 @@ class Intake(
     fun switch() {
         targetPosition =
             when (targetPosition) {
-                PICKUP -> TRANSFER
+                PICKUP, SEARCH -> TRANSFER
                 TRANSFER -> PICKUP
             }
     }

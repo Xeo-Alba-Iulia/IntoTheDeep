@@ -66,10 +66,10 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var pickupWait = 0.4
+            var pickupWait = 0.25
 
             @JvmField @Volatile
-            var pickup = 0.2
+            var pickup = 0.08
 
             @JvmField
             @Volatile
@@ -77,6 +77,10 @@ object Positions {
 
             @JvmField @Volatile
             var wallPickup = 1.0
+
+            @JvmField
+            @Volatile
+            var search = 0.182
         }
     }
 
@@ -118,7 +122,7 @@ object Positions {
     class IntakeClaw {
         companion object {
             @JvmField @Volatile
-            var closed = 0.79
+            var closed = 0.8
 
             @JvmField @Volatile
             var open = 0.46
@@ -141,16 +145,19 @@ object Positions {
     class IntakeRotate {
         companion object {
             @JvmField @Volatile
-            var pickupWait = 0.1
+            var pickupWait = 0.14
 
             @JvmField @Volatile
-            var pickup = 0.05
+            var pickup = 0.08
 
             @JvmField @Volatile
             var transfer = 0.75
 
             @JvmField @Volatile
             var wallPickup = 1.0
+
+            @JvmField @Volatile
+            var search = 0.1
         }
     }
 
