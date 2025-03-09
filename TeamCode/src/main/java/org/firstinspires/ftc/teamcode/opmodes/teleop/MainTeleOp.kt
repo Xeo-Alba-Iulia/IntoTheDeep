@@ -7,10 +7,10 @@ import com.pedropathing.follower.Follower
 import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.localization.Pose
 import com.pedropathing.util.PIDFController
+import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
-import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
@@ -74,7 +74,7 @@ open class MainTeleOp : LinearOpMode() {
 
         val headingPIDFCoefficients = FollowerConstants.headingPIDFCoefficients
         val headingPIDF = PIDFController(headingPIDFCoefficients)
-        headingPIDF.targetPosition = 0.0
+        headingPIDF.targetPosition = Math.PI
 
         val moveGamepad: Gamepad = gamepad1
         val controlGamepad: Gamepad = gamepad2
@@ -102,7 +102,7 @@ open class MainTeleOp : LinearOpMode() {
             delayedActions.addDelayed(0.25) { robot.intake.isClosed = false }
         }
 
-        val averagePendulPosition = listOf(Positions.Pendul.bar, Positions.Pendul.pickup).average()
+        val autoIntakeTimer = Timer()
 
         val pressActionList =
             listOf(
@@ -119,7 +119,7 @@ open class MainTeleOp : LinearOpMode() {
                         robot.outtake.outtakePosition == OuttakePosition.BAR
                     ) {
                         robot.claw.isClosed = false
-                        robot.outtake.pendul.targetPosition = averagePendulPosition
+                        robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
                     } else {
                         robot.claw.isClosed = !robot.claw.isClosed
                     }
@@ -128,7 +128,10 @@ open class MainTeleOp : LinearOpMode() {
                         holdHeading = false
                     }
                 },
-                PressAction(controlGamepad::cross, robot.intake::switch),
+                PressAction(
+                    { controlGamepad.cross && autoIntakeTimer.elapsedTimeSeconds >= 0.6 },
+                    robot.intake::switch,
+                ),
                 PressAction(moveGamepad::cross) {
                     holdHeading = !holdHeading
                 },
@@ -199,18 +202,20 @@ open class MainTeleOp : LinearOpMode() {
                 -moveGamepad.left_stick_y.toDouble(),
                 -moveGamepad.left_stick_x.toDouble() * powerMultiply,
                 if (holdHeading) {
-                    follower.headingOffset += moveGamepad.right_stick_x.toDouble() * 0.025
+//                    follower.headingOffset += moveGamepad.right_stick_x.toDouble() * 0.025
+//
+//                    val modifiedHeading =
+//                        if (follower.pose.heading <= Math.PI) {
+//                            follower.pose.heading
+//                        } else {
+//                            -2 * Math.PI + follower.pose.heading
+//                        }
+//
+//                    RobotLog.d("Modified PID heading: $modifiedHeading")
 
-                    val modifiedHeading =
-                        if (follower.pose.heading <= Math.PI) {
-                            follower.pose.heading
-                        } else {
-                            -2 * Math.PI + follower.pose.heading
-                        }
+//                    RobotLog.d("Modified PID heading: $modifiedHeading")
 
-                    RobotLog.d("Modified PID heading: $modifiedHeading")
-
-                    headingPIDF.updatePosition(modifiedHeading)
+                    headingPIDF.updatePosition(follower.pose.heading)
                     headingPIDF.runPIDF()
                 } else {
                     -moveGamepad.right_stick_x.toDouble() * powerMultiply
@@ -244,13 +249,14 @@ open class MainTeleOp : LinearOpMode() {
             when {
                 gamepad1.right_bumper -> {
                     robot.intake.pickUp()
-                    delayedActions.addDelayed(0.31) {
+                    delayedActions.addDelayed(0.4) {
                         if (sensor.isHoldingSample && isAllianceColor) {
                             robot.intake.targetPosition = IntakePositions.TRANSFER
                         } else if (!sensor.isHoldingSample || isWrongSpecimenColor) {
                             robot.intake.isClosed = false
                         }
                     }
+                    autoIntakeTimer.resetTimer()
                 }
 
                 gamepad1.left_bumper -> {
@@ -299,6 +305,10 @@ open class MainTeleOp : LinearOpMode() {
                     gamepad.triangle -> Positions.Lift.half
                     else -> lift.targetPosition
                 }
+
+            if (gamepad.dpad_down) {
+                intake.targetPosition = IntakePositions.SPECIMEN_PICKUP
+            }
 
             val outtakePosition =
                 when {
