@@ -4,9 +4,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.teamcode.systems.IntakePositions.PICKUP
-import org.firstinspires.ftc.teamcode.systems.IntakePositions.SEARCH
-import org.firstinspires.ftc.teamcode.systems.IntakePositions.TRANSFER
+import org.firstinspires.ftc.teamcode.systems.IntakePositions.*
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.*
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
@@ -70,6 +68,14 @@ class Intake(
 
                     clawRotate.targetPosition = Positions.IntakeClawRotate.middle
                 }
+
+                SPECIMEN_PICKUP -> {
+                    pendul.targetPosition = Positions.IntakePendul.wallPickup
+                    rotate.targetPosition = Positions.IntakeRotate.wallPickup
+                    extend.targetPosition = Positions.Extend.`in`
+
+                    clawRotate.targetPosition = Positions.IntakeClawRotate.middle
+                }
             }
         }
 
@@ -79,8 +85,10 @@ class Intake(
             claw.isClosed = value
         }
 
+    private val pickupPositions = arrayOf(PICKUP, SEARCH)
+
     fun pickUp() {
-        if (targetPosition != TRANSFER) {
+        if (targetPosition in pickupPositions) {
             pickupTimer.resetTimer()
             needsPickup = true
         }
@@ -89,8 +97,8 @@ class Intake(
     fun switch() {
         targetPosition =
             when (targetPosition) {
-                PICKUP, SEARCH -> TRANSFER
-                TRANSFER -> PICKUP
+                in pickupPositions -> TRANSFER
+                else -> PICKUP
             }
     }
 }

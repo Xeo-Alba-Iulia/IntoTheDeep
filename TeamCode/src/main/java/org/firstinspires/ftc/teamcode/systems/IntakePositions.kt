@@ -4,4 +4,5 @@ enum class IntakePositions {
     PICKUP,
     TRANSFER,
     SEARCH,
+    SPECIMEN_PICKUP,
 }

@@ -20,7 +20,11 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.055
+            var pickup = 0.033
+
+            @JvmField
+            @Volatile
+            var specimenRelease = 0.8
         }
     }
 
@@ -37,7 +41,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var half = 650.0
+            var half = 600.0
 
             @JvmField
             @Volatile var hang = 1700.0
@@ -165,10 +169,10 @@ object Positions {
     class OuttakeRotate {
         companion object {
             @JvmField @Volatile
-            var down = 0.0
+            var down = 1.0
 
             @JvmField @Volatile
-            var up = 1.0
+            var up = 0.0
         }
     }
 }
