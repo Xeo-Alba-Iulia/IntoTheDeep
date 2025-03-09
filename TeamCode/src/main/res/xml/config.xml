@@ -8,6 +8,7 @@
             <Motor name="EncoderRight" port="3" /> <!-- Right Encoder -->
             <Servo name="ClawRotate" port="0" />
             <Servo name="Claw" port="2" />
+            <Servo name="OuttakeRotate" port="4" />
         </LynxModule>
         <ServoHub name="Servo Hub 3" port="3">
             <Servo name="Pendul1" port="0" />
@@ -23,6 +24,7 @@
             <Servo name="IntakeRotate" port="3" />
             <Servo name="IntakeClawRotate" port="4" />
             <Servo name="IntakeClaw" port="5" />
+            <AnalogInput name="servo_sensor" port="0" />
             <RevColorSensorV3 name="sensor_color" bus="0" port="0" />
             <ControlHubImuBHI260AP name="imu" bus="0" port="1" />
         </LynxModule>
