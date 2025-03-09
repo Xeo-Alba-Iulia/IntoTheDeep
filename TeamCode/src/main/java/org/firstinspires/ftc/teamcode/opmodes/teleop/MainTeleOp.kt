@@ -14,12 +14,33 @@ import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
+import org.firstinspires.ftc.teamcode.systems.subsystems.intake.Sensor
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.AllianceColor
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.util.PositionStore
 import org.firstinspires.ftc.teamcode.util.PressAction
 
-@TeleOp(name = "TeleOp", group = "A")
-class MainTeleOp : LinearOpMode() {
+@TeleOp
+open class MainTeleOp : LinearOpMode() {
+    private lateinit var sensor: Sensor
+
+    protected open val allianceColor = AllianceColor.RED
+
+    private val isAllianceColor get() =
+        when (allianceColor) {
+            AllianceColor.RED -> sensor.isRed
+            AllianceColor.BLUE -> sensor.isBlue
+        }
+
+    private val isWrongSpecimenColor get() =
+        sensor.isYellow ||
+            when (allianceColor) {
+                AllianceColor.RED -> sensor.isBlue
+                AllianceColor.BLUE -> sensor.isRed
+            }
+
+    private val isBasketColor get() = isAllianceColor || sensor.isYellow
+
     private fun MutableList<Pair<Long, Runnable>>.addDelayed(
         delay: Double,
         runnable: Runnable,
@@ -43,8 +64,9 @@ class MainTeleOp : LinearOpMode() {
         }
     }
 
-    override fun runOpMode() {
+    final override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
+        sensor = Sensor(hardwareMap)
 
         fun inTransfer() =
             robot.lift.targetPosition == Positions.Lift.transfer &&
@@ -222,6 +244,13 @@ class MainTeleOp : LinearOpMode() {
             when {
                 gamepad1.right_bumper -> {
                     robot.intake.pickUp()
+                    delayedActions.addDelayed(0.31) {
+                        if (sensor.isHoldingSample && isAllianceColor) {
+                            robot.intake.targetPosition = IntakePositions.TRANSFER
+                        } else if (!sensor.isHoldingSample || isWrongSpecimenColor) {
+                            robot.intake.isClosed = false
+                        }
+                    }
                 }
 
                 gamepad1.left_bumper -> {
