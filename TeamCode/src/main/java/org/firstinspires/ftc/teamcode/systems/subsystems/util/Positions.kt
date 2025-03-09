@@ -126,7 +126,7 @@ object Positions {
     class IntakeClaw {
         companion object {
             @JvmField @Volatile
-            var closed = 0.8
+            var closed = 0.81
 
             @JvmField @Volatile
             var open = 0.46

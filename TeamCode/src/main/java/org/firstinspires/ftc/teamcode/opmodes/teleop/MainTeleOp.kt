@@ -7,10 +7,10 @@ import com.pedropathing.follower.Follower
 import com.pedropathing.follower.FollowerConstants
 import com.pedropathing.localization.Pose
 import com.pedropathing.util.PIDFController
-import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
+import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.Intake
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
@@ -103,8 +103,6 @@ open class MainTeleOp : LinearOpMode() {
             delayedActions.addDelayed(0.25) { robot.intake.isClosed = false }
         }
 
-        val autoIntakeTimer = Timer()
-
         val pressActionList =
             listOf(
                 PressAction(controlGamepad::right_bumper) {
@@ -129,10 +127,13 @@ open class MainTeleOp : LinearOpMode() {
                         holdHeading = false
                     }
                 },
-                PressAction(controlGamepad::cross, robot.intake::switch),
-                PressAction(moveGamepad::cross) {
-                    holdHeading = !holdHeading
+                PressAction(controlGamepad::left_bumper) {
+                    robot.intake.targetPosition = IntakePositions.TRANSFER
                 },
+                PressAction(controlGamepad::cross) {
+                    robot.intake.targetPosition = IntakePositions.PICKUP
+                },
+                PressAction(moveGamepad::cross) { holdHeading = !holdHeading },
                 PressAction(controlGamepad::right_stick_button) {
                     robot.lift.targetPosition = Positions.Lift.up
                     robot.outtake.outtakePosition = OuttakePosition.TRANSFER
@@ -237,14 +238,31 @@ open class MainTeleOp : LinearOpMode() {
                 when {
                     gamepad1.right_bumper -> {
                         robot.intake.pickUp()
-                        delayedActions.addDelayed(0.4) {
-                            if (sensor.isHoldingSample && isAllianceColor) {
-                                robot.intake.targetPosition = IntakePositions.TRANSFER
-                            } else if (!sensor.isHoldingSample || isWrongSpecimenColor) {
-                                robot.intake.isClosed = false
+                        delayedActions.addDelayed(0.2) {
+                            var colorDetections = 0
+                            colorDetections += if (sensor.isBlue) 1 else 0
+                            colorDetections += if (sensor.isRed) 1 else 0
+                            colorDetections += if (sensor.isYellow) 1 else 0
+
+                            if (colorDetections > 1) {
+                                RobotLog.e(
+                                    """
+                                    Multiple Colors Detected:
+                                        Red: ${sensor.isRed},
+                                        Blue: ${sensor.isBlue},
+                                        Yellow: ${sensor.isYellow},
+                                    """.trimIndent(),
+                                )
+                            }
+
+                            if (!controlGamepad.cross && !controlGamepad.left_bumper) {
+                                if (!sensor.isHoldingSample || isWrongSpecimenColor) {
+                                    robot.intake.isClosed = false
+                                } else if (sensor.isHoldingSample && isAllianceColor) {
+                                    robot.intake.targetPosition = IntakePositions.TRANSFER
+                                }
                             }
                         }
-                        autoIntakeTimer.resetTimer()
                     }
 
                     gamepad1.left_bumper -> {

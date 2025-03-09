@@ -15,7 +15,7 @@ class Sensor(
      * **Trebuie neapărat verificat după delay-ul de închidere la gheară**
      */
     val isHoldingSample
-        get() = servoSensor.voltage >= 1.273
+        get() = servoSensor.voltage >= 1.270
 
     val isHoveringSample
         get() = sensor.getDistance(DistanceUnit.CM) < 4.0
@@ -27,7 +27,7 @@ class Sensor(
         get() = sensor.blue() > 2 * sensor.green()
 
     val isYellow
-        get() = sensor.green() > sensor.red() && sensor.green() > 450
+        get() = sensor.green() > sensor.red() && sensor.green() > 450 && sensor.blue() < 1000
 
     fun red() = sensor.red()
 
