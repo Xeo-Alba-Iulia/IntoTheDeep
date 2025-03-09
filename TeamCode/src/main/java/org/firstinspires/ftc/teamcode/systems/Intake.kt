@@ -85,7 +85,9 @@ class Intake(
             claw.isClosed = value
         }
 
-    private val pickupPositions = arrayOf(PICKUP, SEARCH)
+    companion object {
+        val pickupPositions = arrayOf(PICKUP, SEARCH)
+    }
 
     fun pickUp() {
         if (targetPosition in pickupPositions) {
