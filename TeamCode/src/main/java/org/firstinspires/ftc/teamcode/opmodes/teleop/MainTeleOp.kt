@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.RobotHardware
+import org.firstinspires.ftc.teamcode.systems.Intake
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.Sensor
@@ -128,10 +129,7 @@ open class MainTeleOp : LinearOpMode() {
                         holdHeading = false
                     }
                 },
-                PressAction(
-                    { controlGamepad.cross && autoIntakeTimer.elapsedTimeSeconds >= 0.6 },
-                    robot.intake::switch,
-                ),
+                PressAction(controlGamepad::cross, robot.intake::switch),
                 PressAction(moveGamepad::cross) {
                     holdHeading = !holdHeading
                 },
@@ -202,18 +200,7 @@ open class MainTeleOp : LinearOpMode() {
                 -moveGamepad.left_stick_y.toDouble(),
                 -moveGamepad.left_stick_x.toDouble() * powerMultiply,
                 if (holdHeading) {
-//                    follower.headingOffset += moveGamepad.right_stick_x.toDouble() * 0.025
-//
-//                    val modifiedHeading =
-//                        if (follower.pose.heading <= Math.PI) {
-//                            follower.pose.heading
-//                        } else {
-//                            -2 * Math.PI + follower.pose.heading
-//                        }
-//
-//                    RobotLog.d("Modified PID heading: $modifiedHeading")
-
-//                    RobotLog.d("Modified PID heading: $modifiedHeading")
+                    follower.headingOffset += moveGamepad.right_stick_x.toDouble() * 0.025
 
                     headingPIDF.updatePosition(follower.pose.heading)
                     headingPIDF.runPIDF()
@@ -246,33 +233,35 @@ open class MainTeleOp : LinearOpMode() {
                 follower.pose = Pose(0.0, 0.0, Math.PI)
             }
 
-            when {
-                gamepad1.right_bumper -> {
-                    robot.intake.pickUp()
-                    delayedActions.addDelayed(0.4) {
-                        if (sensor.isHoldingSample && isAllianceColor) {
-                            robot.intake.targetPosition = IntakePositions.TRANSFER
-                        } else if (!sensor.isHoldingSample || isWrongSpecimenColor) {
-                            robot.intake.isClosed = false
+            if (robot.intake.targetPosition in Intake.pickupPositions) {
+                when {
+                    gamepad1.right_bumper -> {
+                        robot.intake.pickUp()
+                        delayedActions.addDelayed(0.4) {
+                            if (sensor.isHoldingSample && isAllianceColor) {
+                                robot.intake.targetPosition = IntakePositions.TRANSFER
+                            } else if (!sensor.isHoldingSample || isWrongSpecimenColor) {
+                                robot.intake.isClosed = false
+                            }
                         }
+                        autoIntakeTimer.resetTimer()
                     }
-                    autoIntakeTimer.resetTimer()
+
+                    gamepad1.left_bumper -> {
+                        robot.intake.isClosed = false
+                        robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.middle
+                    }
                 }
 
-                gamepad1.left_bumper -> {
-                    robot.intake.isClosed = false
-                    robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.middle
+                if (moveGamepad.right_trigger > 0.7) {
+                    robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.right
+                    robot.intake.claw.isClosed = false
                 }
-            }
 
-            if (moveGamepad.right_trigger > 0.7) {
-                robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.right
-                robot.intake.claw.isClosed = false
-            }
-
-            if (moveGamepad.left_trigger > 0.7) {
-                robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.left
-                robot.intake.claw.isClosed = false
+                if (moveGamepad.left_trigger > 0.7) {
+                    robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.left
+                    robot.intake.claw.isClosed = false
+                }
             }
         }
     }
