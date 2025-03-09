@@ -16,19 +16,19 @@ object Sensor : Subsystem() {
     }
 
     val isHoldingSample
-        get() = IntakeClaw.isClosed && servoSensor.voltage >= 1.273
+        get() = IntakeClaw.isClosed && servoSensor.voltage >= 1.270
 
     val isHoveringSample
-        get() = sensor.getDistance(DistanceUnit.CM) < 5.0
+        get() = sensor.getDistance(DistanceUnit.CM) < 4.0
 
     val isRed
-        get() = sensor.red() > 0.1 && sensor.green() + sensor.blue() < 0.1
+        get() = sensor.red() > sensor.green() && sensor.red() > 250
 
     val isBlue
-        get() = sensor.blue() > 0.1 && sensor.red() + sensor.green() < 0.1
+        get() = sensor.blue() > 2 * sensor.green() && sensor.blue() > 250
 
     val isYellow
-        get() = sensor.red() > 0.1 && sensor.green() > 0.1 && sensor.blue() < 0.1
+        get() = sensor.green() > sensor.red() && sensor.green() > 450 && sensor.blue() < 1000
 
     val voltage get() = servoSensor.voltage
 

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems.util
 
 import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 
 object Positions {
     @Config
@@ -21,7 +20,11 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.834
+            var pickup = 0.033
+
+            @JvmField
+            @Volatile
+            var specimenRelease = 0.8
         }
     }
 
@@ -38,7 +41,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var half = 650.0
+            var half = 600.0
 
             @JvmField
             @Volatile var hang = 1700.0
@@ -50,7 +53,6 @@ object Positions {
     }
 
     @Config
-    @Disabled
     class Extend {
         companion object {
             @JvmField
@@ -68,14 +70,21 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var pickupWait = 0.4
+            var pickupWait = 0.25
 
             @JvmField @Volatile
-            var pickup = 0.2
+            var pickup = 0.08
 
             @JvmField
             @Volatile
             var transfer = 0.8
+
+            @JvmField @Volatile
+            var wallPickup = 1.0
+
+            @JvmField
+            @Volatile
+            var search = 0.182
         }
     }
 
@@ -109,7 +118,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.61
+            var pickup = 0.27
         }
     }
 
@@ -117,7 +126,7 @@ object Positions {
     class IntakeClaw {
         companion object {
             @JvmField @Volatile
-            var closed = 0.79
+            var closed = 0.81
 
             @JvmField @Volatile
             var open = 0.46
@@ -140,13 +149,30 @@ object Positions {
     class IntakeRotate {
         companion object {
             @JvmField @Volatile
-            var pickupWait = 0.1
+            var pickupWait = 0.14
 
             @JvmField @Volatile
-            var pickup = 0.05
+            var pickup = 0.08
 
             @JvmField @Volatile
             var transfer = 0.75
+
+            @JvmField @Volatile
+            var wallPickup = 1.0
+
+            @JvmField @Volatile
+            var search = 0.1
+        }
+    }
+
+    @Config
+    class OuttakeRotate {
+        companion object {
+            @JvmField @Volatile
+            var down = 0.0
+
+            @JvmField @Volatile
+            var up = 1.0
         }
     }
 }
