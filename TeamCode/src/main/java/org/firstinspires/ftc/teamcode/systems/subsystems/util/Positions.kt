@@ -8,11 +8,11 @@ object Positions {
         companion object {
             @JvmField
             @Volatile
-            var transfer = 0.19
+            var transfer = 0.14
 
             @JvmField
             @Volatile
-            var bar = 0.71
+            var bar = 0.66
 
             @JvmField
             @Volatile
@@ -20,11 +20,11 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.033
+            var pickup = 0.0
 
             @JvmField
             @Volatile
-            var specimenRelease = 0.8
+            var specimenRelease = 0.75
         }
     }
 
@@ -37,11 +37,11 @@ object Positions {
 
             @JvmField
             @Volatile
-            var transfer = 100.0
+            var transfer = 215.0
 
             @JvmField
             @Volatile
-            var half = 600.0
+            var half = 525.0
 
             @JvmField
             @Volatile var hang = 1700.0
@@ -77,7 +77,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var transfer = 0.8
+            var transfer = 0.63
 
             @JvmField @Volatile
             var wallPickup = 1.0
@@ -110,7 +110,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var bar: Double = 0.73
+            var bar: Double = 0.8
 
             @JvmField
             @Volatile
@@ -155,7 +155,7 @@ object Positions {
             var pickup = 0.08
 
             @JvmField @Volatile
-            var transfer = 0.75
+            var transfer = 0.743
 
             @JvmField @Volatile
             var wallPickup = 1.0
@@ -172,7 +172,7 @@ object Positions {
             var down = 0.0
 
             @JvmField @Volatile
-            var up = 0.825
+            var up = 0.83
         }
     }
 }
