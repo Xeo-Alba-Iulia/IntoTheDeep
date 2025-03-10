@@ -25,11 +25,12 @@ import pedroPathing.constants.LConstants
 @Autonomous
 class Basket : DelayedOpMode() {
     val beginPose = Pose(11.6, 118.0, Math.toRadians(45.0))
-    val samplePoints = arrayOf(
-        Point(21.5, 126.3),
-        Point(21.0, 128.6),
-        Point(23.2, 131.6)
-    )
+    val samplePoints =
+        arrayOf(
+            Point(21.5, 126.3),
+            Point(21.0, 128.6),
+            Point(23.2, 131.6),
+        )
     val scorePose = Pose(16.0, 128.0, Math.toRadians(-45.0))
     val parkPose = Pose(64.2, 92.3, Math.toRadians(90.0))
     val parkControl = Point(65.5, 130.1)
@@ -60,38 +61,49 @@ class Basket : DelayedOpMode() {
         val intake = Intake(hardwareMap)
         val pendul = Pendul(hardwareMap)
 
-        val firstScore = PathBuilder()
-            .addBezierLine(Point(beginPose), Point(scorePose))
-            .setLinearHeadingInterpolation(beginPose.heading, scorePose.heading)
-            .build()
-
-        val pickupSamples = arrayOf(
-            PathBuilder().addBezierLine(Point(scorePose), samplePoints[0])
-                .setTangentHeadingInterpolation()
-                .build(),
-            PathBuilder().addBezierLine(Point(scorePose), samplePoints[1])
-                .setTangentHeadingInterpolation()
-                .build(),
-            PathBuilder().addBezierLine(Point(scorePose), samplePoints[2])
-                .setTangentHeadingInterpolation()
+        val firstScore =
+            PathBuilder()
+                .addBezierLine(Point(beginPose), Point(scorePose))
+                .setLinearHeadingInterpolation(beginPose.heading, scorePose.heading)
                 .build()
-        )
 
-        val scorePaths = arrayOf(
-            PathBuilder().addBezierLine(samplePoints[0], Point(scorePose))
-                .setTangentHeadingInterpolation()
-                .build(),
-            PathBuilder().addBezierLine(samplePoints[1], Point(scorePose))
-                .setTangentHeadingInterpolation()
-                .build(),
-            PathBuilder().addBezierLine(samplePoints[2], Point(scorePose))
-                .setTangentHeadingInterpolation()
+        val pickupSamples =
+            arrayOf(
+                PathBuilder()
+                    .addBezierLine(Point(scorePose), samplePoints[0])
+                    .setTangentHeadingInterpolation()
+                    .build(),
+                PathBuilder()
+                    .addBezierLine(Point(scorePose), samplePoints[1])
+                    .setTangentHeadingInterpolation()
+                    .build(),
+                PathBuilder()
+                    .addBezierLine(Point(scorePose), samplePoints[2])
+                    .setTangentHeadingInterpolation()
+                    .build(),
+            )
+
+        val scorePaths =
+            arrayOf(
+                PathBuilder()
+                    .addBezierLine(samplePoints[0], Point(scorePose))
+                    .setConstantHeadingInterpolation(scorePose.heading)
+                    .build(),
+                PathBuilder()
+                    .addBezierLine(samplePoints[1], Point(scorePose))
+                    .setConstantHeadingInterpolation(scorePose.heading)
+                    .build(),
+                PathBuilder()
+                    .addBezierLine(samplePoints[2], Point(scorePose))
+                    .setConstantHeadingInterpolation(scorePose.heading)
+                    .build(),
+            )
+
+        val parkPath =
+            PathBuilder()
+                .addBezierCurve(Point(scorePose), parkControl, Point(parkPose))
+                .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading)
                 .build()
-        )
-
-        val parkPath = PathBuilder().addBezierCurve(Point(scorePose), parkControl, Point(parkPose))
-            .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading)
-            .build()
 
         while (opModeInInit()) {
             val packet = TelemetryPacket()
@@ -109,28 +121,48 @@ class Basket : DelayedOpMode() {
             }
 
             when (state) {
+                -10 -> {
+                    // Reserved for idling while waiting for a delayedAction to finish
+                    try {
+                        assert(delayedActions.isNotEmpty())
+                    } catch (e: AssertionError) {
+                        throw RuntimeException(e)
+                    }
+                }
+
                 0 -> {
                     follower.followPath(firstScore)
                     robot.outtake.outtakePosition = OuttakePosition.BASKET
+                    robot.lift.targetPosition = Positions.Lift.up
+                    delayedActions.addDelayed(1.0) {
+                        follower.followPath(firstScore)
+                        state = 1
+                    }
+                    state = -10
                 }
+
                 1 -> {
                     if (!follower.isBusy) {
                         robot.claw.isClosed = false
                         state = 2
                     }
                 }
+
                 2 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
                         follower.followPath(pickupSamples[0])
                         robot.intake.targetPosition = IntakePositions.PICKUP
+                        state = 3
                     }
                 }
+
                 3 -> {
                     if (!follower.isBusy) {
                         robot.intake.pickUp()
                         state = 4
                     }
                 }
+
                 4 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
                         follower.followPath(scorePaths[0])
@@ -139,70 +171,93 @@ class Basket : DelayedOpMode() {
                             robot.lift.targetPosition = Positions.Lift.up
                             robot.outtake.outtakePosition = OuttakePosition.BASKET
                         }
+                        delayedActions.addDelayed(1.5) {
+                            state = 5
+                        }
+                        state = -10
                     }
                 }
+
                 5 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
                         robot.claw.isClosed = false
                         state = 6
                     }
                 }
+
                 6 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
                         follower.followPath(pickupSamples[1])
                         robot.intake.targetPosition = IntakePositions.PICKUP
+                        state = 7
                     }
                 }
+
                 7 -> {
                     if (!follower.isBusy) {
                         robot.intake.pickUp()
                         state = 8
                     }
                 }
+
                 8 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        follower.followPath(scorePaths[1])
                         transfer(robot)
                         delayedActions.addDelayed(0.8) {
                             robot.lift.targetPosition = Positions.Lift.up
                             robot.outtake.outtakePosition = OuttakePosition.BASKET
                         }
+                        delayedActions.addDelayed(1.5) {
+                            follower.followPath(scorePaths[1])
+                            state = 9
+                        }
+                        state = -10
                     }
                 }
+
                 9 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
                         robot.claw.isClosed = false
                         state = 10
                     }
                 }
+
                 10 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
                         follower.followPath(pickupSamples[2])
                         robot.intake.targetPosition = IntakePositions.PICKUP
+                        state = 11
                     }
                 }
+
                 11 -> {
                     if (!follower.isBusy) {
                         robot.intake.pickUp()
                         state = 12
                     }
                 }
+
                 12 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        follower.followPath(scorePaths[2])
                         transfer(robot)
                         delayedActions.addDelayed(0.8) {
                             robot.lift.targetPosition = Positions.Lift.up
                             robot.outtake.outtakePosition = OuttakePosition.BASKET
                         }
+                        delayedActions.addDelayed(1.5) {
+                            follower.followPath(scorePaths[2])
+                            state = 13
+                        }
                     }
                 }
+
                 13 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
                         robot.claw.isClosed = false
                         state = 14
                     }
                 }
+
                 14 -> {
                     follower.followPath(parkPath)
                     robot.outtake.outtakePosition = OuttakePosition.BAR
