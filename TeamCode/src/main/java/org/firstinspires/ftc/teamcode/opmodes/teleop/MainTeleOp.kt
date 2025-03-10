@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.Sensor
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.AllianceColor
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.util.DelayedActions
 import org.firstinspires.ftc.teamcode.util.PositionStore
 import org.firstinspires.ftc.teamcode.util.PressAction
 
@@ -41,29 +42,6 @@ open class MainTeleOp : LinearOpMode() {
             }
 
     private val isBasketColor get() = isAllianceColor || sensor.isYellow
-
-    private fun MutableList<Pair<Long, Runnable>>.addDelayed(
-        delay: Double,
-        runnable: Runnable,
-    ) = add(
-        Pair(
-            System.currentTimeMillis() + (delay * 1000).toLong(),
-            runnable,
-        ),
-    )
-
-    private fun MutableList<Pair<Long, Runnable>>.run() {
-        val iterator = iterator()
-
-        while (iterator.hasNext()) {
-            val action = iterator.next()
-
-            if (System.currentTimeMillis() >= action.first) {
-                action.second.run()
-                iterator.remove()
-            }
-        }
-    }
 
     final override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
@@ -94,7 +72,7 @@ open class MainTeleOp : LinearOpMode() {
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(PositionStore.pose)
 
-        val delayedActions = mutableListOf<Pair<Long, Runnable>>()
+        val delayedActions = DelayedActions()
 
         var holdHeading = false
 
