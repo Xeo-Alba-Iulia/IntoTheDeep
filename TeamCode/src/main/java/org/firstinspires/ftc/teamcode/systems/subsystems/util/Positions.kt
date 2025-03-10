@@ -172,7 +172,7 @@ object Positions {
             var down = 0.0
 
             @JvmField @Volatile
-            var up = 1.0
+            var up = 0.825
         }
     }
 }
