@@ -18,9 +18,9 @@ import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.intake.Sensor
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.AllianceColor
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
-import org.firstinspires.ftc.teamcode.util.DelayedActions
-import org.firstinspires.ftc.teamcode.util.PositionStore
-import org.firstinspires.ftc.teamcode.util.PressAction
+import org.firstinspires.ftc.teamcode.util.*
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @TeleOp
 open class MainTeleOp : LinearOpMode() {
@@ -72,22 +72,28 @@ open class MainTeleOp : LinearOpMode() {
         val follower = Follower(this.hardwareMap)
         follower.setStartingPose(PositionStore.pose)
 
-        val delayedActions = DelayedActions()
-
         var holdHeading = false
+
+        val delayedActions = ActionList<DelayedAction<Unit>>()
 
         fun finishTransfer() {
             robot.claw.isClosed = true
-            delayedActions.addDelayed(0.25) { robot.intake.isClosed = false }
+            delayedActions.add(DelayedAction(250.milliseconds) { robot.intake.isClosed = false })
         }
 
         val pressActionList =
-            listOf(
-                PressAction(controlGamepad::right_bumper) {
+            ActionList(
+                FunctionAction(controlGamepad::right_bumper) {
                     if (inTransfer()) {
                         if (robot.claw.isClosed) {
                             robot.intake.claw.isClosed = true
-                            delayedActions.addDelayed(0.25) { robot.claw.isClosed = false }
+                            delayedActions.add(
+                                DelayedAction(
+                                    250.milliseconds,
+                                ) {
+                                    robot.claw.isClosed = false
+                                },
+                            )
                         } else {
                             finishTransfer()
                         }
@@ -105,28 +111,30 @@ open class MainTeleOp : LinearOpMode() {
                         holdHeading = false
                     }
                 },
-                PressAction(controlGamepad::left_bumper) {
+                FunctionAction(controlGamepad::left_bumper) {
                     robot.intake.targetPosition = IntakePositions.TRANSFER
                 },
-                PressAction(controlGamepad::cross) {
+                FunctionAction(controlGamepad::cross) {
                     robot.intake.targetPosition = IntakePositions.PICKUP
                 },
-                PressAction(moveGamepad::cross) { holdHeading = !holdHeading },
-                PressAction(controlGamepad::right_stick_button) {
+                FunctionAction(moveGamepad::cross) { holdHeading = !holdHeading },
+                FunctionAction(controlGamepad::right_stick_button) {
                     robot.lift.targetPosition = Positions.Lift.up
                     robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                 },
-                PressAction(controlGamepad::left_stick_button) {
+                FunctionAction(controlGamepad::left_stick_button) {
                     robot.lift.targetPosition = Positions.Lift.hang
                 },
-                PressAction(controlGamepad::circle) {
+                FunctionAction(controlGamepad::circle) {
                     if (inTransfer()) {
                         if (!robot.claw.isClosed) {
                             finishTransfer()
-                            delayedActions.addDelayed(0.3) {
-                                robot.lift.targetPosition = Positions.Lift.up
-                                robot.outtake.outtakePosition = OuttakePosition.BASKET
-                            }
+                            delayedActions.add(
+                                DelayedAction(0.3.seconds) {
+                                    robot.lift.targetPosition = Positions.Lift.up
+                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
+                                },
+                            )
                         } else {
                             robot.lift.targetPosition = Positions.Lift.up
                             robot.outtake.outtakePosition = OuttakePosition.BASKET
@@ -135,13 +143,13 @@ open class MainTeleOp : LinearOpMode() {
                         robot.lift.targetPosition = Positions.Lift.up
                     }
                 },
-                PressAction({ -controlGamepad.left_stick_y < -0.7 }) {
+                FunctionAction({ -controlGamepad.left_stick_y < -0.7 }) {
                     // Joystick-urile sunt inversate
                     robot.lift.targetPosition = Positions.Lift.half
                     robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                     robot.claw.isClosed = false
                 },
-                PressAction(controlGamepad::dpad_right) {
+                FunctionAction(controlGamepad::dpad_right) {
                     robot.claw.isClosed = false
                     holdHeading = false
                     val setOuttakeLiftPosition = {
@@ -150,15 +158,15 @@ open class MainTeleOp : LinearOpMode() {
                     }
                     if (robot.intake.targetPosition != IntakePositions.TRANSFER) {
                         robot.intake.targetPosition = IntakePositions.TRANSFER
-                        delayedActions.addDelayed(0.2, setOuttakeLiftPosition)
+                        delayedActions.add(DelayedAction(0.2.seconds) { setOuttakeLiftPosition() })
                     } else {
                         setOuttakeLiftPosition()
                     }
                 },
-                PressAction({ -controlGamepad.right_stick_y < -0.9 && !robot.lift.isResetting }) {
+                FunctionAction({ -controlGamepad.right_stick_y < -0.9 && !robot.lift.isResetting }) {
                     robot.lift.isResetting = !robot.lift.isResetting
                 },
-                PressAction({ -controlGamepad.right_stick_y >= -0.9 && robot.lift.isResetting }) {
+                FunctionAction({ -controlGamepad.right_stick_y >= -0.9 && robot.lift.isResetting }) {
                     robot.lift.isResetting = !robot.lift.isResetting
                 },
             )
@@ -191,11 +199,9 @@ open class MainTeleOp : LinearOpMode() {
             follower.update()
             follower.drawOnDashBoard()
 
-            for (action in pressActionList) {
-                action.run()
-            }
+            pressActionList()
 
-            delayedActions.run()
+            delayedActions()
 
             robot.applyPositions(controlGamepad)
 
@@ -216,31 +222,33 @@ open class MainTeleOp : LinearOpMode() {
                 when {
                     gamepad1.right_bumper -> {
                         robot.intake.pickUp()
-                        delayedActions.addDelayed(0.2) {
-                            var colorDetections = 0
-                            colorDetections += if (sensor.isBlue) 1 else 0
-                            colorDetections += if (sensor.isRed) 1 else 0
-                            colorDetections += if (sensor.isYellow) 1 else 0
+                        delayedActions.add(
+                            DelayedAction(0.2.seconds) {
+                                var colorDetections = 0
+                                colorDetections += if (sensor.isBlue) 1 else 0
+                                colorDetections += if (sensor.isRed) 1 else 0
+                                colorDetections += if (sensor.isYellow) 1 else 0
 
-                            if (colorDetections > 1) {
-                                RobotLog.e(
-                                    """
-                                    Multiple Colors Detected:
-                                        Red: ${sensor.isRed},
-                                        Blue: ${sensor.isBlue},
-                                        Yellow: ${sensor.isYellow},
-                                    """.trimIndent(),
-                                )
-                            }
-
-                            if (!controlGamepad.cross && !controlGamepad.left_bumper) {
-                                if (!sensor.isHoldingSample || isWrongSpecimenColor) {
-                                    robot.intake.isClosed = false
-                                } else if (sensor.isHoldingSample && isAllianceColor) {
-                                    robot.intake.targetPosition = IntakePositions.TRANSFER
+                                if (colorDetections > 1) {
+                                    RobotLog.e(
+                                        """
+                                        Multiple Colors Detected:
+                                            Red: ${sensor.isRed},
+                                            Blue: ${sensor.isBlue},
+                                            Yellow: ${sensor.isYellow},
+                                        """.trimIndent(),
+                                    )
                                 }
-                            }
-                        }
+
+                                if (!controlGamepad.cross && !controlGamepad.left_bumper) {
+                                    if (!sensor.isHoldingSample || isWrongSpecimenColor) {
+                                        robot.intake.isClosed = false
+                                    } else if (sensor.isHoldingSample && isAllianceColor) {
+                                        robot.intake.targetPosition = IntakePositions.TRANSFER
+                                    }
+                                }
+                            },
+                        )
                     }
 
                     gamepad1.left_bumper -> {
