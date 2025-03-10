@@ -4,14 +4,13 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Servo
-import com.rowanmcalpin.nextftc.core.SubsystemGroup
 import com.rowanmcalpin.nextftc.core.command.groups.SequentialGroup
 import com.rowanmcalpin.nextftc.core.command.utility.InstantCommand
 import com.rowanmcalpin.nextftc.ftc.NextFTCOpMode
 import org.firstinspires.ftc.teamcode.nextftc.Intake
 
 @TeleOp
-class SensorTest : NextFTCOpMode(SubsystemGroup(Sensor, IntakeClaw, Intake)) {
+class SensorTest : NextFTCOpMode(Sensor, Intake) {
     lateinit var telemetry: MultipleTelemetry
     lateinit var servo: Servo
 
