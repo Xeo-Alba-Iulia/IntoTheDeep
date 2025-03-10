@@ -15,4 +15,10 @@ class DelayedAction<out T>(
     )
 
     override fun compareTo(other: DelayedAction<*>) = this.endTimeMark.compareTo(other.endTimeMark)
+
+    // Inverting the check on delayedActions just leads to instant execution, so we throw an exception
+    override fun invertCheck() =
+        throw UnsupportedOperationException(
+            "invertCheck() is not supported for DelayedAction.",
+        )
 }

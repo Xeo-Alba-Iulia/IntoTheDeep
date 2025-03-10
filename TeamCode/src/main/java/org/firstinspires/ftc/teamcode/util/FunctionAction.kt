@@ -6,14 +6,16 @@ package org.firstinspires.ftc.teamcode.util
  * @param check         The check function for this action
  * @param execute       Function to execute the first time check evaluates to true
  * @param willCancel    Whether the Action should keep executing after it completes once
+ * @param lastState     Should be set
  */
 open class FunctionAction<out T>(
     val check: () -> Boolean,
     val willCancel: Boolean = false,
-    private var lastState: Boolean = false,
+    initialState: Boolean = check(),
     val execute: () -> T,
 ) {
-    var isCanceled = false
+    open var isCanceled = false
+    private var lastState = initialState
 
     operator fun invoke(): T? {
         val currentState = check()
@@ -29,5 +31,5 @@ open class FunctionAction<out T>(
         return returnValue
     }
 
-    fun invertCheck() = FunctionAction<T>({ !check() }, willCancel, !lastState, execute)
+    open fun invertCheck() = FunctionAction<T>({ !check() }, willCancel, execute = execute)
 }
