@@ -28,20 +28,20 @@ open class MainTeleOp : LinearOpMode() {
 
     protected open val allianceColor = AllianceColor.RED
 
+    protected var isYellowAllowed = false
     private val isAllianceColor get() =
         when (allianceColor) {
             AllianceColor.RED -> sensor.isRed
             AllianceColor.BLUE -> sensor.isBlue
         }
+    private val isOppositeColor get() =
+        when (allianceColor) {
+            AllianceColor.RED -> sensor.isBlue
+            AllianceColor.BLUE -> sensor.isRed
+        }
 
-    private val isWrongSpecimenColor get() =
-        sensor.isYellow ||
-            when (allianceColor) {
-                AllianceColor.RED -> sensor.isBlue
-                AllianceColor.BLUE -> sensor.isRed
-            }
-
-    private val isBasketColor get() = isAllianceColor || sensor.isYellow
+    private val isRightColor get() = isAllianceColor || (isYellowAllowed && sensor.isYellow)
+    private val isWrongColor get() = isOppositeColor || (!isYellowAllowed && sensor.isYellow)
 
     final override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
@@ -74,7 +74,7 @@ open class MainTeleOp : LinearOpMode() {
 
         var holdHeading = false
 
-        val delayedActions = ActionList<DelayedAction<Unit>>()
+        val delayedActions = ActionList<FunctionAction<Unit>>()
 
         fun finishTransfer() {
             robot.claw.isClosed = true
@@ -105,10 +105,6 @@ open class MainTeleOp : LinearOpMode() {
                         robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
                     } else {
                         robot.claw.isClosed = !robot.claw.isClosed
-                    }
-
-                    if (robot.claw.isClosed) {
-                        holdHeading = false
                     }
                 },
                 FunctionAction(controlGamepad::left_bumper) {
@@ -169,6 +165,47 @@ open class MainTeleOp : LinearOpMode() {
                 FunctionAction({ -controlGamepad.right_stick_y >= -0.9 && robot.lift.isResetting }) {
                     robot.lift.isResetting = !robot.lift.isResetting
                 },
+                FunctionAction(moveGamepad::right_bumper) {
+                    delayedActions.add(
+                        FunctionAction(robot.intake::isUp, willCancel = true) {
+                            var colorDetections = 0
+                            colorDetections += if (sensor.isBlue) 1 else 0
+                            colorDetections += if (sensor.isRed) 1 else 0
+                            colorDetections += if (sensor.isYellow) 1 else 0
+
+                            if (colorDetections > 1) {
+                                RobotLog.e(
+                                    """
+                                    Multiple Colors Detected:
+                                        Red: ${sensor.isRed},
+                                        Blue: ${sensor.isBlue},
+                                        Yellow: ${sensor.isYellow},
+                                    """.trimIndent(),
+                                )
+                                throw RuntimeException("Multiple colors detected")
+                            }
+
+                            if (!controlGamepad.cross && !controlGamepad.left_bumper) {
+                                if (!sensor.isHoldingSample || isWrongColor) {
+                                    robot.intake.isClosed = false
+                                    RobotLog.d("Reached with no specimen")
+                                } else if (sensor.isHoldingSample && isRightColor) {
+                                    robot.intake.targetPosition = IntakePositions.TRANSFER
+                                }
+                            }
+                        },
+                    )
+                },
+                FunctionAction(moveGamepad::square) {
+                    isYellowAllowed = !isYellowAllowed
+                    controlGamepad.rumbleBlips(
+                        if (isYellowAllowed) {
+                            2
+                        } else {
+                            1
+                        },
+                    )
+                },
             )
 
         waitForStart()
@@ -177,6 +214,8 @@ open class MainTeleOp : LinearOpMode() {
         follower.startTeleopDrive()
 
         robot.intake.targetPosition = IntakePositions.TRANSFER
+        robot.extend.targetPosition = Positions.Extend.`in`
+        robot.outtake.pendul.targetPosition = 0.8
         robot.intake.isClosed = false
 
         while (opModeIsActive()) {
@@ -199,9 +238,9 @@ open class MainTeleOp : LinearOpMode() {
             follower.update()
             follower.drawOnDashBoard()
 
-            pressActionList()
-
+            // Ordinea e intentionata, ultima din pressActionList pica daca e invers
             delayedActions()
+            pressActionList()
 
             robot.applyPositions(controlGamepad)
 
@@ -222,33 +261,6 @@ open class MainTeleOp : LinearOpMode() {
                 when {
                     gamepad1.right_bumper -> {
                         robot.intake.pickUp()
-                        delayedActions.add(
-                            DelayedAction(0.2.seconds) {
-                                var colorDetections = 0
-                                colorDetections += if (sensor.isBlue) 1 else 0
-                                colorDetections += if (sensor.isRed) 1 else 0
-                                colorDetections += if (sensor.isYellow) 1 else 0
-
-                                if (colorDetections > 1) {
-                                    RobotLog.e(
-                                        """
-                                        Multiple Colors Detected:
-                                            Red: ${sensor.isRed},
-                                            Blue: ${sensor.isBlue},
-                                            Yellow: ${sensor.isYellow},
-                                        """.trimIndent(),
-                                    )
-                                }
-
-                                if (!controlGamepad.cross && !controlGamepad.left_bumper) {
-                                    if (!sensor.isHoldingSample || isWrongSpecimenColor) {
-                                        robot.intake.isClosed = false
-                                    } else if (sensor.isHoldingSample && isAllianceColor) {
-                                        robot.intake.targetPosition = IntakePositions.TRANSFER
-                                    }
-                                }
-                            },
-                        )
                     }
 
                     gamepad1.left_bumper -> {

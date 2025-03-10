@@ -24,10 +24,10 @@ class Sensor(
         get() = sensor.red() > sensor.green() && sensor.red() > 250
 
     val isBlue
-        get() = sensor.blue() > 2 * sensor.green()
+        get() = sensor.blue() > 2 * sensor.green() && !isYellow
 
     val isYellow
-        get() = sensor.green() > sensor.red() && sensor.green() > 450 && sensor.blue() < 1000
+        get() = sensor.green() > sensor.red() && sensor.green() > 1000
 
     fun red() = sensor.red()
 
