@@ -54,13 +54,14 @@ class ClipsAuto : LinearOpMode() {
             )
         val dropPoint =
             arrayOf(
-                Point(36.0, samplePoint[0].y),
-                Point(36.0, samplePoint[1].y),
+                Point(23.0, samplePoint[0].y),
+                Point(23.0, samplePoint[1].y),
                 Point(17.0, samplePoint[2].y),
             )
 
         val scoreControl = Point(20.0, scorePoint[1].y)
         val pickupPoint = Point(17.0, 30.0)
+        val parkPoint = Point(22.0, 50.0)
 
         val scorePathList =
             mutableListOf(
@@ -77,7 +78,7 @@ class ClipsAuto : LinearOpMode() {
                     .addTemporalCallback(0.0) {
                         robot.lift.targetPosition = Positions.Lift.half
                         robot.claw.isClosed = true
-                    }.addTemporalCallback(0.6) { robot.outtake.outtakePosition = OuttakePosition.BAR }
+                    }.addTemporalCallback(0.3) { robot.outtake.outtakePosition = OuttakePosition.BAR }
                     .build(),
             )
 
@@ -89,7 +90,7 @@ class ClipsAuto : LinearOpMode() {
                     .addTemporalCallback(0.0) {
                         robot.lift.targetPosition = Positions.Lift.half
                         robot.claw.isClosed = true
-                    }.addTemporalCallback(0.6) { robot.outtake.outtakePosition = OuttakePosition.BAR }
+                    }.addTemporalCallback(0.1) { robot.outtake.outtakePosition = OuttakePosition.BAR }
                     .build()
             }
 
@@ -101,7 +102,7 @@ class ClipsAuto : LinearOpMode() {
                     .addTemporalCallback(0.0) {
                         robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
                         robot.claw.isClosed = false
-                    }.addTemporalCallback(0.5) {
+                    }.addTemporalCallback(0.3) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         robot.lift.targetPosition = 0.0
                     }.build()
@@ -161,11 +162,13 @@ class ClipsAuto : LinearOpMode() {
 
         val park =
             PathBuilder()
-                .addBezierLine(scorePoint[4], pickupPoint)
+                .addBezierLine(scorePoint[4], parkPoint)
                 .setTangentHeadingInterpolation()
                 .addTemporalCallback(0.0) {
                     robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
                     robot.claw.isClosed = false
+                }.addTemporalCallback(0.4) {
+                    robot.intake.targetPosition = IntakePositions.PICKUP
                 }.build()
 
         robot.outtake.pendul.targetPosition = 0.95
