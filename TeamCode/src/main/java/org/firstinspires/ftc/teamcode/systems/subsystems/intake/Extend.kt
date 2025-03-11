@@ -11,7 +11,7 @@ class Extend(
 ) : ServoPositionMechanism(Positions.Extend.`in`) {
     override val servos = arrayOf(hardwareMap.servo["Extend1"], hardwareMap.servo["Extend2"])
 
-    val servoSmooth = ServoSmooth(0.96)
+    val servoSmooth = ServoSmooth(0.97)
 
     override var targetPosition: Double = Positions.Extend.`in`
         get() {
