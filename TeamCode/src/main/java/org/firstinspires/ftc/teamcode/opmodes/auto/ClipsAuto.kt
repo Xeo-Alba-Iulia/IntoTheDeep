@@ -40,11 +40,11 @@ class ClipsAuto : LinearOpMode() {
         val beginPoint = Point(9.0, 60.5)
         val scorePoint =
             arrayOf(
-                Point(35.0, 67.5),
-                Point(35.0, 68.0),
-                Point(35.0, 68.5),
-                Point(35.0, 69.0),
-                Point(35.0, 69.5),
+                Point(38.0, 67.5),
+                Point(38.0, 68.0),
+                Point(38.0, 68.5),
+                Point(38.0, 69.0),
+                Point(38.0, 69.5),
             )
         val samplePoint =
             arrayOf(
@@ -59,7 +59,7 @@ class ClipsAuto : LinearOpMode() {
                 Point(17.0, samplePoint[2].y),
             )
 
-        val scoreControl = Point(20.0, scorePoint[1].y)
+        val scoreControl = Point(7.0, scorePoint[1].y)
         val pickupPoint = Point(17.0, 30.0)
         val parkPoint = Point(22.0, 50.0)
 
