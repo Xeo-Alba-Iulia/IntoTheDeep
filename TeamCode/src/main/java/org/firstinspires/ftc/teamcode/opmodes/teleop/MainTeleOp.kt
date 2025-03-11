@@ -74,11 +74,11 @@ open class MainTeleOp : LinearOpMode() {
 
         var holdHeading = false
 
-        val delayedActions = ActionList<FunctionAction<Unit>>()
+        val delayedActions = ActionList<FunctionAction<*>>()
 
         fun finishTransfer() {
             robot.claw.isClosed = true
-            delayedActions.add(DelayedAction(250.milliseconds) { robot.intake.isClosed = false })
+            delayedActions += DelayedAction(250.milliseconds) { robot.intake.isClosed = false }
         }
 
         val pressActionList =
@@ -87,13 +87,10 @@ open class MainTeleOp : LinearOpMode() {
                     if (inTransfer()) {
                         if (robot.claw.isClosed) {
                             robot.intake.claw.isClosed = true
-                            delayedActions.add(
-                                DelayedAction(
-                                    250.milliseconds,
-                                ) {
+                            delayedActions +=
+                                DelayedAction(250.milliseconds) {
                                     robot.claw.isClosed = false
-                                },
-                            )
+                                }
                         } else {
                             finishTransfer()
                         }
@@ -129,12 +126,11 @@ open class MainTeleOp : LinearOpMode() {
                     if (inTransfer()) {
                         if (!robot.claw.isClosed) {
                             finishTransfer()
-                            delayedActions.add(
+                            delayedActions +=
                                 DelayedAction(0.3.seconds) {
                                     robot.lift.targetPosition = Positions.Lift.up
                                     robot.outtake.outtakePosition = OuttakePosition.BASKET
-                                },
-                            )
+                                }
                         } else {
                             robot.lift.targetPosition = Positions.Lift.up
                             robot.outtake.outtakePosition = OuttakePosition.BASKET
@@ -158,7 +154,7 @@ open class MainTeleOp : LinearOpMode() {
                     }
                     if (robot.intake.targetPosition != IntakePositions.TRANSFER) {
                         robot.intake.targetPosition = IntakePositions.TRANSFER
-                        delayedActions.add(DelayedAction(0.2.seconds) { setOuttakeLiftPosition() })
+                        delayedActions += DelayedAction(0.2.seconds) { setOuttakeLiftPosition() }
                     } else {
                         setOuttakeLiftPosition()
                     }
@@ -170,7 +166,7 @@ open class MainTeleOp : LinearOpMode() {
                     robot.lift.isResetting = !robot.lift.isResetting
                 },
                 FunctionAction(moveGamepad::right_bumper) {
-                    delayedActions.add(
+                    delayedActions +=
                         FunctionAction(robot.intake::isUp, willCancel = true) {
                             var colorDetections = 0
                             colorDetections += if (sensor.isBlue) 1 else 0
@@ -196,8 +192,7 @@ open class MainTeleOp : LinearOpMode() {
                                     robot.intake.targetPosition = IntakePositions.TRANSFER
                                 }
                             }
-                        },
-                    )
+                        }
                 },
                 FunctionAction(moveGamepad::square) {
                     isYellowAllowed = !isYellowAllowed
@@ -235,7 +230,7 @@ open class MainTeleOp : LinearOpMode() {
             follower.update()
             follower.drawOnDashBoard()
 
-            // Ordinea e intentionata, ultima din pressActionList pica daca e invers
+            // Ordinea e intenționată, ultima din pressActionList pica daca e invers
             delayedActions()
             pressActionList()
 
