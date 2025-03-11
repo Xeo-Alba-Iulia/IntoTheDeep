@@ -113,7 +113,11 @@ open class MainTeleOp : LinearOpMode() {
                 FunctionAction(controlGamepad::cross) {
                     robot.intake.targetPosition = IntakePositions.PICKUP
                 },
-                FunctionAction(moveGamepad::cross) { holdHeading = !holdHeading },
+                FunctionAction(moveGamepad::cross) {
+                    if (!robot.intake.isExtended) {
+                        holdHeading = !holdHeading
+                    }
+                },
                 FunctionAction(controlGamepad::right_stick_button) {
                     robot.lift.targetPosition = Positions.Lift.up
                     robot.outtake.outtakePosition = OuttakePosition.TRANSFER
@@ -182,7 +186,6 @@ open class MainTeleOp : LinearOpMode() {
                                         Yellow: ${sensor.isYellow},
                                     """.trimIndent(),
                                 )
-                                throw RuntimeException("Multiple colors detected")
                             }
 
                             if (!controlGamepad.cross && !controlGamepad.left_bumper) {
@@ -198,13 +201,7 @@ open class MainTeleOp : LinearOpMode() {
                 },
                 FunctionAction(moveGamepad::square) {
                     isYellowAllowed = !isYellowAllowed
-                    controlGamepad.rumbleBlips(
-                        if (isYellowAllowed) {
-                            2
-                        } else {
-                            1
-                        },
-                    )
+                    controlGamepad.rumbleBlips(if (isYellowAllowed) 2 else 1)
                 },
             )
 

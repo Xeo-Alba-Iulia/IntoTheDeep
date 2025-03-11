@@ -92,17 +92,15 @@ class Intake(
     }
 
     fun pickUp() {
-        if (targetPosition in pickupPositions) {
+        if (isExtended) {
             pickupTimer.resetTimer()
             needsPickup = true
         }
     }
 
     fun switch() {
-        targetPosition =
-            when (targetPosition) {
-                in pickupPositions -> TRANSFER
-                else -> PICKUP
-            }
+        targetPosition = if (isExtended) TRANSFER else PICKUP
     }
+
+    val isExtended get() = targetPosition in pickupPositions
 }
