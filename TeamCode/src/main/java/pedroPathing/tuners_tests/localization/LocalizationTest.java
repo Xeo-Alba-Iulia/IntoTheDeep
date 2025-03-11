@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.teamcode.systems.IntakePositions;
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition;
+import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -93,6 +94,7 @@ public class LocalizationTest extends OpMode {
 
         robot.getOuttake().setOuttakePosition(OuttakePosition.TRANSFER);
         robot.getIntake().setTargetPosition(IntakePositions.TRANSFER);
+        robot.getIntake().getExtend().setTargetPosition(Positions.Extend.in);
     }
 
     /**

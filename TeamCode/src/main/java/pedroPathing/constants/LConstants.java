@@ -14,9 +14,9 @@ public class LConstants {
         ThreeWheelConstants.leftY = 5.314961;
         ThreeWheelConstants.rightY = -5.314961;
         ThreeWheelConstants.strafeX = 3.74016;
-        ThreeWheelConstants.leftEncoder_HardwareMapName = "MotorBackLeft";
+        ThreeWheelConstants.leftEncoder_HardwareMapName = "MotorFrontLeft";
         ThreeWheelConstants.rightEncoder_HardwareMapName = "EncoderRight";
-        ThreeWheelConstants.strafeEncoder_HardwareMapName = "MotorFrontLeft";
+        ThreeWheelConstants.strafeEncoder_HardwareMapName = "MotorBackLeft";
         ThreeWheelConstants.leftEncoderDirection = Encoder.REVERSE;
         ThreeWheelConstants.rightEncoderDirection = Encoder.REVERSE;
         ThreeWheelConstants.strafeEncoderDirection = Encoder.FORWARD;
@@ -28,9 +28,9 @@ public class LConstants {
         ThreeWheelIMUConstants.leftY = 5.314961;
         ThreeWheelIMUConstants.rightY = -5.314961;
         ThreeWheelIMUConstants.strafeX = 3.74016;
-        ThreeWheelIMUConstants.leftEncoder_HardwareMapName = "MotorBackLeft"; // Control Hub port 3
+        ThreeWheelIMUConstants.leftEncoder_HardwareMapName = "MotorFrontLeft"; // Control Hub port 3
         ThreeWheelIMUConstants.rightEncoder_HardwareMapName = "EncoderRight"; // Expansion Hub port 3
-        ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = "MotorFrontLeft"; // Control Hub port 0
+        ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = "MotorBackLeft"; // Control Hub port 0
         ThreeWheelIMUConstants.leftEncoderDirection = Encoder.REVERSE;
         ThreeWheelIMUConstants.rightEncoderDirection = Encoder.REVERSE;
         ThreeWheelIMUConstants.strafeEncoderDirection = Encoder.FORWARD;
