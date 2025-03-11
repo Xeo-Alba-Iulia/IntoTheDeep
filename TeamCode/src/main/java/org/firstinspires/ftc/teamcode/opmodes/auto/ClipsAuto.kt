@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.auto
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.pedropathing.follower.Follower
+import com.pedropathing.localization.Pose
 import com.pedropathing.pathgen.PathBuilder
 import com.pedropathing.pathgen.Point
 import com.pedropathing.util.Constants
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
+import org.firstinspires.ftc.teamcode.util.PathFunction
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
 
@@ -38,11 +40,11 @@ class ClipsAuto : LinearOpMode() {
         val beginPoint = Point(9.0, 60.5)
         val scorePoint =
             arrayOf(
-                Point(40.0, 67.5),
-                Point(40.0, 68.0),
-                Point(40.0, 68.5),
-                Point(40.0, 69.0),
-                Point(40.0, 69.5),
+                Point(35.0, 67.5),
+                Point(35.0, 68.0),
+                Point(35.0, 68.5),
+                Point(35.0, 69.0),
+                Point(35.0, 69.5),
             )
         val samplePoint =
             arrayOf(
@@ -52,8 +54,8 @@ class ClipsAuto : LinearOpMode() {
             )
         val dropPoint =
             arrayOf(
-                Point(28.0, samplePoint[0].y),
-                Point(28.0, samplePoint[1].y),
+                Point(36.0, samplePoint[0].y),
+                Point(36.0, samplePoint[1].y),
                 Point(17.0, samplePoint[2].y),
             )
 
@@ -72,8 +74,10 @@ class ClipsAuto : LinearOpMode() {
                 PathBuilder()
                     .addBezierCurve(dropPoint[2], scoreControl, scorePoint[1])
                     .setConstantHeadingInterpolation(angle)
-                    .addTemporalCallback(0.0) { robot.lift.targetPosition = Positions.Lift.half }
-                    .addTemporalCallback(0.6) { robot.outtake.outtakePosition = OuttakePosition.BAR }
+                    .addTemporalCallback(0.0) {
+                        robot.lift.targetPosition = Positions.Lift.half
+                        robot.claw.isClosed = true
+                    }.addTemporalCallback(0.6) { robot.outtake.outtakePosition = OuttakePosition.BAR }
                     .build(),
             )
 
@@ -82,15 +86,90 @@ class ClipsAuto : LinearOpMode() {
                 PathBuilder()
                     .addBezierLine(pickupPoint, scorePoint[it + 2])
                     .setConstantHeadingInterpolation(angle)
-                    .addTemporalCallback(0.0) { robot.lift.targetPosition = Positions.Lift.half }
-                    .addTemporalCallback(0.6) { robot.outtake.outtakePosition = OuttakePosition.BAR }
+                    .addTemporalCallback(0.0) {
+                        robot.lift.targetPosition = Positions.Lift.half
+                        robot.claw.isClosed = true
+                    }.addTemporalCallback(0.6) { robot.outtake.outtakePosition = OuttakePosition.BAR }
                     .build()
+            }
+
+        val returnPath =
+            Array(3) {
+                PathBuilder()
+                    .addBezierLine(scorePoint[it + 2], pickupPoint)
+                    .setConstantHeadingInterpolation(angle)
+                    .addTemporalCallback(0.0) {
+                        robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
+                        robot.claw.isClosed = false
+                    }.addTemporalCallback(0.5) {
+                        robot.outtake.outtakePosition = OuttakePosition.PICKUP
+                        robot.lift.targetPosition = 0.0
+                    }.build()
             }
 
         val scorePath = scorePathList.toTypedArray()
 
+        val goToFirstSample: PathFunction = {
+            addBezierCurve(
+                scorePoint[0],
+                Point(12.6, 67.0),
+                Point(24.5, 9.0),
+                Point(66.5, 51.0),
+                samplePoint[0],
+            )
+            setConstantHeadingInterpolation(angle)
+            addTemporalCallback(0.0) {
+                robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
+                robot.claw.isClosed = false
+            }
+            addTemporalCallback(1.0) {
+                robot.intake.targetPosition = IntakePositions.SPECIMEN_PICKUP
+                robot.outtake.outtakePosition = OuttakePosition.PICKUP
+                robot.lift.targetPosition = 0.0
+            }
+        }
+        val dropFirstSample: PathFunction = {
+            addBezierLine(samplePoint[0], dropPoint[0])
+            setConstantHeadingInterpolation(angle)
+        }
+        val goToSecondSample: PathFunction = {
+            addBezierCurve(dropPoint[0], Point(67.5, 28.5), samplePoint[1])
+            setConstantHeadingInterpolation(angle)
+        }
+        val dropSecondSample: PathFunction = {
+            addBezierLine(samplePoint[1], dropPoint[1])
+            setConstantHeadingInterpolation(angle)
+        }
+        val goToThirdSample: PathFunction = {
+            addBezierCurve(dropPoint[1], Point(65.0, 16.0), samplePoint[2])
+            setConstantHeadingInterpolation(angle)
+        }
+        val dropThirdSample: PathFunction = {
+            addBezierLine(samplePoint[2], dropPoint[2])
+            setConstantHeadingInterpolation(angle)
+        }
+
+        val getSamples =
+            PathBuilder()
+                .goToFirstSample()
+                .dropFirstSample()
+                .goToSecondSample()
+                .dropSecondSample()
+                .goToThirdSample()
+                .dropThirdSample()
+                .build()
+
+        val park =
+            PathBuilder()
+                .addBezierLine(scorePoint[4], pickupPoint)
+                .setTangentHeadingInterpolation()
+                .addTemporalCallback(0.0) {
+                    robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
+                    robot.claw.isClosed = false
+                }.build()
+
         robot.outtake.pendul.targetPosition = 0.95
-        robot.intake.targetPosition = IntakePositions.TRANSFER
+        robot.intake.targetPosition = IntakePositions.SPECIMEN_PICKUP
 
         while (opModeInInit()) {
             val p = TelemetryPacket()
@@ -99,7 +178,84 @@ class ClipsAuto : LinearOpMode() {
             dashboard.sendTelemetryPacket(p)
         }
 
-        while (isStopRequested) {
+        follower.poseUpdater.resetIMU()
+        follower.pose = Pose(beginPoint.x, beginPoint.y, angle)
+        state = 0
+
+        while (!isStopRequested) {
+            when (state) {
+                0 -> {
+                    follower.followPath(scorePath[0])
+                    state = 1
+                }
+
+                1 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(getSamples)
+                        state = 2
+                    }
+                }
+
+                2 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(scorePath[1])
+                        state = 3
+                    }
+                }
+
+                3 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(returnPath[0])
+                        state = 4
+                    }
+                }
+
+                4 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(scorePath[2])
+                        state = 5
+                    }
+                }
+
+                5 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(returnPath[1])
+                        state = 6
+                    }
+                }
+
+                6 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(scorePath[3])
+                        state = 7
+                    }
+                }
+
+                7 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(returnPath[2])
+                        state = 8
+                    }
+                }
+
+                8 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(scorePath[4])
+                        state = 9
+                    }
+                }
+
+                9 -> {
+                    if (!follower.isBusy) {
+                        follower.followPath(park)
+                        state = -1
+                    }
+                }
+            }
+            follower.update()
+            val packet = TelemetryPacket()
+            robot.run(packet)
+            dashboard.sendTelemetryPacket(packet)
         }
     }
 }
