@@ -109,8 +109,23 @@ class Basket : LinearOpMode() {
                 .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading)
                 .build()
 
-        val transfer = {
-            // TODO: Find a way to implement this function
+        val transfer: (Int) -> Unit = { value ->
+            delayedActions.add(FunctionAction<Unit>( { robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10 } ) {
+                robot.lift.targetPosition = Positions.Lift.transfer
+                robot.intake.targetPosition = IntakePositions.TRANSFER
+                robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                delayedActions.add(
+                    DelayedAction(0.8.seconds) {
+                        robot.lift.targetPosition = Positions.Lift.up
+                        robot.outtake.outtakePosition = OuttakePosition.BASKET
+                    }
+                )
+                delayedActions.add(
+                    DelayedAction(1.5.seconds) {
+                        state = value * 10 + 1
+                    }
+                )
+            })
         }
 
         while (opModeInInit()) {
@@ -175,25 +190,14 @@ class Basket : LinearOpMode() {
 
                 4 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        delayedActions.add(FunctionAction<Unit>({robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10}) {
-                            robot.lift.targetPosition = Positions.Lift.transfer
-                            robot.intake.targetPosition = IntakePositions.TRANSFER
-                            robot.outtake.outtakePosition = OuttakePosition.TRANSFER
-                            delayedActions.add(
-                                DelayedAction(0.8.seconds) {
-                                    robot.lift.targetPosition = Positions.Lift.up
-                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
-                                }
-                            )
-                            delayedActions.add(
-                                DelayedAction(1.5.seconds) {
-                                    follower.followPath(scorePaths[0])
-                                    state = 5
-                                }
-                            )
-                        })
+                        transfer(4)
                         state = -10
                     }
+                }
+
+                41 -> {
+                    follower.followPath(scorePaths[0])
+                    state = 5
                 }
 
                 5 -> {
@@ -222,25 +226,14 @@ class Basket : LinearOpMode() {
 
                 8 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        delayedActions.add(FunctionAction<Unit>({robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10}) {
-                            robot.lift.targetPosition = Positions.Lift.transfer
-                            robot.intake.targetPosition = IntakePositions.TRANSFER
-                            robot.outtake.outtakePosition = OuttakePosition.TRANSFER
-                            delayedActions.add(
-                                DelayedAction(0.8.seconds) {
-                                    robot.lift.targetPosition = Positions.Lift.up
-                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
-                                }
-                            )
-                            delayedActions.add(
-                                DelayedAction(1.5.seconds) {
-                                    follower.followPath(scorePaths[1])
-                                    state = 9
-                                }
-                            )
-                        })
+                        transfer(8)
                         state = -10
                     }
+                }
+
+                81 -> {
+                    follower.followPath(scorePaths[1])
+                    state = 9
                 }
 
                 9 -> {
@@ -269,25 +262,14 @@ class Basket : LinearOpMode() {
 
                 12 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        delayedActions.add(FunctionAction<Unit>({robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10}) {
-                            robot.lift.targetPosition = Positions.Lift.transfer
-                            robot.intake.targetPosition = IntakePositions.TRANSFER
-                            robot.outtake.outtakePosition = OuttakePosition.TRANSFER
-                            delayedActions.add(
-                                DelayedAction(0.8.seconds) {
-                                    robot.lift.targetPosition = Positions.Lift.up
-                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
-                                }
-                            )
-                            delayedActions.add(
-                                DelayedAction(1.5.seconds) {
-                                    follower.followPath(scorePaths[2])
-                                    state = 13
-                                }
-                            )
-                        })
+                        transfer(12)
                         state = -10
                     }
+                }
+
+                121 -> {
+                    follower.followPath(scorePaths[2])
+                    state = 13
                 }
 
                 13 -> {
