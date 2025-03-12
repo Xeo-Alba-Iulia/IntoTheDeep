@@ -2,6 +2,7 @@ package pedroPathing.constants;
 
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Localizers;
+import com.pedropathing.util.KalmanFilterParameters;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class FConstants {
@@ -26,26 +27,28 @@ public class FConstants {
         FollowerConstants.forwardZeroPowerAcceleration = -41.78295044292578;
         FollowerConstants.lateralZeroPowerAcceleration = -73.40248127111744;
 
-        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.16,0,0.009,0);
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.18,0,0.006,0);
         FollowerConstants.useSecondaryTranslationalPID = false;
         FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(0.1,0,0.01,0); // Not being used, @see useSecondaryTranslationalPID
 
-        FollowerConstants.headingPIDFCoefficients.setCoefficients(1.4,0,0.185,0);
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(1.5,0,0.1,0);
         FollowerConstants.useSecondaryHeadingPID = false;
         FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(2,0,0.1,0); // Not being used, @see useSecondaryHeadingPID
 
-        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.005,0,0.0000012,0.6,0);
+        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.008,0,0.0012,0.5,0);
         FollowerConstants.useSecondaryDrivePID = false;
         FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.1,0,0,0.6,0); // Not being used, @see useSecondaryDrivePID
 
-        FollowerConstants.zeroPowerAccelerationMultiplier = 4.5;
-        FollowerConstants.centripetalScaling = 0.0003;
+        FollowerConstants.driveKalmanFilterParameters = new KalmanFilterParameters(7, 1.2);
+
+        FollowerConstants.zeroPowerAccelerationMultiplier = 4;
+        FollowerConstants.centripetalScaling = .0005;
 
         FollowerConstants.pathEndTimeoutConstraint = 300;
-        FollowerConstants.pathEndTValueConstraint = 0.98;
+        FollowerConstants.pathEndTValueConstraint = 0.995;
         FollowerConstants.pathEndVelocityConstraint = 0.1;
         FollowerConstants.pathEndTranslationalConstraint = 0.1;
-        FollowerConstants.pathEndHeadingConstraint = 0.007;
+        FollowerConstants.pathEndHeadingConstraint = 0.005;
 
 //        FollowerConstants.automaticHoldEnd = false;
     }
