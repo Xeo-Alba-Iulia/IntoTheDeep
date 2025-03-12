@@ -55,7 +55,7 @@ class ClipsAuto : LinearOpMode() {
             )
 
         val scoreControl = Point(7.0, scorePoint[1].y)
-        val pickupPoint = Point(8.7, 30.0)
+        val pickupPoint = Point(9.0, 30.0)
         val parkPoint = Point(22.0, 50.0)
 
         val dropPoint =
