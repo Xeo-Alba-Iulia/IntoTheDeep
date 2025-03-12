@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.util.*
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
 import kotlin.math.PI
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @Autonomous
@@ -37,14 +38,14 @@ class ClipsAuto : LinearOpMode() {
 
         val dashboard = FtcDashboard.getInstance()
         val angle = PI
-        val beginPoint = Point(8.0, 60.5)
+        val beginPoint = Point(7.7, 60.5)
         val scorePoint =
             arrayOf(
                 Point(37.0, 72.0),
                 Point(36.0, 70.0),
-                Point(37.0, 69.0),
-                Point(37.0, 69.0),
-                Point(37.0, 69.0),
+                Point(36.0, 69.0),
+                Point(36.0, 69.0),
+                Point(36.0, 69.0),
             )
         val samplePoint =
             arrayOf(
@@ -64,7 +65,7 @@ class ClipsAuto : LinearOpMode() {
                 Point(18.0, samplePoint[2].y),
             )
 
-        val smallScoreControl = Point(26.0, 62.0)
+        val smallScoreControl = Point(25.0, 64.0)
 
         val scorePathList =
             mutableListOf(
@@ -93,6 +94,7 @@ class ClipsAuto : LinearOpMode() {
                     .addTemporalCallback(0.0) {
                         robot.lift.targetPosition = Positions.Lift.half
                         robot.claw.isClosed = true
+                        follower.setMaxPower(1.0)
                     }.addTemporalCallback(0.1) { robot.outtake.outtakePosition = OuttakePosition.BAR }
                     .build()
             }
@@ -100,7 +102,7 @@ class ClipsAuto : LinearOpMode() {
         val returnPath =
             Array(3) {
                 PathBuilder()
-                    .addBezierCurve(scorePoint[it + 2], smallScoreControl, pickupPoint)
+                    .addBezierCurve(scorePoint[it + 2], Point(24.0, 69.0), Point(24.0, 30.0), pickupPoint)
                     .setConstantHeadingInterpolation(angle)
                     .addTemporalCallback(0.0) {
                         robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
@@ -108,7 +110,8 @@ class ClipsAuto : LinearOpMode() {
                     }.addTemporalCallback(0.1) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         robot.lift.targetPosition = 0.0
-                    }.build()
+                    }.setZeroPowerAccelerationMultiplier(1.8)
+                    .build()
             }
 
         val scorePath = scorePathList.toTypedArray()
@@ -127,11 +130,11 @@ class ClipsAuto : LinearOpMode() {
                 robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
                 robot.claw.isClosed = false
             }
-            addParametricCallback(0.5) {
+            addParametricCallback(0.4) {
                 robot.intake.targetPosition = IntakePositions.SPECIMEN_PICKUP
                 robot.outtake.outtakePosition = OuttakePosition.PICKUP
                 robot.lift.targetPosition = 0.0
-                follower.setMaxPower(0.6)
+                follower.setMaxPower(0.5)
             }
             addParametricCallback(0.9) {
                 follower.setMaxPower(1.0)
@@ -142,8 +145,8 @@ class ClipsAuto : LinearOpMode() {
             setConstantHeadingInterpolation(angle)
         }
         val goToSecondSample: PathFunction = {
-            addBezierCurve(dropPoint[0], Point(67.5, 28.5), samplePoint[1])
-            addParametricCallback(0.4) { follower.setMaxPower(0.6) }
+            addBezierCurve(dropPoint[0], Point(67.0, 26.0), samplePoint[1])
+            addParametricCallback(0.3) { follower.setMaxPower(0.6) }
             addParametricCallback(0.9) { follower.setMaxPower(1.0) }
             setConstantHeadingInterpolation(angle)
         }
@@ -153,7 +156,7 @@ class ClipsAuto : LinearOpMode() {
         }
         val goToThirdSample: PathFunction = {
             addBezierCurve(dropPoint[1], Point(65.0, 16.0), samplePoint[2])
-            addParametricCallback(0.4) { follower.setMaxPower(0.6) }
+            addParametricCallback(0.3) { follower.setMaxPower(0.6) }
             addParametricCallback(0.9) { follower.setMaxPower(1.0) }
             setConstantHeadingInterpolation(angle)
         }
@@ -165,6 +168,7 @@ class ClipsAuto : LinearOpMode() {
         val pickupFirstSpecimen =
             Path(BezierCurve(dropPoint[2], Point(dropPoint[2].x, pickupPoint.y), pickupPoint))
         pickupFirstSpecimen.setConstantHeadingInterpolation(PI)
+        pickupFirstSpecimen.zeroPowerAccelerationMultiplier = 1.7
 
         val getSamples =
             PathBuilder()
@@ -174,6 +178,7 @@ class ClipsAuto : LinearOpMode() {
                 .dropSecondSample()
                 .goToThirdSample()
                 .dropThirdSample()
+                .setZeroPowerAccelerationMultiplier(8.0)
                 .build()
 
         val park =
@@ -201,8 +206,14 @@ class ClipsAuto : LinearOpMode() {
         follower.pose = Pose(beginPoint.x, beginPoint.y, angle)
         val actions = ActionList<FunctionAction<Int>>()
 
+        val clawDelay = 0.40.milliseconds
+
         while (!isStopRequested) {
             when (state) {
+                -10 -> {
+                    require(actions.isNotEmpty())
+                }
+
                 0 -> {
                     robot.outtake.outtakePosition = OuttakePosition.BAR
                     robot.lift.targetPosition = Positions.Lift.half
@@ -224,17 +235,23 @@ class ClipsAuto : LinearOpMode() {
 
                 2 -> {
                     if (!follower.isBusy) {
-                        follower.setMaxPower(0.85)
                         follower.followPath(pickupFirstSpecimen, true)
+                        follower.setMaxPower(0.85)
                         state = 21
                     }
                 }
 
                 21 -> {
                     if (!follower.isBusy) {
+                        robot.claw.isClosed = true
                         follower.setMaxPower(1.0)
-                        follower.followPath(scorePath[1])
-                        state = 3
+                        actions +=
+                            DelayedAction(clawDelay) {
+                                follower.followPath(scorePath[1])
+                                state = 3
+                                3
+                            }
+                        state = -10
                     }
                 }
 
@@ -247,8 +264,14 @@ class ClipsAuto : LinearOpMode() {
 
                 4 -> {
                     if (!follower.isBusy) {
-                        follower.followPath(scorePath[2])
-                        state = 5
+                        robot.claw.isClosed = true
+                        actions +=
+                            DelayedAction(clawDelay) {
+                                follower.followPath(scorePath[2])
+                                state = 5
+                                5
+                            }
+                        state = -10
                     }
                 }
 
@@ -261,8 +284,14 @@ class ClipsAuto : LinearOpMode() {
 
                 6 -> {
                     if (!follower.isBusy) {
-                        follower.followPath(scorePath[3])
-                        state = 7
+                        robot.claw.isClosed = true
+                        actions +=
+                            DelayedAction(clawDelay) {
+                                follower.followPath(scorePath[3])
+                                state = 7
+                                7
+                            }
+                        state = -10
                     }
                 }
 
@@ -275,15 +304,28 @@ class ClipsAuto : LinearOpMode() {
 
                 8 -> {
                     if (!follower.isBusy) {
-                        follower.followPath(scorePath[4])
-                        state = 9
+                        robot.claw.isClosed = true
+                        actions +=
+                            DelayedAction(clawDelay) {
+                                follower.followPath(scorePath[4])
+                                state = 9
+                                9
+                            }
+                        state = -10
                     }
                 }
 
                 9 -> {
                     if (!follower.isBusy) {
-                        follower.followPath(park)
-                        state = -1
+                        robot.claw.isClosed = false
+                        robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
+                        actions +=
+                            DelayedAction(80.0.milliseconds) {
+                                follower.followPath(park)
+                                state = -1
+                                -1
+                            }
+                        state = -10
                     }
                 }
             }
@@ -293,6 +335,7 @@ class ClipsAuto : LinearOpMode() {
             dashboard.sendTelemetryPacket(packet)
             actions()
             Drawing.drawDebug(follower)
+            autoPose = follower.pose
         }
     }
 }
