@@ -3,16 +3,17 @@ package pedroPathing.tuners_tests.pid;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.util.Constants;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.Point;
-
+import com.pedropathing.util.Constants;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.systems.Intake;
+import org.firstinspires.ftc.teamcode.systems.IntakePositions;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -40,6 +41,8 @@ public class CurvedBackAndForth extends OpMode {
 
     private Follower follower;
 
+    private Intake intake;
+
     private Path forwards;
     private Path backwards;
 
@@ -51,6 +54,8 @@ public class CurvedBackAndForth extends OpMode {
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
+
+        intake = new Intake(hardwareMap);
 
         forwards = new Path(new BezierCurve(new Point(0,0, Point.CARTESIAN), new Point(Math.abs(DISTANCE),0, Point.CARTESIAN), new Point(Math.abs(DISTANCE),DISTANCE, Point.CARTESIAN)));
         backwards = new Path(new BezierCurve(new Point(Math.abs(DISTANCE),DISTANCE, Point.CARTESIAN), new Point(Math.abs(DISTANCE),0, Point.CARTESIAN), new Point(0,0, Point.CARTESIAN)));
@@ -65,6 +70,8 @@ public class CurvedBackAndForth extends OpMode {
                             + "forward and backward continuously along the path. Make sure you have"
                             + "enough room.");
         telemetryA.update();
+
+        intake.setTargetPosition(IntakePositions.TRANSFER);
     }
 
     /**
@@ -86,5 +93,6 @@ public class CurvedBackAndForth extends OpMode {
 
         telemetryA.addData("going forward", forward);
         follower.telemetryDebug(telemetryA);
+        intake.run(new TelemetryPacket());
     }
 }

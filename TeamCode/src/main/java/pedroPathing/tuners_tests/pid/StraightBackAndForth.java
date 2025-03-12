@@ -3,16 +3,17 @@ package pedroPathing.tuners_tests.pid;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.util.Constants;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.Point;
-
+import com.pedropathing.util.Constants;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.systems.Intake;
+import org.firstinspires.ftc.teamcode.systems.IntakePositions;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -40,6 +41,8 @@ public class StraightBackAndForth extends OpMode {
 
     private Follower follower;
 
+    private Intake intake;
+
     private Path forwards;
     private Path backwards;
 
@@ -51,6 +54,8 @@ public class StraightBackAndForth extends OpMode {
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
+
+        intake = new Intake(hardwareMap);
 
         forwards = new Path(new BezierLine(new Point(0,0, Point.CARTESIAN), new Point(DISTANCE,0, Point.CARTESIAN)));
         forwards.setConstantHeadingInterpolation(0);
@@ -64,6 +69,7 @@ public class StraightBackAndForth extends OpMode {
                             + " inches forward. The robot will go forward and backward continuously"
                             + " along the path. Make sure you have enough room.");
         telemetryA.update();
+        intake.setTargetPosition(IntakePositions.TRANSFER);
     }
 
     /**
@@ -85,5 +91,6 @@ public class StraightBackAndForth extends OpMode {
 
         telemetryA.addData("going forward", forward);
         follower.telemetryDebug(telemetryA);
+        intake.run(new TelemetryPacket());
     }
 }
