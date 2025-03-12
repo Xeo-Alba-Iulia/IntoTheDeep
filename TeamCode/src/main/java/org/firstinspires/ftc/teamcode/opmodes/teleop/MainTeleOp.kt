@@ -70,7 +70,7 @@ open class MainTeleOp : LinearOpMode() {
             )
 
         val follower = Follower(this.hardwareMap)
-        follower.setStartingPose(PositionStore.pose)
+        follower.setStartingPose(autoPose)
 
         var holdHeading = false
 

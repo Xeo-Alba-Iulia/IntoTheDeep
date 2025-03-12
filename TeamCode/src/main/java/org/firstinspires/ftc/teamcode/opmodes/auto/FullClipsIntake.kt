@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
-import org.firstinspires.ftc.teamcode.util.PositionStore
+import org.firstinspires.ftc.teamcode.util.autoPose
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
 import kotlin.math.PI
@@ -402,7 +402,7 @@ class FullClipsIntake : LinearOpMode() {
                 }
 
                 -1 -> {
-                    PositionStore.pose = follower.pose
+                    autoPose = follower.pose
                     robot.claw.isClosed = false
                 }
             }
