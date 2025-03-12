@@ -44,4 +44,10 @@ class ActionList<in T : FunctionAction<*>>(
     operator fun plusAssign(elements: Array<out T>) {
         commandsToAdd += elements
     }
+
+    val size get() = actionList.size + commandsToAdd.size
+
+    fun isEmpty() = actionList.isEmpty() && commandsToAdd.isEmpty()
+
+    fun isNotEmpty() = actionList.isNotEmpty() || commandsToAdd.isNotEmpty()
 }
