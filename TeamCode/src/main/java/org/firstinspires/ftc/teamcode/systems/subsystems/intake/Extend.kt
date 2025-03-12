@@ -24,6 +24,6 @@ class Extend(
             return result
         }
         set(value) {
-            servoSmooth.targetPosition = value
+            servoSmooth.targetPosition = value.coerceIn(Positions.Extend.`in`..Positions.Extend.out)
         }
 }
