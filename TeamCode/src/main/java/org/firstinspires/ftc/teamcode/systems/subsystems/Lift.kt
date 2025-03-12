@@ -43,6 +43,8 @@ class Lift(
     val measuredPosition: Double
         get() = liftMotors.map { it.currentPosition }.average()
 
+    fun atTarget() = measuredPosition in targetPosition - 20..targetPosition + 20
+
     init {
         liftMotors.forEach {
             it.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

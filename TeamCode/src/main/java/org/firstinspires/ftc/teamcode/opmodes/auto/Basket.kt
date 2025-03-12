@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto
 
+import android.util.Log
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.pedropathing.follower.Follower
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.util.DelayedAction
 import org.firstinspires.ftc.teamcode.util.FunctionAction
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @Autonomous
@@ -36,7 +38,7 @@ class Basket : LinearOpMode() {
             Point(23.2, 131.6),
         )
     val scorePose = Pose(16.0, 128.0, Math.toRadians(-45.0))
-    val parkPose = Pose(64.2, 92.3, Math.toRadians(90.0))
+    val parkPose = Pose(64.2, 92.3, Math.toRadians(-90.0))
     val parkControl = Point(65.5, 130.1)
 
     private val pathTimer = Timer()
@@ -109,23 +111,34 @@ class Basket : LinearOpMode() {
                 .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading)
                 .build()
 
-        val transfer: (Int) -> Unit = { value ->
-            delayedActions.add(FunctionAction<Unit>( { robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10 } ) {
-                robot.lift.targetPosition = Positions.Lift.transfer
-                robot.intake.targetPosition = IntakePositions.TRANSFER
-                robot.outtake.outtakePosition = OuttakePosition.TRANSFER
-                delayedActions.add(
-                    DelayedAction(0.8.seconds) {
-                        robot.lift.targetPosition = Positions.Lift.up
-                        robot.outtake.outtakePosition = OuttakePosition.BASKET
-                    }
-                )
-                delayedActions.add(
-                    DelayedAction(1.5.seconds) {
-                        state = value * 10 + 1
-                    }
-                )
-            })
+        val transfer: (Int) -> Unit = {
+            robot.lift.targetPosition = Positions.Lift.hang
+            robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+            robot.intake.targetPosition = IntakePositions.TRANSFER
+
+            delayedActions +=
+                DelayedAction(200.0.milliseconds) {
+                    robot.lift.targetPosition = Positions.Lift.transfer
+                    delayedActions +=
+                        FunctionAction(robot.lift::atTarget, willCancel = true) {
+                            robot.claw.isClosed = true
+                            delayedActions +=
+                                DelayedAction(80.0.milliseconds) {
+                                    robot.intake.claw.isClosed = false
+                                }
+                            delayedActions +=
+                                DelayedAction(120.0.milliseconds) {
+                                    robot.lift.targetPosition = Positions.Lift.up
+                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
+                                }
+                            delayedActions +=
+                                DelayedAction(1.5.seconds) {
+                                    state = it
+                                }
+                        }
+                }
+
+            state = -10
         }
 
         while (opModeInInit()) {
@@ -147,20 +160,21 @@ class Basket : LinearOpMode() {
                 -10 -> {
                     // Reserved for idling while waiting for a delayedAction to finish
                     try {
-                        assert(!delayedActions.isEmpty())
+                        assert(delayedActions.isNotEmpty())
                     } catch (e: AssertionError) {
                         throw RuntimeException(e)
                     }
                 }
 
                 0 -> {
-                    follower.followPath(firstScore)
+//                    follower.followPath(firstScore)
                     robot.outtake.outtakePosition = OuttakePosition.BASKET
                     robot.lift.targetPosition = Positions.Lift.up
-                    delayedActions.add(DelayedAction(2.0.seconds) {
-                        follower.followPath(firstScore)
-                        state = 1
-                    })
+                    delayedActions +=
+                        DelayedAction(2.0.seconds) {
+                            follower.followPath(firstScore)
+                            state = 1
+                        }
                     state = -10
                 }
 
@@ -190,8 +204,7 @@ class Basket : LinearOpMode() {
 
                 4 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        transfer(4)
-                        state = -10
+                        transfer(41)
                     }
                 }
 
@@ -201,8 +214,9 @@ class Basket : LinearOpMode() {
                 }
 
                 5 -> {
-                    if (!follower.isBusy && delayedActions.isEmpty()) {
+                    if (!follower.isBusy) {
                         robot.claw.isClosed = false
+                        Log.d("ActionList", "${delayedActions.size}")
                         state = 6
                     }
                 }
@@ -226,8 +240,7 @@ class Basket : LinearOpMode() {
 
                 8 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        transfer(8)
-                        state = -10
+                        transfer(81)
                     }
                 }
 
@@ -262,8 +275,7 @@ class Basket : LinearOpMode() {
 
                 12 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        transfer(12)
-                        state = -10
+                        transfer(121)
                     }
                 }
 
@@ -281,14 +293,15 @@ class Basket : LinearOpMode() {
 
                 14 -> {
                     follower.followPath(parkPath)
-                    robot.lift.targetPosition = Positions.Lift.half
-                    robot.outtake.outtakePosition = OuttakePosition.BAR
+                    robot.lift.targetPosition = Positions.Lift.half + 100.0
+                    robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                     robot.intake.targetPosition = IntakePositions.TRANSFER
+                    state = -1
                 }
             }
 
             robot.run(TelemetryPacket())
-            Drawing.drawRobot(follower.pose, "#142780")
+            Drawing.drawDebug(follower)
             follower.update()
             follower.drawOnDashBoard()
             dashboard.telemetry.update()
