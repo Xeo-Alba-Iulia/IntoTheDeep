@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util
 
+import android.util.Log
+
 class ActionList<in T : FunctionAction<*>>(
     private val actionList: MutableList<T>,
 ) {
@@ -13,6 +15,7 @@ class ActionList<in T : FunctionAction<*>>(
         }
         actionList.removeIf(FunctionAction<*>::isCanceled)
         actionList += commandsToAdd
+        commandsToAdd.clear()
     }
 
     fun add(element: T) = commandsToAdd.add(element)
@@ -27,6 +30,7 @@ class ActionList<in T : FunctionAction<*>>(
 
     operator fun plusAssign(element: T) {
         commandsToAdd += element
+        Log.d("ActionList", "Current size: $size")
     }
 
     operator fun plusAssign(elements: Collection<T>) {
