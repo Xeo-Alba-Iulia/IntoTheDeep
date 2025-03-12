@@ -11,6 +11,7 @@ import com.pedropathing.util.Drawing
 import com.pedropathing.util.Timer
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit
 import org.firstinspires.ftc.teamcode.RobotHardware
 import org.firstinspires.ftc.teamcode.systems.Intake
@@ -18,12 +19,15 @@ import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
-import org.firstinspires.ftc.teamcode.util.DelayedOpMode
+import org.firstinspires.ftc.teamcode.util.ActionList
+import org.firstinspires.ftc.teamcode.util.DelayedAction
+import org.firstinspires.ftc.teamcode.util.FunctionAction
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
+import kotlin.time.Duration.Companion.seconds
 
 @Autonomous
-class Basket : DelayedOpMode() {
+class Basket : LinearOpMode() {
     val beginPose = Pose(11.6, 118.0, Math.toRadians(45.0))
     val samplePoints =
         arrayOf(
@@ -42,7 +46,7 @@ class Basket : DelayedOpMode() {
             pathTimer.resetTimer()
         }
 
-    override val delayedActions: MutableList<Pair<Long, Runnable>> = mutableListOf()
+    val delayedActions = ActionList<FunctionAction<Unit>>()
 
     override fun runOpMode() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
@@ -105,6 +109,10 @@ class Basket : DelayedOpMode() {
                 .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading)
                 .build()
 
+        val transfer = {
+            // TODO: Find a way to implement this function
+        }
+
         while (opModeInInit()) {
             val packet = TelemetryPacket()
             intake.run(packet)
@@ -124,7 +132,7 @@ class Basket : DelayedOpMode() {
                 -10 -> {
                     // Reserved for idling while waiting for a delayedAction to finish
                     try {
-                        assert(delayedActions.isNotEmpty())
+                        assert(!delayedActions.isEmpty())
                     } catch (e: AssertionError) {
                         throw RuntimeException(e)
                     }
@@ -134,10 +142,10 @@ class Basket : DelayedOpMode() {
                     follower.followPath(firstScore)
                     robot.outtake.outtakePosition = OuttakePosition.BASKET
                     robot.lift.targetPosition = Positions.Lift.up
-                    delayedActions.addDelayed(1.0) {
+                    delayedActions.add(DelayedAction(2.0.seconds) {
                         follower.followPath(firstScore)
                         state = 1
-                    }
+                    })
                     state = -10
                 }
 
@@ -152,6 +160,8 @@ class Basket : DelayedOpMode() {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
                         follower.followPath(pickupSamples[0])
                         robot.intake.targetPosition = IntakePositions.PICKUP
+                        robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                        robot.lift.targetPosition = Positions.Lift.hang
                         state = 3
                     }
                 }
@@ -165,15 +175,23 @@ class Basket : DelayedOpMode() {
 
                 4 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        follower.followPath(scorePaths[0])
-                        transfer(robot)
-                        delayedActions.addDelayed(0.8) {
-                            robot.lift.targetPosition = Positions.Lift.up
-                            robot.outtake.outtakePosition = OuttakePosition.BASKET
-                        }
-                        delayedActions.addDelayed(1.5) {
-                            state = 5
-                        }
+                        delayedActions.add(FunctionAction<Unit>({robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10}) {
+                            robot.lift.targetPosition = Positions.Lift.transfer
+                            robot.intake.targetPosition = IntakePositions.TRANSFER
+                            robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                            delayedActions.add(
+                                DelayedAction(0.8.seconds) {
+                                    robot.lift.targetPosition = Positions.Lift.up
+                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
+                                }
+                            )
+                            delayedActions.add(
+                                DelayedAction(1.5.seconds) {
+                                    follower.followPath(scorePaths[0])
+                                    state = 5
+                                }
+                            )
+                        })
                         state = -10
                     }
                 }
@@ -189,6 +207,8 @@ class Basket : DelayedOpMode() {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
                         follower.followPath(pickupSamples[1])
                         robot.intake.targetPosition = IntakePositions.PICKUP
+                        robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                        robot.lift.targetPosition = Positions.Lift.hang
                         state = 7
                     }
                 }
@@ -202,15 +222,23 @@ class Basket : DelayedOpMode() {
 
                 8 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        transfer(robot)
-                        delayedActions.addDelayed(0.8) {
-                            robot.lift.targetPosition = Positions.Lift.up
-                            robot.outtake.outtakePosition = OuttakePosition.BASKET
-                        }
-                        delayedActions.addDelayed(1.5) {
-                            follower.followPath(scorePaths[1])
-                            state = 9
-                        }
+                        delayedActions.add(FunctionAction<Unit>({robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10}) {
+                            robot.lift.targetPosition = Positions.Lift.transfer
+                            robot.intake.targetPosition = IntakePositions.TRANSFER
+                            robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                            delayedActions.add(
+                                DelayedAction(0.8.seconds) {
+                                    robot.lift.targetPosition = Positions.Lift.up
+                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
+                                }
+                            )
+                            delayedActions.add(
+                                DelayedAction(1.5.seconds) {
+                                    follower.followPath(scorePaths[1])
+                                    state = 9
+                                }
+                            )
+                        })
                         state = -10
                     }
                 }
@@ -226,6 +254,8 @@ class Basket : DelayedOpMode() {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
                         follower.followPath(pickupSamples[2])
                         robot.intake.targetPosition = IntakePositions.PICKUP
+                        robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                        robot.lift.targetPosition = Positions.Lift.hang
                         state = 11
                     }
                 }
@@ -239,15 +269,24 @@ class Basket : DelayedOpMode() {
 
                 12 -> {
                     if (pathTimer.elapsedTimeSeconds > pickupDelay) {
-                        transfer(robot)
-                        delayedActions.addDelayed(0.8) {
-                            robot.lift.targetPosition = Positions.Lift.up
-                            robot.outtake.outtakePosition = OuttakePosition.BASKET
-                        }
-                        delayedActions.addDelayed(1.5) {
-                            follower.followPath(scorePaths[2])
-                            state = 13
-                        }
+                        delayedActions.add(FunctionAction<Unit>({robot.lift.measuredPosition in Positions.Lift.hang - 10..Positions.Lift.hang + 10}) {
+                            robot.lift.targetPosition = Positions.Lift.transfer
+                            robot.intake.targetPosition = IntakePositions.TRANSFER
+                            robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                            delayedActions.add(
+                                DelayedAction(0.8.seconds) {
+                                    robot.lift.targetPosition = Positions.Lift.up
+                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
+                                }
+                            )
+                            delayedActions.add(
+                                DelayedAction(1.5.seconds) {
+                                    follower.followPath(scorePaths[2])
+                                    state = 13
+                                }
+                            )
+                        })
+                        state = -10
                     }
                 }
 
@@ -260,6 +299,7 @@ class Basket : DelayedOpMode() {
 
                 14 -> {
                     follower.followPath(parkPath)
+                    robot.lift.targetPosition = Positions.Lift.half
                     robot.outtake.outtakePosition = OuttakePosition.BAR
                     robot.intake.targetPosition = IntakePositions.TRANSFER
                 }
@@ -270,7 +310,7 @@ class Basket : DelayedOpMode() {
             follower.update()
             follower.drawOnDashBoard()
             dashboard.telemetry.update()
-            delayedActions.run()
+            delayedActions()
         }
     }
 }
