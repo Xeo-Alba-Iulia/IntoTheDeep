@@ -14,6 +14,8 @@ class Pendul(
     override val servos: Array<Servo> =
         arrayOf(hardwareMap.servo["Pendul1"], hardwareMap.servo["Pendul2"])
 
+    var useServoSmooth = true
+
     val servoSmooth = ServoSmooth(0.96)
 
     override var targetPosition: Double = 0.8
@@ -28,6 +30,9 @@ class Pendul(
         }
         set(value) {
             servoSmooth.targetPosition = value
+            if (!useServoSmooth) {
+                field = value
+            }
         }
 }
 
