@@ -32,4 +32,6 @@ open class FunctionAction<out T>(
     }
 
     open fun invertCheck() = FunctionAction<T>({ !check() }, willCancel, execute = execute)
+
+    override fun toString() = "${this::class.simpleName} with willCancel = $willCancel"
 }

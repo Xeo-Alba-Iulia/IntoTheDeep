@@ -8,14 +8,19 @@ class ActionList<in T : FunctionAction<*>>(
     constructor(vararg actions: T) : this(mutableListOf(*actions))
 
     private val commandsToAdd = mutableListOf<T>()
+    private var oldSize = size
 
     operator fun invoke() {
         for (action in actionList) {
             action()
         }
         actionList.removeIf(FunctionAction<*>::isCanceled)
+        if (size != oldSize) {
+            Log.d("ActionList", "New size: $size")
+        }
         actionList += commandsToAdd
         commandsToAdd.clear()
+        oldSize = size
     }
 
     fun add(element: T) = commandsToAdd.add(element)
@@ -30,7 +35,7 @@ class ActionList<in T : FunctionAction<*>>(
 
     operator fun plusAssign(element: T) {
         commandsToAdd += element
-        Log.d("ActionList", "Current size: $size")
+        Log.d("ActionList", "Added new element: $element")
     }
 
     operator fun plusAssign(elements: Collection<T>) {
