@@ -11,7 +11,7 @@ package org.firstinspires.ftc.teamcode.util
 open class FunctionAction<out T>(
     val check: () -> Boolean,
     val willCancel: Boolean = false,
-    initialState: Boolean = check(),
+    val initialState: Boolean = check(),
     val execute: () -> T,
 ) {
     open var isCanceled = false
@@ -31,7 +31,7 @@ open class FunctionAction<out T>(
         return returnValue
     }
 
-    open fun invertCheck() = FunctionAction<T>({ !check() }, willCancel, execute = execute)
+    open fun invert() = FunctionAction({ !check() }, willCancel, !initialState, execute)
 
     override fun toString() = "${this::class.simpleName} with willCancel = $willCancel"
 }
