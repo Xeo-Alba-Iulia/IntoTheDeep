@@ -38,14 +38,14 @@ class ClipsAuto : LinearOpMode() {
 
         val dashboard = FtcDashboard.getInstance()
         val angle = PI
-        val beginPoint = Point(7.0, 60.5)
+        val beginPoint = Point(8.0, 60.5)
         val scorePoint =
             arrayOf(
-                Point(37.0, 72.0),
-                Point(37.5, 70.0),
-                Point(37.5, 69.0),
-                Point(37.5, 69.0),
-                Point(37.5, 69.0),
+                Point(38.0, 72.0),
+                Point(38.0, 70.0),
+                Point(38.0, 69.0),
+                Point(38.0, 69.0),
+                Point(38.0, 69.0),
             )
         val samplePoint =
             arrayOf(
@@ -55,7 +55,7 @@ class ClipsAuto : LinearOpMode() {
             )
 
         val scoreControl = Point(7.0, scorePoint[1].y)
-        val pickupPoint = Point(9.0, 30.0)
+        val pickupPoint = Point(9.8, 30.0)
         val parkPoint = Point(22.0, 50.0)
 
         val dropPoint =
@@ -110,7 +110,7 @@ class ClipsAuto : LinearOpMode() {
                     }.addTemporalCallback(0.1) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         robot.lift.targetPosition = 0.0
-                    }.setZeroPowerAccelerationMultiplier(1.8)
+                    }.setZeroPowerAccelerationMultiplier(1.2)
                     .build()
             }
 
