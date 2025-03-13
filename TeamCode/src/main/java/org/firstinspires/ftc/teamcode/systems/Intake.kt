@@ -20,7 +20,7 @@ class Intake(
     private var needsPickup = false
     private var pickupTimer = Timer()
 
-    val isUp get() = pickupTimer.elapsedTimeSeconds >= 0.24
+    val isPickedUp get() = pickupTimer.elapsedTimeSeconds >= 0.24
 
     private lateinit var oldPosition: IntakePositions
 

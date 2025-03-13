@@ -28,20 +28,26 @@ open class MainTeleOp : LinearOpMode() {
 
     protected open val allianceColor = AllianceColor.RED
 
+    private var isRed = false
+    private var isBlue = false
+    private var isYellow = false
+
     protected var isYellowAllowed = false
     private val isAllianceColor get() =
         when (allianceColor) {
-            AllianceColor.RED -> sensor.isRed
-            AllianceColor.BLUE -> sensor.isBlue
+            AllianceColor.RED -> isRed
+            AllianceColor.BLUE -> isBlue
         }
     private val isOppositeColor get() =
         when (allianceColor) {
-            AllianceColor.RED -> sensor.isBlue
-            AllianceColor.BLUE -> sensor.isRed
+            AllianceColor.RED -> isBlue
+            AllianceColor.BLUE -> isRed
         }
 
-    private val isRightColor get() = isAllianceColor || (isYellowAllowed && sensor.isYellow)
-    private val isWrongColor get() = isOppositeColor || (!isYellowAllowed && sensor.isYellow)
+    private fun Boolean.toInt() = if (this) 1 else 0
+
+    private val isRightColor get() = isAllianceColor || (isYellowAllowed && isYellow)
+    private val isWrongColor get() = isOppositeColor || (!isYellowAllowed && isYellow)
 
     final override fun runOpMode() {
         val robot = RobotHardware(this.hardwareMap)
@@ -50,6 +56,25 @@ open class MainTeleOp : LinearOpMode() {
         fun inTransfer() =
             robot.lift.targetPosition == Positions.Lift.transfer &&
                 robot.outtake.outtakePosition == OuttakePosition.TRANSFER
+
+        var isRed = false
+        var isBlue = false
+        var isYellow = false
+
+        val colorDetections = {
+            isRed = sensor.isRed
+            isBlue = sensor.isBlue
+            isYellow = sensor.isYellow
+
+            val colorDetections = isRed.toInt() + isBlue.toInt() + isYellow.toInt()
+            if (colorDetections > 1) {
+                RobotLog.e("ColorDetection", "Red: $isRed, Blue: $isBlue, Yellow: $isYellow")
+            }
+
+            colorDetections
+        }
+
+        var colorDetectionTicks = 0
 
         val headingPIDFCoefficients = FollowerConstants.headingPIDFCoefficients
         val headingPIDF = PIDFController(headingPIDFCoefficients)
@@ -165,35 +190,7 @@ open class MainTeleOp : LinearOpMode() {
                 FunctionAction({ -controlGamepad.right_stick_y >= -0.9 && robot.lift.isResetting }) {
                     robot.lift.isResetting = !robot.lift.isResetting
                 },
-                FunctionAction(moveGamepad::right_bumper) {
-                    delayedActions +=
-                        FunctionAction(robot.intake::isUp, willCancel = true) {
-                            var colorDetections = 0
-                            colorDetections += if (sensor.isBlue) 1 else 0
-                            colorDetections += if (sensor.isRed) 1 else 0
-                            colorDetections += if (sensor.isYellow) 1 else 0
-
-                            if (colorDetections > 1) {
-                                RobotLog.e(
-                                    """
-                                    Multiple Colors Detected:
-                                        Red: ${sensor.isRed},
-                                        Blue: ${sensor.isBlue},
-                                        Yellow: ${sensor.isYellow},
-                                    """.trimIndent(),
-                                )
-                            }
-
-                            if (!controlGamepad.cross && !controlGamepad.left_bumper) {
-                                if (!sensor.isHoldingSample || isWrongColor) {
-                                    robot.intake.isClosed = false
-                                    RobotLog.d("Reached with no specimen")
-                                } else if (sensor.isHoldingSample && isRightColor) {
-                                    robot.intake.targetPosition = IntakePositions.TRANSFER
-                                }
-                            }
-                        }
-                },
+                FunctionAction(moveGamepad::right_bumper) { colorDetectionTicks = 0 },
                 FunctionAction(moveGamepad::square) {
                     isYellowAllowed = !isYellowAllowed
                     controlGamepad.rumbleBlips(if (isYellowAllowed) 2 else 1)
@@ -269,6 +266,22 @@ open class MainTeleOp : LinearOpMode() {
                 if (moveGamepad.left_trigger > 0.7) {
                     robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.left
                     robot.intake.claw.isClosed = false
+                }
+
+                if (colorDetectionTicks <= 10 && robot.intake.isPickedUp) {
+                    if (colorDetections() <= 1) {
+                        if (!controlGamepad.cross && !controlGamepad.left_bumper) {
+                            if (!sensor.isHoldingSample || isWrongColor) {
+                                robot.intake.isClosed = false
+                                RobotLog.d("Reached with no specimen")
+                            } else if (sensor.isHoldingSample && isRightColor) {
+                                robot.intake.targetPosition = IntakePositions.TRANSFER
+                            }
+                        }
+                        // Stops any further attempts at detecting colors
+                        colorDetectionTicks = 10
+                    }
+                    colorDetectionTicks++
                 }
             }
         }
