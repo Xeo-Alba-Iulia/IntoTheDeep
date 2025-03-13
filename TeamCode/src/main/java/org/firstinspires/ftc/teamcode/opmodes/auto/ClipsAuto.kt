@@ -38,7 +38,7 @@ class ClipsAuto : LinearOpMode() {
 
         val dashboard = FtcDashboard.getInstance()
         val angle = PI
-        val beginPoint = Point(7.5, 60.5)
+        val beginPoint = Point(7.0, 60.5)
         val scorePoint =
             arrayOf(
                 Point(37.0, 72.0),

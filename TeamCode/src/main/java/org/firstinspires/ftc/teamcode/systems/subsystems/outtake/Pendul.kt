@@ -14,11 +14,11 @@ class Pendul(
     override val servos: Array<Servo> =
         arrayOf(hardwareMap.servo["Pendul1"], hardwareMap.servo["Pendul2"])
 
-    val servoSmooth = ServoSmooth(0.97)
+    val servoSmooth = ServoSmooth(0.96)
 
     override var targetPosition: Double = 0.8
         get() {
-            if (abs(servoSmooth.targetPosition - field) < 0.02) {
+            if (abs(servoSmooth.targetPosition - field) < 0.01) {
                 return servoSmooth.targetPosition
             }
 
