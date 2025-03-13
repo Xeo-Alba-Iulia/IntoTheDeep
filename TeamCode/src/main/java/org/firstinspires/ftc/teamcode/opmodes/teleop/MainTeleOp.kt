@@ -74,7 +74,7 @@ open class MainTeleOp : LinearOpMode() {
 
         var holdHeading = false
 
-        val delayedActions = ActionList<FunctionAction<*>>()
+        val delayedActions = ActionList<FunctionAction<Any>, Any>()
 
         fun finishTransfer() {
             robot.claw.isClosed = true
@@ -82,7 +82,7 @@ open class MainTeleOp : LinearOpMode() {
         }
 
         val pressActionList =
-            ActionList(
+            ActionList<FunctionAction<Any>, Any>(
                 FunctionAction(controlGamepad::right_bumper) {
                     if (inTransfer()) {
                         if (robot.claw.isClosed) {
@@ -198,7 +198,7 @@ open class MainTeleOp : LinearOpMode() {
                     isYellowAllowed = !isYellowAllowed
                     controlGamepad.rumbleBlips(if (isYellowAllowed) 2 else 1)
                 },
-            )
+            ) {}
 
         waitForStart()
 

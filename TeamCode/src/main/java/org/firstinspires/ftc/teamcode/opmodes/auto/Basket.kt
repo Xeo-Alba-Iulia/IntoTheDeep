@@ -48,7 +48,7 @@ class Basket : LinearOpMode() {
             pathTimer.resetTimer()
         }
 
-    val delayedActions = ActionList<FunctionAction<Unit>>()
+    val delayedActions = ActionList<FunctionAction<Unit>, Unit>()
 
     override fun runOpMode() {
         Constants.setConstants(FConstants::class.java, LConstants::class.java)
