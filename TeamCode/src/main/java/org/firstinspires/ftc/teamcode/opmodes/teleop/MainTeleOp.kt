@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop
 
+import android.util.Log
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
@@ -68,7 +69,7 @@ open class MainTeleOp : LinearOpMode() {
 
             val colorDetections = isRed.toInt() + isBlue.toInt() + isYellow.toInt()
             if (colorDetections > 1) {
-                RobotLog.e("ColorDetection", "Red: $isRed, Blue: $isBlue, Yellow: $isYellow")
+                Log.e("ColorDetection", "Red: $isRed, Blue: $isBlue, Yellow: $isYellow")
             }
 
             colorDetections
@@ -269,12 +270,15 @@ open class MainTeleOp : LinearOpMode() {
                 }
 
                 if (colorDetectionTicks <= 10 && robot.intake.isPickedUp) {
+                    Log.d("ColorDetection", "Checking colors")
                     if (colorDetections() <= 1) {
+                        RobotLog.d("ColorDetection", "Checked colors successfully")
                         if (!controlGamepad.cross && !controlGamepad.left_bumper) {
                             if (!sensor.isHoldingSample || isWrongColor) {
                                 robot.intake.isClosed = false
-                                RobotLog.d("Reached with no specimen")
+                                RobotLog.d("ColorDetection", "Reached with no or wrong color specimen")
                             } else if (sensor.isHoldingSample && isRightColor) {
+                                RobotLog.d("ColorDetection", "Reached correct color")
                                 robot.intake.targetPosition = IntakePositions.TRANSFER
                             }
                         }
