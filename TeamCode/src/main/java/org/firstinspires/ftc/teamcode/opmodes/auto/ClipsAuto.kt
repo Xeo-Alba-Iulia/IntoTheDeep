@@ -38,7 +38,7 @@ class ClipsAuto : LinearOpMode() {
 
         val dashboard = FtcDashboard.getInstance()
         val angle = PI
-        val beginPoint = Point(8.0, 60.5)
+        val beginPoint = Point(8.5, 60.5)
         val scorePoint =
             arrayOf(
                 Point(38.0, 72.0),
@@ -49,13 +49,13 @@ class ClipsAuto : LinearOpMode() {
             )
         val samplePoint =
             arrayOf(
-                Point(57.7, 27.0),
-                Point(57.7, 17.0),
-                Point(57.7, 10.0),
+                Point(56.7, 27.0),
+                Point(56.7, 17.0),
+                Point(56.7, 10.0),
             )
 
         val scoreControl = Point(7.0, scorePoint[1].y)
-        val pickupPoint = Point(9.8, 30.0)
+        val pickupPoint = Point(9.5, 34.0)
         val parkPoint = Point(22.0, 50.0)
 
         val dropPoint =
@@ -102,7 +102,7 @@ class ClipsAuto : LinearOpMode() {
         val returnPath =
             Array(3) {
                 PathBuilder()
-                    .addBezierCurve(scorePoint[it + 2], Point(24.0, 69.0), Point(24.0, 30.0), pickupPoint)
+                    .addBezierCurve(scorePoint[it + 2], Point(24.0, 65.0), Point(24.0, 40.0), pickupPoint)
                     .setConstantHeadingInterpolation(angle)
                     .addTemporalCallback(0.0) {
                         robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
@@ -110,7 +110,7 @@ class ClipsAuto : LinearOpMode() {
                     }.addTemporalCallback(0.1) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         robot.lift.targetPosition = 0.0
-                    }.setZeroPowerAccelerationMultiplier(1.2)
+                    }.setZeroPowerAccelerationMultiplier(3.1)
                     .build()
             }
 
@@ -134,7 +134,7 @@ class ClipsAuto : LinearOpMode() {
                 robot.intake.targetPosition = IntakePositions.SPECIMEN_PICKUP
                 robot.outtake.outtakePosition = OuttakePosition.PICKUP
                 robot.lift.targetPosition = 0.0
-                follower.setMaxPower(0.5)
+                follower.setMaxPower(0.7)
             }
             addParametricCallback(0.9) {
                 follower.setMaxPower(1.0)
@@ -146,7 +146,7 @@ class ClipsAuto : LinearOpMode() {
         }
         val goToSecondSample: PathFunction = {
             addBezierCurve(dropPoint[0], Point(67.0, 26.0), samplePoint[1])
-            addParametricCallback(0.3) { follower.setMaxPower(0.6) }
+            addParametricCallback(0.3) { follower.setMaxPower(0.7) }
             addParametricCallback(0.9) { follower.setMaxPower(1.0) }
             setConstantHeadingInterpolation(angle)
         }
@@ -156,7 +156,7 @@ class ClipsAuto : LinearOpMode() {
         }
         val goToThirdSample: PathFunction = {
             addBezierCurve(dropPoint[1], Point(65.0, 16.0), samplePoint[2])
-            addParametricCallback(0.3) { follower.setMaxPower(0.6) }
+            addParametricCallback(0.3) { follower.setMaxPower(0.7) }
             addParametricCallback(0.9) { follower.setMaxPower(1.0) }
             setConstantHeadingInterpolation(angle)
         }
@@ -168,7 +168,7 @@ class ClipsAuto : LinearOpMode() {
         val pickupFirstSpecimen =
             Path(BezierCurve(dropPoint[2], Point(dropPoint[2].x, pickupPoint.y), pickupPoint))
         pickupFirstSpecimen.setConstantHeadingInterpolation(PI)
-        pickupFirstSpecimen.zeroPowerAccelerationMultiplier = 1.7
+//        pickupFirstSpecimen.zeroPowerAccelerationMultiplier = 3
 
         val getSamples =
             PathBuilder()
