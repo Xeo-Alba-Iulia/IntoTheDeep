@@ -31,13 +31,14 @@ import kotlin.time.Duration.Companion.seconds
 @Autonomous
 class Basket : LinearOpMode() {
     val beginPose = Pose(11.6, 118.0, Math.toRadians(45.0))
-    val samplePoints =
+    val samplePoses =
         arrayOf(
-            Point(21.5, 126.3),
-            Point(21.0, 128.6),
-            Point(23.2, 131.6),
+            Pose(22.0, 126.3, Math.toRadians(-19.0)),
+            Pose(21.5, 128.6, Math.toRadians(0.0)),
+            Pose(23.2, 131.6, Math.toRadians(19.0)),
         )
-    val scorePose = Pose(16.0, 128.0, Math.toRadians(-45.0))
+    val scorePose = Pose(20.0, 124.0, Math.toRadians(-45.0))
+    val scoreAngle = Math.toRadians(-45.0)
     val parkPose = Pose(64.2, 92.3, Math.toRadians(-90.0))
     val parkControl = Point(65.5, 130.1)
 
@@ -76,40 +77,42 @@ class Basket : LinearOpMode() {
         val pickupSamples =
             arrayOf(
                 PathBuilder()
-                    .addBezierLine(Point(scorePose), samplePoints[0])
-                    .setTangentHeadingInterpolation()
+                    .addBezierLine(Point(scorePose), Point(samplePoses[0]))
+                    .setLinearHeadingInterpolation(scoreAngle, samplePoses[0].heading, 0.6)
                     .build(),
                 PathBuilder()
-                    .addBezierLine(Point(scorePose), samplePoints[1])
-                    .setTangentHeadingInterpolation()
+                    .addBezierLine(Point(scorePose), Point(samplePoses[1]))
+                    .setLinearHeadingInterpolation(scoreAngle, samplePoses[1].heading, 0.6)
                     .build(),
                 PathBuilder()
-                    .addBezierLine(Point(scorePose), samplePoints[2])
-                    .setTangentHeadingInterpolation()
+                    .addBezierLine(Point(scorePose), Point(samplePoses[2]))
+                    .setLinearHeadingInterpolation(scoreAngle, samplePoses[2].heading, 0.6)
                     .build(),
             )
 
         val scorePaths =
             arrayOf(
                 PathBuilder()
-                    .addBezierLine(samplePoints[0], Point(scorePose))
-                    .setConstantHeadingInterpolation(scorePose.heading)
+                    .addBezierLine(Point(samplePoses[0]), Point(scorePose))
+                    .setLinearHeadingInterpolation(samplePoses[0].heading, scorePose.heading)
                     .build(),
                 PathBuilder()
-                    .addBezierLine(samplePoints[1], Point(scorePose))
-                    .setConstantHeadingInterpolation(scorePose.heading)
+                    .addBezierLine(Point(samplePoses[1]), Point(scorePose))
+                    .setLinearHeadingInterpolation(samplePoses[1].heading, scorePose.heading)
                     .build(),
                 PathBuilder()
-                    .addBezierLine(samplePoints[2], Point(scorePose))
-                    .setConstantHeadingInterpolation(scorePose.heading)
+                    .addBezierLine(Point(samplePoses[2]), Point(scorePose))
+                    .setLinearHeadingInterpolation(samplePoses[2].heading, scorePose.heading)
                     .build(),
             )
 
         val parkPath =
             PathBuilder()
                 .addBezierCurve(Point(scorePose), parkControl, Point(parkPose))
-                .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading)
-                .build()
+                .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading, 0.5)
+                .addParametricCallback(0.9) {
+                    robot.outtake.outtakePosition = OuttakePosition.BAR
+                }.build()
 
         val transfer: (Int) -> Unit = {
             robot.lift.targetPosition = Positions.Lift.hang
@@ -140,6 +143,8 @@ class Basket : LinearOpMode() {
 
             state = -10
         }
+        intake.targetPosition = IntakePositions.SPECIMEN_PICKUP
+        pendul.targetPosition = Positions.Pendul.transfer
 
         while (opModeInInit()) {
             val packet = TelemetryPacket()
@@ -148,6 +153,10 @@ class Basket : LinearOpMode() {
             dashboard.sendTelemetryPacket(packet)
         }
         val pickupDelay = 0.12
+        val dropDelay = 0.5.seconds
+
+        follower.poseUpdater.resetIMU()
+        follower.pose = beginPose
 
         val opModeTimer = Timer()
 
@@ -217,7 +226,11 @@ class Basket : LinearOpMode() {
                     if (!follower.isBusy) {
                         robot.claw.isClosed = false
                         Log.d("ActionList", "${delayedActions.size}")
-                        state = 6
+                        state = -10
+                        delayedActions +=
+                            DelayedAction(dropDelay) {
+                                state = 6
+                            }
                     }
                 }
 
@@ -252,7 +265,11 @@ class Basket : LinearOpMode() {
                 9 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
                         robot.claw.isClosed = false
-                        state = 10
+                        state = -10
+                        delayedActions +=
+                            DelayedAction(dropDelay) {
+                                state = 10
+                            }
                     }
                 }
 
@@ -287,7 +304,11 @@ class Basket : LinearOpMode() {
                 13 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
                         robot.claw.isClosed = false
-                        state = 14
+                        state = -10
+                        delayedActions +=
+                            DelayedAction(dropDelay) {
+                                state = 14
+                            }
                     }
                 }
 

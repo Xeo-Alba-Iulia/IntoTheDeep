@@ -48,7 +48,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var up = 3200.0
+            var up = 3250.0
         }
     }
 
@@ -114,7 +114,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var basket: Double = 0.27
+            var basket: Double = 0.4
 
             @JvmField
             @Volatile
