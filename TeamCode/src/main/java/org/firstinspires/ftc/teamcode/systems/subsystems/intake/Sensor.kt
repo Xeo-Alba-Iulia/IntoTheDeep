@@ -21,13 +21,13 @@ class Sensor(
         get() = sensor.getDistance(DistanceUnit.CM) < 4.0
 
     val isRed
-        get() = sensor.red() > sensor.green() && sensor.red() > 250
+        get() = sensor.red() > sensor.green() && sensor.red() > 500
 
     val isBlue
-        get() = sensor.blue() > 2 * sensor.green() && !isYellow
+        get() = sensor.blue() > 1.7 * sensor.green() || sensor.blue() > 950
 
     val isYellow
-        get() = sensor.green() > sensor.red() && sensor.green() > 1000
+        get() = sensor.green() > sensor.red() || sensor.red() > 1000
 
     fun red() = sensor.red()
 

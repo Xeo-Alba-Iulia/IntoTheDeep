@@ -42,6 +42,9 @@ class SensorTest : OpMode() {
         if (isInPickup && pickupTimer.elapsedTimeSeconds >= 0.3) {
             isInPickup = false
         }
+        if (gamepad1.left_bumper) {
+            intake.claw.isClosed = false
+        }
 
         telemetry.addData("Holding Sample", sensor.isHoldingSample)
         telemetry.addData("Hovering Sample", sensor.isHoveringSample)
