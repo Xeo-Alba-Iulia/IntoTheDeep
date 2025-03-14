@@ -8,27 +8,23 @@ package org.firstinspires.ftc.teamcode.util
  * @param willCancel    Whether the Action should keep executing after it completes once
  * @param lastState     Should be set
  */
-open class FunctionAction<out T>(
+open class FunctionAction(
     val check: () -> Boolean,
     val willCancel: Boolean = false,
     val initialState: Boolean = check(),
-    val execute: () -> T,
+    val execute: () -> Unit,
 ) {
     open var isCanceled = false
     private var lastState = initialState
 
-    operator fun invoke(): T? {
+    operator fun invoke() {
         val currentState = check()
-        val returnValue =
-            if (currentState && !lastState && !isCanceled) {
-                isCanceled = willCancel
-                execute()
-            } else {
-                null
-            }
+        if (currentState && !lastState && !isCanceled) {
+            isCanceled = willCancel
+            execute()
+        }
 
         lastState = currentState
-        return returnValue
     }
 
     open fun invert() = FunctionAction({ !check() }, willCancel, !initialState, execute)

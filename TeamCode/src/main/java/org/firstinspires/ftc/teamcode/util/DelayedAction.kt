@@ -4,17 +4,17 @@ import kotlin.time.ComparableTimeMark
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
-class DelayedAction<out T>(
+class DelayedAction(
     val endTimeMark: ComparableTimeMark,
-    execute: () -> T,
-) : FunctionAction<T>(check = endTimeMark::hasPassedNow, willCancel = true, execute = execute),
-    Comparable<DelayedAction<*>> {
-    constructor(delay: Duration, execute: () -> T) : this(
+    execute: () -> Unit,
+) : FunctionAction(check = endTimeMark::hasPassedNow, willCancel = true, execute = execute),
+    Comparable<DelayedAction> {
+    constructor(delay: Duration, execute: () -> Unit) : this(
         TimeSource.Monotonic.markNow() + delay,
         execute,
     )
 
-    override fun compareTo(other: DelayedAction<*>) = this.endTimeMark.compareTo(other.endTimeMark)
+    override fun compareTo(other: DelayedAction) = this.endTimeMark.compareTo(other.endTimeMark)
 
     // Inverting the check on delayedActions just leads to instant execution, so we throw an exception
     override fun invert() =

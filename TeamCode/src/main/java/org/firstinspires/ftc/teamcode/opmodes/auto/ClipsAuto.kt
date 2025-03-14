@@ -207,7 +207,7 @@ class ClipsAuto : LinearOpMode() {
 
         follower.poseUpdater.resetIMU()
         follower.pose = Pose(beginPoint.x, beginPoint.y, angle)
-        val actions = ActionList<FunctionAction<Int>, Int> { state = this }
+        val actions = ActionList<FunctionAction>()
 
         val clawDelay = 0.40.milliseconds
 //        robot.outtake.pendul.useServoSmooth = false
@@ -225,7 +225,7 @@ class ClipsAuto : LinearOpMode() {
                     actions +=
                         DelayedAction(0.15.seconds) {
                             follower.followPath(scorePath[0])
-                            1
+                            state = 1
                         }
                 }
 
@@ -251,7 +251,7 @@ class ClipsAuto : LinearOpMode() {
                         actions +=
                             DelayedAction(clawDelay) {
                                 follower.followPath(scorePath[1])
-                                3
+                                state = 3
                             }
                         state = -10
                     }
@@ -270,7 +270,7 @@ class ClipsAuto : LinearOpMode() {
                         actions +=
                             DelayedAction(clawDelay) {
                                 follower.followPath(scorePath[2])
-                                5
+                                state = 5
                             }
                         state = -10
                     }
@@ -289,7 +289,7 @@ class ClipsAuto : LinearOpMode() {
                         actions +=
                             DelayedAction(clawDelay) {
                                 follower.followPath(scorePath[3])
-                                7
+                                state = 7
                             }
                         state = -10
                     }
@@ -308,7 +308,7 @@ class ClipsAuto : LinearOpMode() {
                         actions +=
                             DelayedAction(clawDelay) {
                                 follower.followPath(scorePath[4])
-                                9
+                                state = 9
                             }
                         state = -10
                     }
@@ -321,7 +321,7 @@ class ClipsAuto : LinearOpMode() {
                         actions +=
                             DelayedAction(80.0.milliseconds) {
                                 follower.followPath(park)
-                                -1
+                                state = -1
                             }
                         state = -10
                     }

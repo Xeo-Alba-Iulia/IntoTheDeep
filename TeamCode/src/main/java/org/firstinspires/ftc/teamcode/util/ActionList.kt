@@ -2,23 +2,19 @@ package org.firstinspires.ftc.teamcode.util
 
 import android.util.Log
 
-class ActionList<in T : FunctionAction<U>, U>(
+class ActionList<in T : FunctionAction>(
     private val actionList: MutableList<T> = mutableListOf(),
-    val resultFunction: U.() -> Unit = {},
 ) {
-    constructor(vararg actions: T, resultFunction: (U) -> Unit) : this(
-        mutableListOf(*actions),
-        resultFunction,
-    )
+    constructor(vararg actions: T) : this(mutableListOf(*actions))
 
     private val commandsToAdd = mutableListOf<T>()
     private var oldSize = size
 
     operator fun invoke() {
         for (action in actionList) {
-            action()?.resultFunction()
+            action()
         }
-        actionList.removeIf(FunctionAction<*>::isCanceled)
+        actionList.removeIf(FunctionAction::isCanceled)
         if (size != oldSize) {
             Log.d("ActionList", "New size: $size")
         }
