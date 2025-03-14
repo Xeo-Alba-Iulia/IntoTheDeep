@@ -30,12 +30,12 @@ import kotlin.time.Duration.Companion.seconds
 
 @Autonomous
 class Basket : LinearOpMode() {
-    val beginPose = Pose(11.6, 118.0, Math.toRadians(45.0))
+    val beginPose = Pose(8.7, 105.0, Math.toRadians(-90.0))
     val samplePoses =
         arrayOf(
             Pose(24.35, 126.86, Math.toRadians(-19.0)),
             Pose(21.5, 128.6, Math.toRadians(0.0)),
-            Pose(23.2, 131.6, Math.toRadians(19.0)),
+            Pose(23.2, 131.6, Math.toRadians(18.5)),
         )
     val scorePose = Pose(20.0, 125.5, Math.toRadians(-45.0))
     val scoreAngle = Math.toRadians(-45.0)
@@ -112,7 +112,8 @@ class Basket : LinearOpMode() {
                 .setLinearHeadingInterpolation(scorePose.heading, parkPose.heading, 0.5)
                 .addParametricCallback(0.9) {
                     robot.outtake.outtakePosition = OuttakePosition.BAR
-                }.build()
+                }.setZeroPowerAccelerationMultiplier(2.0)
+                .build()
 
         val transfer: (Int) -> Unit = {
             robot.lift.targetPosition = Positions.Lift.hang
@@ -126,16 +127,16 @@ class Basket : LinearOpMode() {
                         FunctionAction(robot.lift::atTarget, willCancel = true) {
                             robot.claw.isClosed = true
                             delayedActions +=
-                                DelayedAction(80.0.milliseconds) {
+                                DelayedAction(100.0.milliseconds) {
                                     robot.intake.claw.isClosed = false
                                 }
                             delayedActions +=
-                                DelayedAction(120.0.milliseconds) {
+                                DelayedAction(150.0.milliseconds) {
                                     robot.lift.targetPosition = Positions.Lift.up
-                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
                                 }
                             delayedActions +=
                                 DelayedAction(1.5.seconds) {
+                                    robot.outtake.outtakePosition = OuttakePosition.BASKET
                                     state = it
                                 }
                         }
@@ -177,7 +178,7 @@ class Basket : LinearOpMode() {
 
                 0 -> {
 //                    follower.followPath(firstScore)
-                    robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+                    robot.outtake.outtakePosition = OuttakePosition.BASKET
                     robot.lift.targetPosition = Positions.Lift.up
                     delayedActions +=
                         DelayedAction(1.5.seconds) {
