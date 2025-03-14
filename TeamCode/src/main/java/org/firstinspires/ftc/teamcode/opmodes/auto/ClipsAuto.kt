@@ -215,7 +215,7 @@ class ClipsAuto : LinearOpMode() {
         while (!isStopRequested) {
             when (state) {
                 -10 -> {
-                    require(actions.isNotEmpty())
+                    assert(actions.isNotEmpty())
                 }
 
                 0 -> {
