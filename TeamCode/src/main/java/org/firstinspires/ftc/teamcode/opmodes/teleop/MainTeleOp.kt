@@ -135,6 +135,9 @@ open class MainTeleOp : LinearOpMode() {
                 },
                 FunctionAction(controlGamepad::cross) {
                     robot.intake.targetPosition = IntakePositions.PICKUP
+                    if (robot.outtake.outtakePosition == OuttakePosition.PICKUP || robot.outtake.outtakePosition == OuttakePosition.TRANSFER) {
+                        robot.outtake.outtakePosition = OuttakePosition.BASKET
+                    }
                 },
                 FunctionAction(moveGamepad::cross) {
                     if (!robot.intake.isExtended) {
