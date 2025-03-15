@@ -90,7 +90,7 @@ open class MainTeleOp : LinearOpMode() {
             mutableListOf(
                 robot.intake,
                 robot.outtake,
-                robot.extend,
+//                robot.extend,
                 robot.lift,
                 robot.claw,
             )
@@ -135,9 +135,9 @@ open class MainTeleOp : LinearOpMode() {
                 },
                 FunctionAction(controlGamepad::cross) {
                     robot.intake.targetPosition = IntakePositions.PICKUP
-                    if (robot.outtake.outtakePosition == OuttakePosition.PICKUP || robot.outtake.outtakePosition == OuttakePosition.TRANSFER) {
-                        robot.outtake.outtakePosition = OuttakePosition.BASKET
-                    }
+//                    if (robot.outtake.outtakePosition == OuttakePosition.PICKUP || robot.outtake.outtakePosition == OuttakePosition.TRANSFER) {
+//                        robot.outtake.outtakePosition = OuttakePosition.BASKET
+//                    }
                 },
                 FunctionAction(moveGamepad::cross) {
                     if (!robot.intake.isExtended) {
@@ -207,7 +207,7 @@ open class MainTeleOp : LinearOpMode() {
         follower.startTeleopDrive()
 
         robot.intake.targetPosition = IntakePositions.TRANSFER
-        robot.extend.targetPosition = Positions.Extend.`in`
+//        robot.extend.targetPosition = Positions.Extend.`in`
         robot.outtake.pendul.targetPosition = 0.8
         robot.intake.isClosed = false
 
