@@ -188,10 +188,10 @@ class ClipsAuto : LinearOpMode() {
                 .addTemporalCallback(0.0) {
                     robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
                     robot.claw.isClosed = false
-                }.addTemporalCallback(0.2) {
+                }.addTemporalCallback(0.05) {
                     robot.intake.targetPosition = IntakePositions.PICKUP
                     robot.intake.extend.targetPosition = Positions.Extend.`in`
-                }.addTemporalCallback(0.4) {
+                }.addTemporalCallback(0.2) {
                     robot.intake.extend.targetPosition = Positions.Extend.`out`
                 }.build()
 
