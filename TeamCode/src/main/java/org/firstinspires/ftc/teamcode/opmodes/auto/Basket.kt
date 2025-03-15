@@ -98,12 +98,16 @@ class Basket : LinearOpMode() {
                     .build(),
                 PathBuilder()
                     .addBezierLine(Point(samplePoses[1]), Point(scorePose))
-                    .setLinearHeadingInterpolation(samplePoses[1].heading, scorePose.heading + Math.toRadians(10.0))
-                    .build(),
+                    .setLinearHeadingInterpolation(
+                        samplePoses[1].heading,
+                        scorePose.heading + Math.toRadians(10.0),
+                    ).build(),
                 PathBuilder()
                     .addBezierLine(Point(samplePoses[2]), Point(scorePose))
-                    .setLinearHeadingInterpolation(samplePoses[2].heading, scorePose.heading + Math.toRadians(5.0))
-                    .build(),
+                    .setLinearHeadingInterpolation(
+                        samplePoses[2].heading,
+                        scorePose.heading + Math.toRadians(5.0),
+                    ).build(),
             )
 
         val parkPath =
@@ -131,7 +135,7 @@ class Basket : LinearOpMode() {
                                     robot.intake.claw.isClosed = false
                                 }
                             delayedActions +=
-                                DelayedAction(150.0.milliseconds) {
+                                DelayedAction(250.0.milliseconds) {
                                     robot.lift.targetPosition = Positions.Lift.up
                                 }
                             delayedActions +=

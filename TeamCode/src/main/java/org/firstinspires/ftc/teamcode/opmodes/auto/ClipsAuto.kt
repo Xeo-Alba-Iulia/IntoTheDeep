@@ -41,7 +41,7 @@ class ClipsAuto : LinearOpMode() {
         val beginPoint = Point(8.5, 60.5)
         val scorePoint =
             arrayOf(
-                Point(38.0, 72.0),
+                Point(40.0, 72.0),
                 Point(38.0, 70.0),
                 Point(38.0, 69.0),
                 Point(38.0, 69.0),
@@ -107,10 +107,10 @@ class ClipsAuto : LinearOpMode() {
                     .addTemporalCallback(0.0) {
                         robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
                         robot.claw.isClosed = false
-                    }.addTemporalCallback(0.1) {
+                    }.addTemporalCallback(0.04) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         robot.lift.targetPosition = 0.0
-                    }.setZeroPowerAccelerationMultiplier(3.1)
+                    }.setZeroPowerAccelerationMultiplier(3.0)
                     .build()
             }
 
