@@ -21,6 +21,7 @@ class Intake(
     private var pickupTimer = Timer()
 
     val isPickedUp get() = pickupTimer.elapsedTimeSeconds >= 0.24
+    var isExtendStop = false
 
     private lateinit var oldPosition: IntakePositions
 
@@ -31,7 +32,7 @@ class Intake(
             rotate.targetPosition = Positions.IntakeRotate.pickup
         }
 
-        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.12) {
+        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.1) {
             isClosed = true
         }
 
@@ -42,7 +43,16 @@ class Intake(
             needsPickup = false
         }
 
-        return pendul.run(p) && extend.run(p) && clawRotate.run(p) && rotate.run(p) && claw.run(p)
+        if (!isExtendStop) {
+            extend.run(p)
+        }
+
+        pendul.run(p)
+        clawRotate.run(p)
+        rotate.run(p)
+        claw.run(p)
+
+        return true
     }
 
     var targetPosition: IntakePositions = PICKUP
