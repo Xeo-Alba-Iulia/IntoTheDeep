@@ -27,7 +27,7 @@ class Outtake(
                 OuttakePosition.TRANSFER -> {
                     rotation.targetPosition = Positions.ClawRotate.transfer
                     pendul.targetPosition = Positions.Pendul.transfer
-                    outtakeRotation.targetPosition = Positions.OuttakeRotate.down
+                    outtakeRotation.targetPosition = Positions.OuttakeRotate.up
                 }
 
                 OuttakePosition.BASKET -> {
