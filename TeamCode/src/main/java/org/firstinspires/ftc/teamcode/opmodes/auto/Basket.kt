@@ -33,9 +33,9 @@ class Basket : LinearOpMode() {
     val beginPose = Pose(8.7, 105.0, Math.toRadians(-90.0))
     val samplePoses =
         arrayOf(
-            Pose(24.35, 126.86, Math.toRadians(-19.0)),
-            Pose(21.5, 128.6, Math.toRadians(0.0)),
-            Pose(23.2, 131.6, Math.toRadians(18.5)),
+            Pose(23.35, 127.86, Math.toRadians(-19.0)),
+            Pose(21.5, 129.6, Math.toRadians(0.0)),
+            Pose(23.2, 132.6, Math.toRadians(18.5)),
         )
     val scorePose = Pose(20.0, 125.5, Math.toRadians(-45.0))
     val scoreAngle = Math.toRadians(-45.0)
@@ -98,11 +98,11 @@ class Basket : LinearOpMode() {
                     .build(),
                 PathBuilder()
                     .addBezierLine(Point(samplePoses[1]), Point(scorePose))
-                    .setLinearHeadingInterpolation(samplePoses[1].heading, scorePose.heading)
+                    .setLinearHeadingInterpolation(samplePoses[1].heading, scorePose.heading + Math.toRadians(10.0))
                     .build(),
                 PathBuilder()
                     .addBezierLine(Point(samplePoses[2]), Point(scorePose))
-                    .setLinearHeadingInterpolation(samplePoses[2].heading, scorePose.heading)
+                    .setLinearHeadingInterpolation(samplePoses[2].heading, scorePose.heading + Math.toRadians(5.0))
                     .build(),
             )
 
@@ -153,8 +153,8 @@ class Basket : LinearOpMode() {
             pendul.run(packet)
             dashboard.sendTelemetryPacket(packet)
         }
-        val pickupDelay = 0.3
-        val dropDelay = 0.5.seconds
+        val pickupDelay = 0.5
+        val dropDelay = 0.7.seconds
 
         follower.poseUpdater.resetIMU()
         follower.pose = beginPose
@@ -213,8 +213,11 @@ class Basket : LinearOpMode() {
 
                 3 -> {
                     if (!follower.isBusy) {
-                        robot.intake.pickUp()
-                        state = 4
+                        delayedActions +=
+                            DelayedAction(0.5.seconds) {
+                                robot.intake.pickUp()
+                                state = 4
+                            }
                     }
                 }
 
@@ -231,13 +234,16 @@ class Basket : LinearOpMode() {
 
                 5 -> {
                     if (!follower.isBusy) {
-                        robot.claw.isClosed = false
-                        Log.d("ActionList", "${delayedActions.size}")
-                        state = -10
                         delayedActions +=
-                            DelayedAction(dropDelay) {
-                                state = 6
+                            DelayedAction(0.5.seconds) {
+                                robot.claw.isClosed = false
+                                Log.d("ActionList", "${delayedActions.size}")
+                                delayedActions +=
+                                    DelayedAction(dropDelay) {
+                                        state = 6
+                                    }
                             }
+                        state = -10
                     }
                 }
 
@@ -253,8 +259,11 @@ class Basket : LinearOpMode() {
 
                 7 -> {
                     if (!follower.isBusy) {
-                        robot.intake.pickUp()
-                        state = 8
+                        delayedActions +=
+                            DelayedAction(0.5.seconds) {
+                                robot.intake.pickUp()
+                                state = 8
+                            }
                     }
                 }
 
@@ -271,12 +280,16 @@ class Basket : LinearOpMode() {
 
                 9 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
-                        robot.claw.isClosed = false
-                        state = -10
                         delayedActions +=
-                            DelayedAction(dropDelay) {
-                                state = 10
+                            DelayedAction(0.5.seconds) {
+                                robot.claw.isClosed = false
+                                Log.d("ActionList", "${delayedActions.size}")
+                                delayedActions +=
+                                    DelayedAction(dropDelay) {
+                                        state = 10
+                                    }
                             }
+                        state = -10
                     }
                 }
 
@@ -292,8 +305,11 @@ class Basket : LinearOpMode() {
 
                 11 -> {
                     if (!follower.isBusy) {
-                        robot.intake.pickUp()
-                        state = 12
+                        delayedActions +=
+                            DelayedAction(0.5.seconds) {
+                                robot.intake.pickUp()
+                                state = 12
+                            }
                     }
                 }
 
@@ -310,12 +326,16 @@ class Basket : LinearOpMode() {
 
                 13 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
-                        robot.claw.isClosed = false
-                        state = -10
                         delayedActions +=
-                            DelayedAction(dropDelay) {
-                                state = 14
+                            DelayedAction(0.5.seconds) {
+                                robot.claw.isClosed = false
+                                Log.d("ActionList", "${delayedActions.size}")
+                                delayedActions +=
+                                    DelayedAction(dropDelay) {
+                                        state = 14
+                                    }
                             }
+                        state = -10
                     }
                 }
 
