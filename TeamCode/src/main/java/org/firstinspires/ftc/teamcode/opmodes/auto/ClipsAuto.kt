@@ -41,11 +41,11 @@ class ClipsAuto : LinearOpMode() {
         val beginPoint = Point(8.5, 60.5)
         val scorePoint =
             arrayOf(
-                Point(38.0, 72.0),
-                Point(38.0, 70.0),
-                Point(38.0, 69.0),
-                Point(38.0, 69.0),
-                Point(38.0, 69.0),
+                Point(40.0, 72.0),
+                Point(39.0, 70.0),
+                Point(39.0, 69.0),
+                Point(39.0, 69.0),
+                Point(39.0, 69.0),
             )
         val samplePoint =
             arrayOf(
@@ -96,13 +96,14 @@ class ClipsAuto : LinearOpMode() {
                         robot.claw.isClosed = true
                         follower.setMaxPower(1.0)
                     }.addTemporalCallback(0.1) { robot.outtake.outtakePosition = OuttakePosition.BAR }
+                    .setZeroPowerAccelerationMultiplier(5.0)
                     .build()
             }
 
         val returnPath =
             Array(3) {
                 PathBuilder()
-                    .addBezierCurve(scorePoint[it + 2], Point(24.0, 65.0), Point(24.0, 40.0), pickupPoint)
+                    .addBezierCurve(scorePoint[it + 2], Point(24.0, 65.0), Point(26.0, 34.0), pickupPoint)
                     .setConstantHeadingInterpolation(angle)
                     .addTemporalCallback(0.0) {
                         robot.outtake.pendul.targetPosition = Positions.Pendul.specimenRelease
@@ -110,7 +111,7 @@ class ClipsAuto : LinearOpMode() {
                     }.addTemporalCallback(0.1) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         robot.lift.targetPosition = 0.0
-                    }.setZeroPowerAccelerationMultiplier(3.1)
+                    }.setZeroPowerAccelerationMultiplier(3.2)
                     .build()
             }
 

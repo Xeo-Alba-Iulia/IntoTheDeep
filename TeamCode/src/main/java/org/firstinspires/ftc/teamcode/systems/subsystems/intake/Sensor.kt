@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems.intake
 
+import android.util.Log
 import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.AnalogInput
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -29,9 +30,21 @@ class Sensor(
     val isYellow
         get() = sensor.green() > sensor.red() && sensor.red() > 1000
 
-    fun red() = sensor.red()
+    fun red(): Int {
+        val value = sensor.red()
+        Log.d("ColorSensor", "red: $value")
+        return value
+    }
 
-    fun green() = sensor.green()
+    fun green(): Int {
+        val value = sensor.green()
+        Log.d("ColorSensor", "green: $value")
+        return value
+    }
 
-    fun blue() = sensor.blue()
+    fun blue(): Int {
+        val value = sensor.blue()
+        Log.d("ColorSensor", "blue: $value")
+        return value
+    }
 }

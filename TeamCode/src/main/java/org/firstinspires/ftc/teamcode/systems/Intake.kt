@@ -31,11 +31,11 @@ class Intake(
             rotate.targetPosition = Positions.IntakeRotate.pickup
         }
 
-        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.1) {
+        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.12) {
             isClosed = true
         }
 
-        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.19) {
+        if (needsPickup && pickupTimer.elapsedTimeSeconds >= 0.23) {
             if (targetPosition == oldPosition) {
                 targetPosition = oldPosition
             }

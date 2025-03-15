@@ -33,13 +33,13 @@ class Basket : LinearOpMode() {
     val beginPose = Pose(8.7, 105.0, Math.toRadians(-90.0))
     val samplePoses =
         arrayOf(
-            Pose(23.5, 127.5, Math.toRadians(-19.0)),
-            Pose(21.5, 130.25, Math.toRadians(0.0)),
+            Pose(23.4, 127.7, Math.toRadians(-19.0)),
+            Pose(21.5, 130.5, Math.toRadians(0.0)),
             Pose(23.7, 133.0, Math.toRadians(18.5)),
         )
     val scorePose = Pose(20.0, 125.5, Math.toRadians(-45.0))
     val scoreAngle = Math.toRadians(-45.0)
-    val parkPose = Pose(64.2, 92.3, Math.toRadians(90.0))
+    val parkPose = Pose(65.2, 92.3, Math.toRadians(90.0))
     val parkControl = Point(65.5, 130.1)
 
     private val pathTimer = Timer()
@@ -98,12 +98,16 @@ class Basket : LinearOpMode() {
                     .build(),
                 PathBuilder()
                     .addBezierLine(Point(samplePoses[1]), Point(scorePose))
-                    .setLinearHeadingInterpolation(samplePoses[1].heading, scorePose.heading + Math.toRadians(10.0))
-                    .build(),
+                    .setLinearHeadingInterpolation(
+                        samplePoses[1].heading,
+                        scorePose.heading + Math.toRadians(10.0),
+                    ).build(),
                 PathBuilder()
                     .addBezierLine(Point(samplePoses[2]), Point(scorePose))
-                    .setLinearHeadingInterpolation(samplePoses[2].heading, scorePose.heading + Math.toRadians(5.0))
-                    .build(),
+                    .setLinearHeadingInterpolation(
+                        samplePoses[2].heading,
+                        scorePose.heading + Math.toRadians(5.0),
+                    ).build(),
             )
 
         val parkPath =
@@ -135,7 +139,7 @@ class Basket : LinearOpMode() {
                                     robot.lift.targetPosition = Positions.Lift.up
                                 }
                             delayedActions +=
-                                DelayedAction(1.5.seconds) {
+                                FunctionAction(robot.lift::atTarget, willCancel = true) {
                                     robot.outtake.outtakePosition = OuttakePosition.BASKET
                                     state = it
                                 }
@@ -153,13 +157,15 @@ class Basket : LinearOpMode() {
             pendul.run(packet)
             dashboard.sendTelemetryPacket(packet)
         }
-        val pickupDelay = 0.5
-        val dropDelay = 0.7.seconds
+        val pickupDelay = 0.3
+        val dropDelay = 0.2.seconds
 
         follower.poseUpdater.resetIMU()
         follower.pose = beginPose
 
         val opModeTimer = Timer()
+
+        robot.outtake.outtakePosition = OuttakePosition.TRANSFER
 
         while (!isStopRequested) {
             if (opModeTimer.elapsedTimeSeconds > 29.9) {
@@ -178,11 +184,12 @@ class Basket : LinearOpMode() {
 
                 0 -> {
 //                    follower.followPath(firstScore)
-                    robot.outtake.outtakePosition = OuttakePosition.BASKET
+//                    robot.outtake.outtakePosition = OuttakePosition.BASKET
                     robot.lift.targetPosition = Positions.Lift.up
                     delayedActions +=
-                        DelayedAction(1.5.seconds) {
+                        FunctionAction(robot.lift::atTarget, willCancel = true) {
                             follower.followPath(firstScore)
+                            robot.outtake.outtakePosition = OuttakePosition.BASKET
                             state = 1
                         }
                     state = -10
@@ -192,7 +199,7 @@ class Basket : LinearOpMode() {
                     if (!follower.isBusy) {
                         robot.outtake.outtakePosition = OuttakePosition.BASKET
                         delayedActions +=
-                            DelayedAction(0.5.seconds) {
+                            DelayedAction(0.1.seconds) {
                                 robot.claw.isClosed = false
                                 state = 2
                             }
@@ -214,7 +221,7 @@ class Basket : LinearOpMode() {
                 3 -> {
                     if (!follower.isBusy) {
                         delayedActions +=
-                            DelayedAction(0.5.seconds) {
+                            DelayedAction(0.1.seconds) {
                                 robot.intake.pickUp()
                                 state = 4
                             }
@@ -235,7 +242,7 @@ class Basket : LinearOpMode() {
                 5 -> {
                     if (!follower.isBusy) {
                         delayedActions +=
-                            DelayedAction(0.5.seconds) {
+                            DelayedAction(0.1.seconds) {
                                 robot.claw.isClosed = false
                                 Log.d("ActionList", "${delayedActions.size}")
                                 delayedActions +=
@@ -260,7 +267,7 @@ class Basket : LinearOpMode() {
                 7 -> {
                     if (!follower.isBusy) {
                         delayedActions +=
-                            DelayedAction(0.5.seconds) {
+                            DelayedAction(0.1.seconds) {
                                 robot.intake.pickUp()
                                 state = 8
                             }
@@ -295,6 +302,7 @@ class Basket : LinearOpMode() {
 
                 10 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
+                        follower.setMaxPower(0.8)
                         follower.followPath(pickupSamples[2])
                         robot.intake.targetPosition = IntakePositions.PICKUP
                         robot.outtake.outtakePosition = OuttakePosition.TRANSFER
@@ -305,8 +313,9 @@ class Basket : LinearOpMode() {
 
                 11 -> {
                     if (!follower.isBusy) {
+                        follower.setMaxPower(1.0)
                         delayedActions +=
-                            DelayedAction(0.75.seconds) {
+                            DelayedAction(0.1.seconds) {
                                 robot.intake.pickUp()
                                 state = 12
                             }
@@ -327,7 +336,7 @@ class Basket : LinearOpMode() {
                 13 -> {
                     if (!follower.isBusy && delayedActions.isEmpty()) {
                         delayedActions +=
-                            DelayedAction(0.5.seconds) {
+                            DelayedAction(0.4.seconds) {
                                 robot.claw.isClosed = false
                                 Log.d("ActionList", "${delayedActions.size}")
                                 delayedActions +=
