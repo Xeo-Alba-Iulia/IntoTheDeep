@@ -33,9 +33,9 @@ class Basket : LinearOpMode() {
     val beginPose = Pose(8.7, 105.0, Math.toRadians(-90.0))
     val samplePoses =
         arrayOf(
-            Pose(23.35, 127.86, Math.toRadians(-19.0)),
-            Pose(21.5, 129.6, Math.toRadians(0.0)),
-            Pose(23.2, 132.6, Math.toRadians(18.5)),
+            Pose(23.5, 127.5, Math.toRadians(-19.0)),
+            Pose(21.5, 130.25, Math.toRadians(0.0)),
+            Pose(23.7, 133.0, Math.toRadians(18.5)),
         )
     val scorePose = Pose(20.0, 125.5, Math.toRadians(-45.0))
     val scoreAngle = Math.toRadians(-45.0)
@@ -306,7 +306,7 @@ class Basket : LinearOpMode() {
                 11 -> {
                     if (!follower.isBusy) {
                         delayedActions +=
-                            DelayedAction(0.5.seconds) {
+                            DelayedAction(0.75.seconds) {
                                 robot.intake.pickUp()
                                 state = 12
                             }
