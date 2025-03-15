@@ -166,6 +166,7 @@ class Basket : LinearOpMode() {
         val opModeTimer = Timer()
 
         robot.outtake.outtakePosition = OuttakePosition.TRANSFER
+        robot.outtake.pendul.servoSmooth.currentPositionRatio = 0.98
 
         while (!isStopRequested) {
             if (opModeTimer.elapsedTimeSeconds > 29.9) {

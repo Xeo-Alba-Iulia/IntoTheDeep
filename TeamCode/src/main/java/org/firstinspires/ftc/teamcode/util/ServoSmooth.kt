@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.util
 import android.util.Log
 
 class ServoSmooth(
-    val currentPositionRatio: Double,
+    var currentPositionRatio: Double,
 ) {
     init {
         require(currentPositionRatio in 0.0..1.0)
