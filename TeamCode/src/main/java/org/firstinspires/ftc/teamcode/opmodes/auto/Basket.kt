@@ -30,12 +30,12 @@ import kotlin.time.Duration.Companion.seconds
 
 @Autonomous
 class Basket : LinearOpMode() {
-    val beginPose = Pose(8.7, 106.378, Math.toRadians(-90.0))
+    val beginPose = Pose(8.7, 106.8, Math.toRadians(-90.0))
     val samplePoses =
         arrayOf(
             Pose(23.4, 128.5, Math.toRadians(-19.0)),
-            Pose(21.5, 130.5, Math.toRadians(0.0)),
-            Pose(23.5, 130.0, Math.toRadians(18.5)),
+            Pose(21.5, 130.6, Math.toRadians(0.0)),
+            Pose(23.5, 133.2, Math.toRadians(18.5)),
         )
     val scorePose = Pose(20.0, 125.5, Math.toRadians(-45.0))
     val scoreAngle = Math.toRadians(-45.0)
@@ -132,11 +132,11 @@ class Basket : LinearOpMode() {
                         FunctionAction(robot.lift::atTarget, willCancel = true) {
                             robot.claw.isClosed = true
                             delayedActions +=
-                                DelayedAction(100.0.milliseconds) {
+                                DelayedAction(150.0.milliseconds) {
                                     robot.intake.claw.isClosed = false
                                 }
                             delayedActions +=
-                                DelayedAction(150.0.milliseconds) {
+                                DelayedAction(250.0.milliseconds) {
                                     robot.lift.targetPosition = Positions.Lift.up
                                     robot.outtake.outtakePosition = OuttakePosition.BASKET
                                     delayedActions +=
