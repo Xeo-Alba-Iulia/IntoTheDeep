@@ -169,10 +169,10 @@ object Positions {
     class OuttakeRotate {
         companion object {
             @JvmField @Volatile
-            var down = 0.0
+            var down = 0.83
 
             @JvmField @Volatile
-            var up = 0.83
+            var up = 0.0
         }
     }
 }
