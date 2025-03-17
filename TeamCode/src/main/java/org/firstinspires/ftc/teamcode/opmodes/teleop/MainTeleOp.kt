@@ -170,7 +170,7 @@ open class MainTeleOp : LinearOpMode() {
                 },
                 FunctionAction({ -controlGamepad.left_stick_y < -0.7 }) {
                     // Joystick-urile sunt inversate
-                    robot.lift.targetPosition = Positions.Lift.half
+                    robot.lift.targetPosition = Positions.Lift.half + 400.0
                     robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                     robot.claw.isClosed = false
                 },
@@ -183,7 +183,7 @@ open class MainTeleOp : LinearOpMode() {
                     }
                     if (robot.intake.targetPosition != IntakePositions.TRANSFER) {
                         robot.intake.targetPosition = IntakePositions.TRANSFER
-                        delayedActions += DelayedAction(0.2.seconds) { setOuttakeLiftPosition() }
+                        delayedActions += DelayedAction(0.4.seconds) { setOuttakeLiftPosition() }
                     } else {
                         setOuttakeLiftPosition()
                     }

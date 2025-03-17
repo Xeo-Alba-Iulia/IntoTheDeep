@@ -37,7 +37,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var transfer = 375.0
+            var transfer = 365.0
 
             @JvmField
             @Volatile
