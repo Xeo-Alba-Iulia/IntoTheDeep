@@ -52,10 +52,10 @@ dependencies {
 
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
-    implementation "com.pedropathing:pedro:1.0.8"
+    implementation "com.pedropathing:pedro:1.0.9"
     implementation "org.team11260:fast-load:0.1.2"
-    implementation("com.rowanmcalpin.nextftc:core-local:0.6.0")
-    implementation("com.rowanmcalpin.nextftc:ftc-local:0.6.0")
-    implementation("com.rowanmcalpin.nextftc:pedro-local:0.6.0")
+    implementation("com.rowanmcalpin.nextftc:core:0.6.1")
+    implementation("com.rowanmcalpin.nextftc:ftc:0.6.1")
+    implementation("com.rowanmcalpin.nextftc:pedro:0.6.1")
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
