@@ -273,15 +273,15 @@ open class MainTeleOp : LinearOpMode() {
                 }
 
                 if (colorDetectionTicks <= 10 && robot.intake.isPickedUp) {
-                    Log.d("ColorDetection", "Checking colors")
+                    RobotLog.dd("ColorDetection", "Checking colors")
                     if (colorDetections() <= 1) {
-                        RobotLog.d("ColorDetection", "Checked colors successfully")
+                        RobotLog.dd("ColorDetection", "Checked colors successfully")
                         if (!controlGamepad.cross && !controlGamepad.left_bumper) {
                             if (!sensor.isHoldingSample || isWrongColor) {
                                 robot.intake.isClosed = false
-                                RobotLog.d("ColorDetection", "Reached with no or wrong color specimen")
+                                RobotLog.dd("ColorDetection", "Reached with no or wrong color specimen")
                             } else if (sensor.isHoldingSample && isRightColor) {
-                                RobotLog.d("ColorDetection", "Reached correct color")
+                                RobotLog.dd("ColorDetection", "Reached correct color")
                                 robot.intake.targetPosition = IntakePositions.TRANSFER
                             }
                         }
