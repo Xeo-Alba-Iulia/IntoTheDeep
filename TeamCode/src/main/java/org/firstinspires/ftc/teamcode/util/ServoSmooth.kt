@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.util
 
-import android.util.Log
-
 class ServoSmooth(
     var currentPositionRatio: Double,
 ) {
@@ -14,11 +12,6 @@ class ServoSmooth(
             field = value.coerceIn(0.0..1.0)
         }
 
-    operator fun get(currentPosition: Double): Double {
-        val returnValue =
-            (currentPosition * currentPositionRatio) + (targetPosition * (1 - currentPositionRatio))
-
-        Log.d("ServoSmooth", "Current position: $currentPosition, return: $returnValue")
-        return returnValue
-    }
+    operator fun get(currentPosition: Double) =
+        (currentPosition * currentPositionRatio) + (targetPosition * (1 - currentPositionRatio))
 }
