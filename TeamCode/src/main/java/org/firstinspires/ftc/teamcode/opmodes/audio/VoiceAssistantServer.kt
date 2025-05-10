@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.util.RobotLog
 import fi.iki.elonen.NanoHTTPD.IHTTPSession
 import fi.iki.elonen.NanoWSD
 import fi.iki.elonen.NanoWSD.WebSocket
-import kotlinx.serialization.serializerOrNull
 import org.firstinspires.ftc.ftccommon.external.OnCreate
 import java.io.IOException
 import kotlin.reflect.KCallable
@@ -21,37 +20,39 @@ class VoiceAssistantServer {
         @OnCreate
         @JvmStatic
         fun init() {
-            instance = VoiceAssistantServer()
+            if (!::instance.isInitialized) {
+                instance = VoiceAssistantServer()
+            }
         }
     }
 
     private val map: MutableMap<String, KCallable<*>> = mutableMapOf()
-    private val wsd =
-        object : NanoWSD(PORT) {
-            override fun openWebSocket(handshake: IHTTPSession) = VoiceAssistantSocket(handshake)
-        }
 
     init {
         createFunctionMap()
+    }
+
+    private val wsd =
+        object : NanoWSD(PORT) {
+            override fun openWebSocket(handshake: IHTTPSession) = VoiceAssistantSocket(handshake, map)
+        }
+
+    init {
         wsd.start()
     }
 
     private fun createFunctionMap() {
         for (callable in VoiceAssistantOpMode::class.members) {
             if (callable.annotations.any { it is VoiceActivated }) {
-                if (callable.valueParameters.any { serializerOrNull(it.type) == null }) {
-                    RobotLog.ee(
-                        TAG,
-                        "Function ${callable.name} has invalid parameters: ${callable.valueParameters}",
-                    )
-                    continue
-                }
+                require(callable.valueParameters.isEmpty()) { "Annotated function takes parameters" }
+                map[callable.name] = callable
             }
         }
     }
 
     private class VoiceAssistantSocket(
         handshake: IHTTPSession,
+        val map: Map<String, KCallable<*>>,
     ) : WebSocket(handshake) {
         override fun onOpen() {
             RobotLog.ii(TAG, "WebSocket opened")
@@ -77,6 +78,13 @@ class VoiceAssistantServer {
                 send("Voice Assistant Op Mode is not running")
                 return
             }
+            val operation = map[message]
+            if (operation == null) {
+                send("Requested Operation can't be found")
+                RobotLog.ww(TAG, "Wrong function call in message: $message")
+                return
+            }
+            operation.call(instance)
         }
 
         override fun onPong(frame: NanoWSD.WebSocketFrame) {
