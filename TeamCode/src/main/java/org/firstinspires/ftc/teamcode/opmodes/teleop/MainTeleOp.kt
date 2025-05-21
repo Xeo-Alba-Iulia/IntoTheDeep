@@ -58,9 +58,9 @@ open class MainTeleOp : LinearOpMode() {
             robot.lift.targetPosition == Positions.Lift.transfer &&
                 robot.outtake.outtakePosition == OuttakePosition.TRANSFER
 
-        var isRed = false
-        var isBlue = false
-        var isYellow = false
+        var isRed: Boolean
+        var isBlue: Boolean
+        var isYellow: Boolean
 
         val colorDetections = {
             isRed = sensor.isRed
@@ -134,10 +134,7 @@ open class MainTeleOp : LinearOpMode() {
                     robot.intake.targetPosition = IntakePositions.TRANSFER
                 },
                 FunctionAction(controlGamepad::cross) {
-                    robot.intake.targetPosition = IntakePositions.PICKUP
-//                    if (robot.outtake.outtakePosition == OuttakePosition.PICKUP || robot.outtake.outtakePosition == OuttakePosition.TRANSFER) {
-//                        robot.outtake.outtakePosition = OuttakePosition.BASKET
-//                    }
+                    robot.intake.switch()
                 },
                 FunctionAction(moveGamepad::cross) {
                     if (!robot.intake.isExtended) {

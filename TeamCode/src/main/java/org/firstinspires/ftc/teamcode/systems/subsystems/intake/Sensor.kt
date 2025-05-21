@@ -1,15 +1,12 @@
 package org.firstinspires.ftc.teamcode.systems.subsystems.intake
 
-import android.util.Log
-import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.AnalogInput
 import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 class Sensor(
     hardwareMap: HardwareMap,
 ) {
-    private val sensor: RevColorSensorV3 = hardwareMap.get(RevColorSensorV3::class.java, "sensor_color")
+//    private val sensor: RevColorSensorV3 = hardwareMap.get(RevColorSensorV3::class.java, "sensor_color")
     private val servoSensor: AnalogInput = hardwareMap.analogInput["servo_sensor"]
 
     /**
@@ -19,32 +16,14 @@ class Sensor(
         get() = servoSensor.voltage >= 1.270
 
     val isHoveringSample
-        get() = sensor.getDistance(DistanceUnit.CM) < 4.0
+        get() = 0
 
     val isRed
-        get() = sensor.red() > sensor.green() && sensor.red() > 500
+        get() = false
 
     val isBlue
-        get() = sensor.blue() > 1.7 * sensor.green() || sensor.blue() > 950
+        get() = false
 
     val isYellow
-        get() = sensor.green() > sensor.red() && sensor.red() > 1000
-
-    fun red(): Int {
-        val value = sensor.red()
-        Log.d("ColorSensor", "red: $value")
-        return value
-    }
-
-    fun green(): Int {
-        val value = sensor.green()
-        Log.d("ColorSensor", "green: $value")
-        return value
-    }
-
-    fun blue(): Int {
-        val value = sensor.blue()
-        Log.d("ColorSensor", "blue: $value")
-        return value
-    }
+        get() = false
 }

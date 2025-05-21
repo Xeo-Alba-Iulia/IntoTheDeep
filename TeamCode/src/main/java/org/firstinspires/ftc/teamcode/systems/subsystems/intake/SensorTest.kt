@@ -53,9 +53,9 @@ class SensorTest : OpMode() {
         telemetry.addData("isBlue", sensor.isBlue)
         telemetry.addData("isYellow", sensor.isYellow)
 
-        telemetry.addData("Red", sensor.red())
-        telemetry.addData("Blue", sensor.blue())
-        telemetry.addData("Green", sensor.green())
+//        telemetry.addData("Red", sensor.red())
+//        telemetry.addData("Blue", sensor.blue())
+//        telemetry.addData("Green", sensor.green())
 
         val p = TelemetryPacket()
         intake.run(p)
