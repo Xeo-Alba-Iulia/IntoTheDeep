@@ -37,11 +37,9 @@ open class NextTeleOp :
     ) {
     val inTransfer
         get() =
-            listOf(
-                !Intake.isExtended,
-                Outtake.targetPosition == OuttakePosition.TRANSFER,
-                Lift.inTransfer,
-            ).all { it }
+            !Intake.isExtended &&
+                Outtake.targetPosition == OuttakePosition.TRANSFER &&
+                Lift.inTransfer
 
     private var holdHeading = false
     private val headingPIDFCoefficients = FollowerConstants.headingPIDFCoefficients
