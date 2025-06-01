@@ -6,14 +6,12 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.pedropathing.util.Timer
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.systems.Intake
 import org.firstinspires.ftc.teamcode.systems.IntakePositions
 
 @TeleOp
 class SensorTest : OpMode() {
     private lateinit var sensor: Sensor
-    private lateinit var telemetry: Telemetry
     private lateinit var intake: Intake
 
     override fun init() {

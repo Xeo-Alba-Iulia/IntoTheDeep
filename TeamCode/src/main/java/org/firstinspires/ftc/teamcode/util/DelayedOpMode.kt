@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 
 abstract class DelayedOpMode : LinearOpMode() {
-    abstract val delayedActions : MutableList<Pair<Long, Runnable>>;
+    abstract val delayedActions: MutableList<Pair<Long, Runnable>>
 
     protected fun MutableList<Pair<Long, Runnable>>.addDelayed(
         delay: Double,
@@ -33,7 +33,7 @@ abstract class DelayedOpMode : LinearOpMode() {
     }
 
     protected fun transfer(robot: RobotHardware) {
-        val finishTransfer : () -> Unit = {
+        val finishTransfer: () -> Unit = {
             if (robot.claw.isClosed) {
                 robot.intake.claw.isClosed = true
                 delayedActions.addDelayed(0.25) { robot.claw.isClosed = false }
