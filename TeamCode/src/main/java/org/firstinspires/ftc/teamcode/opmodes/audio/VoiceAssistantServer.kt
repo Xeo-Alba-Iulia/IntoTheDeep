@@ -1,97 +1,129 @@
 package org.firstinspires.ftc.teamcode.opmodes.audio
 
-import com.qualcomm.robotcore.util.RobotLog
-import fi.iki.elonen.NanoHTTPD.IHTTPSession
-import fi.iki.elonen.NanoWSD
-import fi.iki.elonen.NanoWSD.WebSocket
-import org.firstinspires.ftc.ftccommon.external.OnCreate
-import java.io.IOException
-import kotlin.reflect.KCallable
-import kotlin.reflect.full.valueParameters
+import android.annotation.SuppressLint
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.google.gson.Gson
+import com.google.gson.JsonParser
+import com.qualcomm.ftccommon.FtcEventLoop
+import com.qualcomm.robotcore.eventloop.EventLoop
+import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier
+import dev.frozenmilk.sinister.loading.Preload
+import dev.frozenmilk.sinister.sdk.apphooks.OnCreate
+import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
+import fi.iki.elonen.NanoHTTPD
+import java.lang.reflect.Parameter
 
-class VoiceAssistantServer {
-    companion object {
-        const val TAG = "VoiceAssistantServer"
-        private const val PORT = 5000
+data class OpModeName(
+    val opModeName: String,
+)
 
-        lateinit var instance: VoiceAssistantServer
-            private set
+private object VoiceAssistantOnCreateEventLoop : OnCreateEventLoop {
+    override fun onCreateEventLoop(
+        context: Context,
+        ftcEventLoop: FtcEventLoop,
+    ) {
+        VoiceAssistantInit.onCreateEventLoop(ftcEventLoop)
+    }
+}
 
-        @OnCreate
-        @JvmStatic
-        fun init() {
-            if (!::instance.isInitialized) {
-                instance = VoiceAssistantServer()
-            }
-        }
+private object VoiceAssistantOnCreate : OnCreate {
+    override fun onCreate(context: Context) {
+        VoiceAssistantInit.onCreate()
+    }
+}
+
+@Preload
+object VoiceAssistantInit : OpModeManagerNotifier.Notifications {
+    val TAG = this::class.simpleName as String
+
+    lateinit var eventLoop: EventLoop
+
+    @SuppressLint("StaticFieldLeak")
+    lateinit var opModeManager: OpModeManagerImpl
+
+    var opMode: OpMode? = null
+
+    lateinit var nanoHTTPD: NanoHTTPD
+
+    fun onCreate() {
+        nanoHTTPD = VoiceAssistantServer()
+        nanoHTTPD.start()
     }
 
-    private val map: MutableMap<String, KCallable<*>> = mutableMapOf()
+    fun onCreateEventLoop(ftcEventLoop: FtcEventLoop) {
+        if (::eventLoop.isInitialized) {
+            throw IllegalStateException("onCreateEventLoop called more than once")
+        }
+        this.eventLoop = ftcEventLoop
+        this.opModeManager = eventLoop.opModeManager
 
-    init {
-        createFunctionMap()
+        opModeManager.registerListener(this)
     }
 
-    private val wsd =
-        object : NanoWSD(PORT) {
-            override fun openWebSocket(handshake: IHTTPSession) = VoiceAssistantSocket(handshake, map)
-        }
-
-    init {
-        wsd.start()
+    override fun onOpModePreStart(opMode: OpMode) {
+        this.opMode = opMode
     }
 
-    private fun createFunctionMap() {
-        for (callable in VoiceAssistantOpMode::class.members) {
-            if (callable.annotations.any { it is VoiceActivated }) {
-                require(callable.valueParameters.isEmpty()) { "Annotated function takes parameters" }
-                map[callable.name] = callable
-            }
-        }
+    override fun onOpModePostStop(opMode: OpMode) {
+        this.opMode = null
     }
 
-    private class VoiceAssistantSocket(
-        handshake: IHTTPSession,
-        val map: Map<String, KCallable<*>>,
-    ) : WebSocket(handshake) {
-        override fun onOpen() {
-            RobotLog.ii(TAG, "WebSocket opened")
+    override fun onOpModePreInit(opMode: OpMode?) {}
+}
+
+private class VoiceAssistantServer : NanoHTTPD(8080) {
+    private val gson = Gson()
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun serve(session: IHTTPSession): Response {
+        val uri = session.uri.trim('/')
+        val body = session.inputStream.bufferedReader().readText()
+
+        if (uri == "init") {
+            val opModeName = gson.fromJson(body, OpModeName::class.java).opModeName
+            VoiceAssistantInit.opModeManager.initOpMode(opModeName)
+            return newFixedLengthResponse("OpMode Started successfully")
         }
 
-        override fun onClose(
-            closeCode: NanoWSD.WebSocketFrame.CloseCode?,
-            reason: String?,
-            closedByRemote: Boolean,
-        ) {
-            if (closeCode != NanoWSD.WebSocketFrame.CloseCode.NormalClosure) {
-                RobotLog.ww(
-                    TAG,
-                    "WebSocket closed with code: $closeCode, reason: $reason, closed by remote: $closedByRemote",
-                )
-            }
+        if (VoiceAssistantInit.opMode == null) {
+            return newFixedLengthResponse(
+                Response.Status.INTERNAL_ERROR,
+                "text/plain",
+                "OpMode isn't running",
+            )
         }
 
-        override fun onMessage(frame: NanoWSD.WebSocketFrame) {
-            val message = frame.textPayload
-            RobotLog.dd(TAG, "WebSocket message received: $message")
-            if (VoiceAssistantOpMode.instance?.isInLoop != true) {
-                send("Voice Assistant Op Mode is not running")
-                return
-            }
-            val operation = map[message]
-            if (operation == null) {
-                send("Requested Operation can't be found")
-                RobotLog.ww(TAG, "Wrong function call in message: $message")
-                return
-            }
-            operation.call(instance)
-        }
+        val method =
+            VoiceAssistantInit.opMode?.javaClass?.declaredMethods?.find {
+                it.isAnnotationPresent(VoiceActivated::class.java) && it.name == uri
+            } ?: return newFixedLengthResponse(
+                Response.Status.NOT_FOUND,
+                "text/plain",
+                "Method not found",
+            )
 
-        override fun onPong(frame: NanoWSD.WebSocketFrame) {
-            RobotLog.dd(TAG, "WebSocket pong received: ${frame.textPayload}")
-        }
+        val jsonObject =
+            JsonParser().parse(body).asJsonObject ?: return newFixedLengthResponse(
+                Response.Status.BAD_REQUEST,
+                "text/plain",
+                "Invalid JSON body",
+            )
 
-        override fun onException(exception: IOException) {
-        }
+        method.invoke(
+            VoiceAssistantInit.opMode,
+            *method.parameters
+                .map { parameter: Parameter ->
+                    val name = parameter.name
+                    val type = parameter.type
+
+                    gson.fromJson(jsonObject[name], type)
+                }.toTypedArray(),
+        )
+
+        return newFixedLengthResponse("Operation executed successfully")
     }
 }
