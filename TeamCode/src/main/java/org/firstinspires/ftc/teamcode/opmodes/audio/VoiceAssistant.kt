@@ -2,43 +2,34 @@ package org.firstinspires.ftc.teamcode.opmodes.audio
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.google.gson.Gson
-import com.google.gson.JsonParser
 import com.qualcomm.ftccommon.FtcEventLoop
 import com.qualcomm.robotcore.eventloop.EventLoop
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier
-import dev.frozenmilk.sinister.loading.Preload
+import com.qualcomm.robotcore.util.RobotLog
 import dev.frozenmilk.sinister.sdk.apphooks.OnCreate
 import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
 import fi.iki.elonen.NanoHTTPD
-import java.lang.reflect.Parameter
-
-data class OpModeName(
-    val opModeName: String,
-)
 
 private object VoiceAssistantOnCreateEventLoop : OnCreateEventLoop {
     override fun onCreateEventLoop(
         context: Context,
         ftcEventLoop: FtcEventLoop,
     ) {
-        VoiceAssistantInit.onCreateEventLoop(ftcEventLoop)
+        VoiceAssistant.onCreateEventLoop(ftcEventLoop)
     }
 }
 
 private object VoiceAssistantOnCreate : OnCreate {
     override fun onCreate(context: Context) {
-        VoiceAssistantInit.onCreate()
+        VoiceAssistant.onCreate()
     }
 }
 
-@Preload
-object VoiceAssistantInit : OpModeManagerNotifier.Notifications {
-    val TAG = this::class.simpleName as String
+object VoiceAssistant : OpModeManagerNotifier.Notifications {
+    const val TAG = "VoiceAssistantInit"
 
     lateinit var eventLoop: EventLoop
 
@@ -65,31 +56,39 @@ object VoiceAssistantInit : OpModeManagerNotifier.Notifications {
     }
 
     override fun onOpModePreStart(opMode: OpMode) {
+        RobotLog.dd(TAG, "OpMode $opMode started")
         this.opMode = opMode
     }
 
     override fun onOpModePostStop(opMode: OpMode) {
+        RobotLog.dd(TAG, "OpMode $opMode stopped")
         this.opMode = null
     }
 
     override fun onOpModePreInit(opMode: OpMode?) {}
 }
 
-private class VoiceAssistantServer : NanoHTTPD(8080) {
+private class VoiceAssistantServer : NanoHTTPD(5000) {
+    companion object {
+        const val TAG = "VoiceAssistantServer"
+    }
+
     private val gson = Gson()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun serve(session: IHTTPSession): Response {
-        val uri = session.uri.trim('/')
-        val body = session.inputStream.bufferedReader().readText()
+        RobotLog.dd(TAG, "Received request")
+        val uriIterator = session.uri.split('/').iterator()
+        uriIterator.next()
+        val op = uriIterator.next()
 
-        if (uri == "init") {
-            val opModeName = gson.fromJson(body, OpModeName::class.java).opModeName
-            VoiceAssistantInit.opModeManager.initOpMode(opModeName)
+        if (op == "init") {
+            VoiceAssistant.opModeManager.initOpMode(uriIterator.next())
             return newFixedLengthResponse("OpMode Started successfully")
         }
 
-        if (VoiceAssistantInit.opMode == null) {
+        val opMode = VoiceAssistantOpMode.instance
+
+        if (opMode == null) {
             return newFixedLengthResponse(
                 Response.Status.INTERNAL_ERROR,
                 "text/plain",
@@ -97,33 +96,16 @@ private class VoiceAssistantServer : NanoHTTPD(8080) {
             )
         }
 
-        val method =
-            VoiceAssistantInit.opMode?.javaClass?.declaredMethods?.find {
-                it.isAnnotationPresent(VoiceActivated::class.java) && it.name == uri
-            } ?: return newFixedLengthResponse(
+        when (op) {
+            "setPower" -> opMode.setPower(uriIterator.next().toDouble())
+
+            else -> return newFixedLengthResponse(
                 Response.Status.NOT_FOUND,
                 "text/plain",
-                "Method not found",
+                "Unknown operation: $op",
             )
+        }
 
-        val jsonObject =
-            JsonParser().parse(body).asJsonObject ?: return newFixedLengthResponse(
-                Response.Status.BAD_REQUEST,
-                "text/plain",
-                "Invalid JSON body",
-            )
-
-        method.invoke(
-            VoiceAssistantInit.opMode,
-            *method.parameters
-                .map { parameter: Parameter ->
-                    val name = parameter.name
-                    val type = parameter.type
-
-                    gson.fromJson(jsonObject[name], type)
-                }.toTypedArray(),
-        )
-
-        return newFixedLengthResponse("Operation executed successfully")
+        return newFixedLengthResponse("Success")
     }
 }

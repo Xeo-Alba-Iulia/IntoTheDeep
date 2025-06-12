@@ -38,12 +38,7 @@ class VoiceAssistantOpMode : OpMode() {
     }
 
     @VoiceActivated
-    fun startMotor() {
-        motor.power = 0.4
-    }
-
-    @VoiceActivated
-    fun stopMotor() {
-        motor.power = 0.0
+    fun setPower(power: Double) {
+        motor.power = power
     }
 }
