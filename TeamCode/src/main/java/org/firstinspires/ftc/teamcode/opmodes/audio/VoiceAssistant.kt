@@ -9,24 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier
 import com.qualcomm.robotcore.util.RobotLog
-import dev.frozenmilk.sinister.sdk.apphooks.OnCreate
-import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
 import fi.iki.elonen.NanoHTTPD
-
-private object VoiceAssistantOnCreateEventLoop : OnCreateEventLoop {
-    override fun onCreateEventLoop(
-        context: Context,
-        ftcEventLoop: FtcEventLoop,
-    ) {
-        VoiceAssistant.onCreateEventLoop(ftcEventLoop)
-    }
-}
-
-private object VoiceAssistantOnCreate : OnCreate {
-    override fun onCreate(context: Context) {
-        VoiceAssistant.onCreate()
-    }
-}
+import org.firstinspires.ftc.ftccommon.external.OnCreate
+import org.firstinspires.ftc.ftccommon.external.OnCreateEventLoop
 
 object VoiceAssistant : OpModeManagerNotifier.Notifications {
     const val TAG = "VoiceAssistantInit"
@@ -40,12 +25,19 @@ object VoiceAssistant : OpModeManagerNotifier.Notifications {
 
     lateinit var nanoHTTPD: NanoHTTPD
 
-    fun onCreate() {
+    @JvmStatic
+    @OnCreate
+    fun onCreate(context: Context) {
         nanoHTTPD = VoiceAssistantServer()
         nanoHTTPD.start()
     }
 
-    fun onCreateEventLoop(ftcEventLoop: FtcEventLoop) {
+    @JvmStatic
+    @OnCreateEventLoop
+    fun onCreateEventLoop(
+        context: Context,
+        ftcEventLoop: FtcEventLoop,
+    ) {
         if (::eventLoop.isInitialized) {
             throw IllegalStateException("onCreateEventLoop called more than once")
         }
