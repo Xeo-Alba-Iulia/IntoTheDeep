@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.dagger
 
 import com.qualcomm.robotcore.hardware.HardwareMap
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import org.firstinspires.ftc.teamcode.RobotHardware
 
 @Module
 internal object TestModule {
+    @Suppress("KotlinConstantConditions")
     @Provides
     fun provideRobot() = RobotHardware(Any() as HardwareMap)
 }
