@@ -29,7 +29,6 @@ apply from: '../build.dependencies.gradle'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.team11260.fast-load-plugin'
 apply plugin: 'org.jetbrains.kotlin.kapt'
-apply plugin: 'com.google.dagger.hilt.android'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -63,8 +62,8 @@ dependencies {
     implementation "org.team11260:fast-load:0.1.2"
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    implementation 'com.google.dagger:hilt-android:2.56.2'
-    kapt 'com.google.dagger:hilt-compiler:2.56.2'
+    implementation 'com.google.dagger:dagger:2.57'
+    kapt 'com.google.dagger:dagger-compiler:2.57'
 }
 
 kapt {
