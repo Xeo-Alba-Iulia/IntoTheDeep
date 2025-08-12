@@ -16,22 +16,18 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            url = 'https://www.matthewo.tech/maven/'
+            url = 'https://repo.dairy.foundation/releases'
         }
     }
     dependencies {
-        classpath 'org.team11260:fast-load-plugin:0.1.2'
+        classpath 'dev.frozenmilk:Load:0.2.3'
     }
-}
-
-plugins {
-    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
 }
 
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 apply plugin: 'org.jetbrains.kotlin.android'
-apply plugin: 'org.team11260.fast-load-plugin'
+apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -49,19 +45,22 @@ repositories {
         url = 'https://maven.brott.dev/'
     }
     maven {
-        url = 'https://www.matthewo.tech/maven/'
+        url = 'https://maven.pedropathing.com/'
     }
     maven {
-        url = 'https://maven.pedropathing.com/'
+        url = 'https://repo.dairy.foundation/releases'
     }
 }
 
 dependencies {
     implementation project(':FtcRobotController')
-
-    implementation "com.acmerobotics.roadrunner:actions:1.0.0"
-    implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
-    implementation "com.pedropathing:pedro:1.0.8"
-    implementation "org.team11260:fast-load:0.1.2"
+    implementation("com.acmerobotics.roadrunner:actions:1.0.0") {
+        exclude group: "com.acmerobotics.dashboard"
+    }
+    implementation("com.pedropathing:pedro:1.0.8") {
+        exclude group: "com.acmerobotics.dashboard"
+    }
+    implementation("com.acmerobotics.slothboard:dashboard:0.2.3+0.4.16")
+    implementation("dev.frozenmilk.sinister:Sloth:0.2.3")
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
