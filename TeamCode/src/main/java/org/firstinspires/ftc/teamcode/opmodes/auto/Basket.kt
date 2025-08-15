@@ -20,9 +20,7 @@ import org.firstinspires.ftc.teamcode.systems.IntakePositions
 import org.firstinspires.ftc.teamcode.systems.OuttakePosition
 import org.firstinspires.ftc.teamcode.systems.subsystems.outtake.Pendul
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
-import org.firstinspires.ftc.teamcode.util.ActionList
-import org.firstinspires.ftc.teamcode.util.DelayedAction
-import org.firstinspires.ftc.teamcode.util.FunctionAction
+import org.firstinspires.ftc.teamcode.util.*
 import pedroPathing.constants.FConstants
 import pedroPathing.constants.LConstants
 import kotlin.time.Duration.Companion.milliseconds
@@ -30,12 +28,16 @@ import kotlin.time.Duration.Companion.seconds
 
 @Autonomous
 class Basket : LinearOpMode() {
-    val beginPose = Pose(8.7, 106.8, Math.toRadians(-90.0))
+    companion object {
+        const val TAG = "BasketTeleOp"
+    }
+
+    val beginPose = Pose(8.7, 107.5, Math.toRadians(-90.0))
     val samplePoses =
         arrayOf(
-            Pose(23.4, 128.5, Math.toRadians(-19.0)),
-            Pose(21.5, 130.6, Math.toRadians(0.0)),
-            Pose(23.5, 133.2, Math.toRadians(18.5)),
+            Pose(22.8, 129.0, Math.toRadians(-19.0)),
+            Pose(21.2, 131.0, Math.toRadians(0.0)),
+            Pose(22.8, 133.2, Math.toRadians(18.5)),
         )
     val scorePose = Pose(20.0, 125.5, Math.toRadians(-45.0))
     val scoreAngle = Math.toRadians(-45.0)
@@ -126,7 +128,7 @@ class Basket : LinearOpMode() {
             robot.intake.targetPosition = IntakePositions.TRANSFER
 
             delayedActions +=
-                DelayedAction(200.0.milliseconds) {
+                DelayedAction(280.0.milliseconds) {
                     robot.lift.targetPosition = Positions.Lift.transfer
                     delayedActions +=
                         FunctionAction(robot.lift::atTarget, willCancel = true) {
@@ -200,6 +202,10 @@ class Basket : LinearOpMode() {
                     delayedActions +=
                         FunctionAction(robot.lift::atTarget, willCancel = true) {
                             follower.followPath(firstScore)
+                            delayedActions +=
+                                DelayedAction(0.3.seconds) {
+                                    robot.intake.targetPosition = IntakePositions.PICKUP
+                                }
                             robot.outtake.outtakePosition = OuttakePosition.BASKET
                             state = 1
                         }
@@ -221,6 +227,7 @@ class Basket : LinearOpMode() {
 
                 2 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
+                        follower.setMaxPower(0.75)
                         follower.followPath(pickupSamples[0])
                         robot.intake.clawRotate.targetPosition = Positions.IntakeClawRotate.middle - 0.12
                         robot.intake.targetPosition = IntakePositions.PICKUP
@@ -232,6 +239,7 @@ class Basket : LinearOpMode() {
 
                 3 -> {
                     if (!follower.isBusy) {
+                        follower.setMaxPower(1.0)
                         delayedActions +=
                             DelayedAction(0.1.seconds) {
                                 robot.intake.pickUp()
@@ -248,6 +256,10 @@ class Basket : LinearOpMode() {
 
                 41 -> {
                     follower.followPath(scorePaths[0])
+                    delayedActions +=
+                        DelayedAction(0.3.seconds) {
+                            robot.intake.targetPosition = IntakePositions.PICKUP
+                        }
                     state = 5
                 }
 
@@ -268,6 +280,7 @@ class Basket : LinearOpMode() {
 
                 6 -> {
                     if (pathTimer.elapsedTimeSeconds > 0.2) {
+                        follower.setMaxPower(0.75)
                         follower.followPath(pickupSamples[1])
                         robot.intake.targetPosition = IntakePositions.PICKUP
                         robot.outtake.outtakePosition = OuttakePosition.TRANSFER
@@ -278,6 +291,7 @@ class Basket : LinearOpMode() {
 
                 7 -> {
                     if (!follower.isBusy) {
+                        follower.setMaxPower(1.0)
                         delayedActions +=
                             DelayedAction(0.1.seconds) {
                                 robot.intake.pickUp()
@@ -294,6 +308,10 @@ class Basket : LinearOpMode() {
 
                 81 -> {
                     follower.followPath(scorePaths[1])
+                    delayedActions +=
+                        DelayedAction(0.3.seconds) {
+                            robot.intake.targetPosition = IntakePositions.PICKUP
+                        }
                     state = 9
                 }
 
@@ -375,7 +393,10 @@ class Basket : LinearOpMode() {
             follower.update()
             follower.drawOnDashBoard()
             dashboard.telemetry.update()
+            dashboard.telemetry.addData("Robot Pose", follower.pose)
             delayedActions()
         }
+        follower.pose.heading += Math.toRadians(90.0)
+        autoPose = Pose(0.0, 0.0, follower.pose.heading)
     }
 }

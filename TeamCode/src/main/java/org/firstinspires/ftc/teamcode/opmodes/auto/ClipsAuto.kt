@@ -96,7 +96,6 @@ class ClipsAuto : LinearOpMode() {
                         robot.claw.isClosed = true
                         follower.setMaxPower(1.0)
                     }.addTemporalCallback(0.1) { robot.outtake.outtakePosition = OuttakePosition.BAR }
-                    .setZeroPowerAccelerationMultiplier(5.0)
                     .build()
             }
 

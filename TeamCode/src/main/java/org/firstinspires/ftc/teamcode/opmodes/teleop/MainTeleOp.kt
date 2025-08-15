@@ -167,7 +167,7 @@ open class MainTeleOp : LinearOpMode() {
                 },
                 FunctionAction({ -controlGamepad.left_stick_y < -0.7 }) {
                     // Joystick-urile sunt inversate
-                    robot.lift.targetPosition = Positions.Lift.half + 400.0
+                    robot.lift.targetPosition = Positions.Lift.half + 650.0
                     robot.outtake.outtakePosition = OuttakePosition.TRANSFER
                     robot.claw.isClosed = false
                 },
