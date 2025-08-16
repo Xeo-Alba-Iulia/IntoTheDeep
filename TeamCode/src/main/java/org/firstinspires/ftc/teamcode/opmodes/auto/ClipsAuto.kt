@@ -51,11 +51,11 @@ class ClipsAuto : LinearOpMode() {
             arrayOf(
                 Point(56.0, 27.0),
                 Point(56.0, 17.0),
-                Point(56.0, 10.0),
+                Point(56.0, 9.0),
             )
 
         val scoreControl = Point(7.0, scorePoint[1].y)
-        val pickupPoint = Point(10.0, 34.0)
+        val pickupPoint = Point(9.5, 34.0)
         val parkPoint = Point(22.0, 50.0)
 
         val dropPoint =
@@ -110,7 +110,7 @@ class ClipsAuto : LinearOpMode() {
                     }.addTemporalCallback(0.1) {
                         robot.outtake.outtakePosition = OuttakePosition.PICKUP
                         robot.lift.targetPosition = 0.0
-                    }.setZeroPowerAccelerationMultiplier(3.2)
+                    }.setZeroPowerAccelerationMultiplier(3.3)
                     .build()
             }
 
@@ -119,10 +119,8 @@ class ClipsAuto : LinearOpMode() {
         val goToFirstSample: PathFunction = {
             addBezierCurve(
                 scorePoint[0],
-                Point(13.0, 60.0),
-                Point(23.0, 7.0),
-                Point(60.0, 51.5),
-                Point(64.5, 32.5),
+                Point(10.5, 36.0),
+                Point(samplePoint[0].x + 1.0, samplePoint[0].y + 6.0),
                 samplePoint[0],
             )
             setConstantHeadingInterpolation(angle)
@@ -134,10 +132,10 @@ class ClipsAuto : LinearOpMode() {
                 robot.intake.targetPosition = IntakePositions.SPECIMEN_PICKUP
                 robot.outtake.outtakePosition = OuttakePosition.PICKUP
                 robot.lift.targetPosition = 0.0
-                follower.setMaxPower(0.7)
+//                follower.setMaxPower(0.7)
             }
             addParametricCallback(0.9) {
-                follower.setMaxPower(0.95)
+//                follower.setMaxPower(0.95)
             }
         }
         val dropFirstSample: PathFunction = {
@@ -145,9 +143,9 @@ class ClipsAuto : LinearOpMode() {
             setConstantHeadingInterpolation(angle)
         }
         val goToSecondSample: PathFunction = {
-            addBezierCurve(dropPoint[0], Point(67.0, 26.0), samplePoint[1])
-            addParametricCallback(0.3) { follower.setMaxPower(0.7) }
-            addParametricCallback(0.9) { follower.setMaxPower(0.95) }
+            addBezierCurve(dropPoint[0], Point(samplePoint[0].x + 1.0, samplePoint[0].y), samplePoint[1])
+            addParametricCallback(0.3) { follower.setMaxPower(0.85) }
+            addParametricCallback(0.9) { follower.setMaxPower(1.0) }
             setConstantHeadingInterpolation(angle)
         }
         val dropSecondSample: PathFunction = {
@@ -155,9 +153,9 @@ class ClipsAuto : LinearOpMode() {
             setConstantHeadingInterpolation(angle)
         }
         val goToThirdSample: PathFunction = {
-            addBezierCurve(dropPoint[1], Point(65.0, 16.0), samplePoint[2])
-            addParametricCallback(0.3) { follower.setMaxPower(0.7) }
-            addParametricCallback(0.9) { follower.setMaxPower(0.95) }
+            addBezierCurve(dropPoint[1], Point(samplePoint[1].x - 2.0, samplePoint[1].y), samplePoint[2])
+//            addParametricCallback(0.3) { follower.setMaxPower(0.7) }
+//            addParametricCallback(0.9) { follower.setMaxPower(0.95) }
             setConstantHeadingInterpolation(angle)
         }
         val dropThirdSample: PathFunction = {

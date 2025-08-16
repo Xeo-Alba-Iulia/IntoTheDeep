@@ -27,7 +27,7 @@ public class FConstants {
         FollowerConstants.forwardZeroPowerAcceleration = -41.78295044292578;
         FollowerConstants.lateralZeroPowerAcceleration = -73.40248127111744;
 
-        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.44,0,0.016,0);
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.35,0,0.016,0);
         FollowerConstants.useSecondaryTranslationalPID = false;
         FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(0.1,0,0.01,0); // Not being used, @see useSecondaryTranslationalPID
 
@@ -35,16 +35,16 @@ public class FConstants {
         FollowerConstants.useSecondaryHeadingPID = false;
         FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(2,0,0.1,0); // Not being used, @see useSecondaryHeadingPID
 
-        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.0095,0,0.0019,0.5,0);
+        FollowerConstants.drivePIDFCoefficients.setCoefficients(0.008,0,0.0023,0.5,0);
         FollowerConstants.useSecondaryDrivePID = false;
         FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.1,0,0,0.6,0); // Not being used, @see useSecondaryDrivePID
 
         FollowerConstants.driveKalmanFilterParameters = new KalmanFilterParameters(7, 1.2);
 
-        FollowerConstants.zeroPowerAccelerationMultiplier = 4;
+        FollowerConstants.zeroPowerAccelerationMultiplier = 3.5;
         FollowerConstants.centripetalScaling = .0004;
 
-        FollowerConstants.pathEndTimeoutConstraint = 300;
+        FollowerConstants.pathEndTimeoutConstraint = 100;
         FollowerConstants.pathEndTValueConstraint = 0.995;
         FollowerConstants.pathEndVelocityConstraint = 0.1;
         FollowerConstants.pathEndTranslationalConstraint = 0.1;

@@ -77,7 +77,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var transfer = 0.66
+            var transfer = 0.7
 
             @JvmField @Volatile
             var wallPickup = 1.0
@@ -118,7 +118,7 @@ object Positions {
 
             @JvmField
             @Volatile
-            var pickup = 0.3
+            var pickup = 0.25
         }
     }
 
