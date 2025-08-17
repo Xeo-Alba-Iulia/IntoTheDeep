@@ -43,7 +43,7 @@ class Lift(
     val measuredPosition: Double
         get() = liftMotors.map { it.currentPosition }.average()
 
-    fun atTarget() = measuredPosition in targetPosition - 20..targetPosition + 20
+    fun atTarget() = measuredPosition in targetPosition - 10..targetPosition + 10
 
     init {
         liftMotors.forEach {
