@@ -4,15 +4,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions.IntakeClaw.Companion.closed
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions.IntakeClaw.Companion.open
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
+import javax.inject.Inject
 
-class IntakeClaw(
-    hardwareMap: HardwareMap,
-) : ServoPositionMechanism(open) {
-    override val servos = arrayOf(hardwareMap.servo["IntakeClaw"])
+class IntakeClaw
+    @Inject
+    constructor(
+        hardwareMap: HardwareMap,
+    ) : ServoPositionMechanism(open) {
+        override val servos = arrayOf(hardwareMap.servo["IntakeClaw"])
 
-    var isClosed
-        get() = targetPosition >= closed
-        set(value) {
-            targetPosition = if (value) closed else open
-        }
-}
+        var isClosed
+            get() = targetPosition >= closed
+            set(value) {
+                targetPosition = if (value) closed else open
+            }
+    }

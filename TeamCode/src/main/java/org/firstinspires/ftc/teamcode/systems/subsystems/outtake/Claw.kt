@@ -7,22 +7,25 @@ import org.firstinspires.ftc.teamcode.systems.subsystems.util.ManualMechanismTel
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions.Claw.Companion.close
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions.Claw.Companion.open
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
+import javax.inject.Inject
 
-class Claw(
-    hardwareMap: HardwareMap,
-) : ServoPositionMechanism(close) {
-    override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Claw"])
+class Claw
+    @Inject
+    constructor(
+        hardwareMap: HardwareMap,
+    ) : ServoPositionMechanism(close) {
+        override val servos: Array<Servo> = arrayOf(hardwareMap.servo["Claw"])
 
-    init {
-        servos[0].direction = Servo.Direction.REVERSE
-    }
-
-    var isClosed
-        get() = targetPosition == close
-        set(value) {
-            targetPosition = if (value) close else open
+        init {
+            servos[0].direction = Servo.Direction.REVERSE
         }
-}
+
+        var isClosed
+            get() = targetPosition == close
+            set(value) {
+                targetPosition = if (value) close else open
+            }
+    }
 
 @TeleOp(name = "Claw test", group = "C")
 class ClawTest : ManualMechanismTeleOp(::Claw)

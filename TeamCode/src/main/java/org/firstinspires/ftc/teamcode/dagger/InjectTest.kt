@@ -2,22 +2,24 @@ package org.firstinspires.ftc.teamcode.dagger
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.teamcode.RobotHardware
+import org.firstinspires.ftc.teamcode.systems.subsystems.Lift
 import javax.inject.Inject
 
-abstract class DaggerInjectedOpMode : OpMode() {
+abstract class InjectTest : OpMode() {
     @Inject
     lateinit var shouldPass: RobotHardware
 
-    protected val component by lazy {
-        DaggerDaggerTestComponent
+    @Inject
+    lateinit var lift: Lift
+
+    protected val component =
+        DaggerOpModeComponent
             .builder()
-            .hardwareMap(hardwareMap)
-            .telemetry(telemetry)
             .opMode(this)
             .build()
-    }
 
     override fun init() {
+        checkNotNull((this as OpMode).hardwareMap)
         component.inject(this)
     }
 }

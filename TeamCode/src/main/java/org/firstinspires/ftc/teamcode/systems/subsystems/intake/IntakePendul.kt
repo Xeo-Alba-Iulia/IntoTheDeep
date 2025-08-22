@@ -4,9 +4,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.Positions
 import org.firstinspires.ftc.teamcode.systems.subsystems.util.ServoPositionMechanism
+import javax.inject.Inject
 
-class IntakePendul(
-    hardwareMap: HardwareMap,
-) : ServoPositionMechanism(Positions.IntakePendul.transfer) {
-    override val servos: Array<Servo> = arrayOf(hardwareMap.servo["IntakePendul"])
-}
+class IntakePendul
+    @Inject
+    constructor(
+        hardwareMap: HardwareMap,
+    ) : ServoPositionMechanism(Positions.IntakePendul.transfer) {
+        override val servos: Array<Servo> = arrayOf(hardwareMap.servo["IntakePendul"])
+    }

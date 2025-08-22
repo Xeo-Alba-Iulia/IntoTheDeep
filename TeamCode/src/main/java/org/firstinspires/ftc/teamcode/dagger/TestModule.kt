@@ -9,5 +9,5 @@ import org.firstinspires.ftc.teamcode.RobotHardware
 internal object TestModule {
     @Suppress("KotlinConstantConditions")
     @Provides
-    fun provideRobot() = RobotHardware(Any() as HardwareMap)
+    fun provideRobot(hardwareMap: HardwareMap) = RobotHardware(hardwareMap)
 }
